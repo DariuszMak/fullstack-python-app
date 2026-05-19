@@ -51,7 +51,7 @@ tasks:
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
 
 
-  analyze-full:
+  full-static-analyzis:
     desc: Full static analysis + SonarQube + diagrams
     deps:
       - cleanup
@@ -99,7 +99,7 @@ tasks:
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
 
 
-  release-full-setup:
+  full-release-setup:
     desc: Full setup from scratch (Windows + Linux + releases)
     deps:
       - cleanup

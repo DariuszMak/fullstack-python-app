@@ -57,13 +57,13 @@ task full-dev-windows ;
 ### Full analysis
 
 ```commandline
-task analyze-full ; 
+task full-static-analyzis ; 
 ```
 
 ### Full release setup (Windows + Linux)
 
 ```commandline
-task release-full-setup ; 
+task full-release-setup ; 
 ```
 
 ### Edit `ui` forms with QT Designer
