@@ -9,7 +9,7 @@ from src.api.time_provider.time_sync_context import TimeSyncContext
 logger = structlog.get_logger(__name__)
 
 
-class GettimeApiProvider(HttpTimeProvider):
+class GetTimeApiProvider(HttpTimeProvider):
     def __init__(self) -> None:
         super().__init__(
             url="https://gettimeapi.dev/v1/time?timezone=UTC",
@@ -35,7 +35,7 @@ class LocalTimeProvider(TimeProvider):
 def default_time_sync_context() -> TimeSyncContext:
     return TimeSyncContext(
         providers=[
-            GettimeApiProvider(),
+            GetTimeApiProvider(),
             AisenseApiProvider(),
             LocalTimeProvider(),
         ]
