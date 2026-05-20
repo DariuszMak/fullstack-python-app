@@ -15,7 +15,7 @@ def _fetch_weather_response(client: Any, parameters: dict[str, Any]) -> Any:
     log.info("requesting_weather_data")
 
     try:
-        responses = client.weather_api(API_URL, parameters=parameters)
+        responses = client.weather_api(API_URL, params=parameters)
         return responses[0]
     except Exception as e:
         log.exception("weather_api_request_failed", error=str(e))
