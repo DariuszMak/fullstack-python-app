@@ -11,7 +11,7 @@ from src.ui.shared.controller.clock_controller import ClockController
 from src.ui.shared.model.data_types import ClockHands
 
 if TYPE_CHECKING:
-    from src.ui.shared.model.strategies.pid_strategy import PIDMovementStrategy
+    from src.ui.shared.model.strategy.pid_strategy import PIDMovementStrategy
 
 
 def make_dt(hour: int = 12, minute: int = 0, second: int = 0, tz: timezone = UTC) -> datetime:
