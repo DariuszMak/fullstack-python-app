@@ -1,7 +1,7 @@
 import pytest
 
 from src.ui.shared.model.strategies.easing_strategy import EasingMovementStrategy
-from src.ui.shared.model.strategies.movement_strategy import MovementStrategy
+from src.ui.shared.model.interface.movement_strategy import MovementStrategy
 from src.ui.shared.model.strategies.pid_strategy import PIDMovementStrategy
 from src.ui.shared.model.strategies.tick_strategy import TickMovementStrategy
 
