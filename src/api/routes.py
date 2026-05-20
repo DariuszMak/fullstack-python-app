@@ -15,9 +15,7 @@ class TimeSyncContextContainer:
         self.context = context
 
 
-time_sync_context_container = TimeSyncContextContainer(
-    default_time_sync_context()
-)
+time_sync_context_container = TimeSyncContextContainer(default_time_sync_context())
 
 
 def set_time_sync_context(context: TimeSyncContext) -> None:
