@@ -1,4 +1,4 @@
-from src.app.openmeteo.places.jarocin import LATITUDE, LONGITUDE, TIMEZONE
+from src.app.openmeteo.places.place import LATITUDE, LONGITUDE, TIMEZONE
 
 FORECAST_DAYS: int = 16
 API_URL: str = "https://api.open-meteo.com/v1/forecast"

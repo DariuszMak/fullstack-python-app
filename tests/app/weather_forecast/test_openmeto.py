@@ -10,7 +10,7 @@ from src.app.openmeteo.parser import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
-from src.app.openmeteo.places.jarocin import (
+from src.app.openmeteo.places.place import (
     DEFAULT_PLACE,
     LATITUDE,
     LONGITUDE,
