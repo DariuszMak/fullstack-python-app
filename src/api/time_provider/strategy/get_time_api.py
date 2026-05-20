@@ -5,7 +5,7 @@ from src.api.time_provider.strategy.interface.http_time_provider import HttpTime
 logger = structlog.get_logger(__name__)
 
 
-class GetTimeApiProvider(HttpTimeProvider):
+class GetTimeApi(HttpTimeProvider):
     def __init__(self) -> None:
         super().__init__(
             url="https://gettimeapi.dev/v1/time?timezone=UTC",
