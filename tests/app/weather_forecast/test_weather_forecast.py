@@ -249,7 +249,7 @@ def test_passes_parameters_to_api() -> None:
     _, call_kwargs = mock_client.weather_api.call_args
 
     call_args_pos = mock_client.weather_api.call_args[0]
-    assert parameters in call_args_pos or call_kwargs.get("parameters") == parameters
+    assert parameters in call_args_pos or call_kwargs.get("params") == parameters
 
 
 def _make_response_mock() -> MagicMock:
