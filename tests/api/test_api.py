@@ -11,9 +11,9 @@ from src.api.time_provider.context import (
     default_time_sync_context,
 )
 from src.api.time_provider.interface.http_time_provider import HttpTimeProvider
-from src.api.time_provider.interface.strategy.ai_sense_api_provider import AiSenseApiProvider
-from src.api.time_provider.interface.strategy.get_time_api_provider import GetTimeApiProvider
-from src.api.time_provider.interface.strategy.local_time_provider import LocalTimeProvider
+from src.api.time_provider.strategy.ai_sense_api_provider import AiSenseApiProvider
+from src.api.time_provider.strategy.get_time_api_provider import GetTimeApiProvider
+from src.api.time_provider.strategy.local_time_provider import LocalTimeProvider
 from src.api.time_provider.interface.time_provider import TimeProvider
 from src.api.time_provider.time_sync_context import TimeSyncContext
 
