@@ -13,7 +13,7 @@ from src.app.openmeteo.params import (
     TIMEZONE,
     build_request_params,
 )
-from src.app.openmeteo.parsers import (
+from src.app.openmeteo.parser import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
