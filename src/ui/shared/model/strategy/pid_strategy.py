@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.ui.shared.model.interface.movement_strategy import MovementStrategy
+from src.ui.shared.model.strategy.interface.movement_strategy import MovementStrategy
 from src.ui.shared.model.pid import PID
 
 
