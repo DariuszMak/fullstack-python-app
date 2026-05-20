@@ -1,13 +1,4 @@
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class Place:
-    name: str
-    latitude: float
-    longitude: float
-    timezone: str = "Europe/Berlin"
-
+from src.app.openmeteo.places.place_dataclas import Place
 
 PLACES: dict[str, Place] = {
     "jarocin": Place(name="Jarocin", latitude=51.9727, longitude=17.5026),
