@@ -6,7 +6,7 @@ import pytest
 
 from src.app.openmeteo.client_builder import build_openmeteo_client
 from src.app.openmeteo.gather import fetch_weather_response, gather_data
-from src.app.openmeteo.params import (
+from src.app.openmeteo.parameters import (
     FORECAST_DAYS,
     LATITUDE,
     LONGITUDE,
