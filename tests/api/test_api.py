@@ -12,10 +12,10 @@ from src.api.time_provider.time_provider import (
     GettimeApiProvider,
     HttpTimeProvider,
     LocalTimeProvider,
-    TimeProvider,
     TimeSyncContext,
     default_time_sync_context,
 )
+from src.api.time_provider.time_provider_class import TimeProvider
 
 
 def test_chrome_devtools_json_not_found() -> None:

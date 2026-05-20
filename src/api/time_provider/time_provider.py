@@ -1,16 +1,11 @@
-from abc import ABC, abstractmethod
 from datetime import datetime
 
 import httpx
 import structlog
 
+from src.api.time_provider.time_provider_class import TimeProvider
+
 logger = structlog.get_logger(__name__)
-
-
-class TimeProvider(ABC):
-    @abstractmethod
-    async def fetch_time(self) -> datetime | None:
-        pass
 
 
 class HttpTimeProvider(TimeProvider):
