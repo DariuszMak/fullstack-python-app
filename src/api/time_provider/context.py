@@ -17,7 +17,7 @@ class GetTimeApiProvider(HttpTimeProvider):
         )
 
 
-class AisenseApiProvider(HttpTimeProvider):
+class AiSenseApiProvider(HttpTimeProvider):
     def __init__(self) -> None:
         super().__init__(
             url="https://aisenseapi.com/services/v1/datetime",
@@ -36,7 +36,7 @@ def default_time_sync_context() -> TimeSyncContext:
     return TimeSyncContext(
         providers=[
             GetTimeApiProvider(),
-            AisenseApiProvider(),
+            AiSenseApiProvider(),
             LocalTimeProvider(),
         ]
     )

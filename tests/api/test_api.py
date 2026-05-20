@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from src.api.app import app
 from src.api.routes import set_time_sync_context
 from src.api.time_provider.context import (
-    AisenseApiProvider,
+    AiSenseApiProvider,
     GetTimeApiProvider,
     LocalTimeProvider,
     default_time_sync_context,
@@ -147,7 +147,7 @@ async def test_aisense_api_provider_parses_datetime_key(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    provider = AisenseApiProvider()
+    provider = AiSenseApiProvider()
     result = await provider.fetch_time()
     assert result is not None
     assert result.astimezone(UTC) == datetime.fromisoformat(iso_time)
@@ -200,7 +200,7 @@ async def test_context_falls_back_to_local_when_all_http_fail(
     context = TimeSyncContext(
         providers=[
             GetTimeApiProvider(),
-            AisenseApiProvider(),
+            AiSenseApiProvider(),
             LocalTimeProvider(),
         ]
     )
