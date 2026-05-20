@@ -7,7 +7,7 @@ import structlog
 from src.ui.shared.controller.update_logic import update_clock_hands
 from src.ui.shared.helpers import calculate_clock_hands_angles
 from src.ui.shared.model.data_types import ClockHands
-from src.ui.shared.model.strategy.pid_strategy import PIDMovementStrategy
+from src.ui.shared.model.strategy.pid_movement import PIDMovementStrategy
 
 if TYPE_CHECKING:
     from datetime import datetime
