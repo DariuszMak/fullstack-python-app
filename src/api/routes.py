@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 
 import structlog
@@ -10,12 +11,12 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
+@dataclass
 class TimeSyncContextContainer:
-    def __init__(self, context: TimeSyncContext) -> None:
-        self.context = context
+    context: TimeSyncContext
 
 
-time_sync_context_container = TimeSyncContextContainer(default_time_sync_context())
+time_sync_context_container = TimeSyncContextContainer(context=default_time_sync_context())
 
 
 def set_time_sync_context(context: TimeSyncContext) -> None:
