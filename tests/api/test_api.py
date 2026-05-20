@@ -7,13 +7,13 @@ from fastapi.testclient import TestClient
 
 from src.api.app import app
 from src.api.routes import set_time_sync_context
-from src.api.time_provider.http_time_provider import HttpTimeProvider
 from src.api.time_provider.context import (
     AisenseApiProvider,
     GettimeApiProvider,
     LocalTimeProvider,
     default_time_sync_context,
 )
+from src.api.time_provider.http_time_provider import HttpTimeProvider
 from src.api.time_provider.time_provider import TimeProvider
 from src.api.time_provider.time_sync_context import TimeSyncContext
 
