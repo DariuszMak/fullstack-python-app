@@ -1,6 +1,3 @@
-moc_*.py
-files_rc.py
-
 __pycache__
 *.py[cod]
 *$py.class
@@ -49,31 +46,17 @@ htmlcov
 .tox
 .coverage
 .coverage.*
+.cache.
 .cache.*
 .pytest_cache
 nosetests.xml
 coverage.xml
 *.cover
-*,cover
-*.py,cover
 .hypothesis
 
 # Translations
 *.mo
 *.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Flask stuff:
-instance
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
 
 # PyBuilder
 .pybuilder
@@ -150,9 +133,26 @@ GitHub.sublime-settings
 !.vscode/extensions.json
 .history
 
+# Ruff
+ruff-report.json
+
 # React UI build
 frontend/node_modules
 static
 
-# Ruff
-ruff-report.json
+# Django:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask:
+instance
+.webassets-cache
+
+# Scrapy:
+.scrapy
+
+# PySide:
+moc_*.py
+files_rc.py
