@@ -24,6 +24,7 @@ foreach ($file in $files) {
     $svg = $svg -replace '<g class="cluster">', '<g class="cluster" style="opacity:0.85"'
 
     Set-Content -Path $file.FullName -Value $svg -Encoding UTF8
+    Write-Host "Diagram created: $($file.Name)"
 }
 
 Start-Process images\structure_module.svg ; 
