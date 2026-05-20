@@ -6,6 +6,7 @@ from PySide6.QtCore import QPointF
 
 from src.ui.shared.helpers import (
     calculate_clock_hands_angles,
+    clock_hands_in_radians,
     convert_clock_pid_to_cartesian,
     format_datetime,
     polar_to_cartesian,
@@ -41,6 +42,66 @@ def test_polar_to_cartesian_180_degrees() -> None:
     res = polar_to_cartesian(QPointF(0.0, 0.0), length, angle)
     assert abs(res.x() - 0.0) < 1e-5
     assert abs(res.y() - 10.0) < 1e-5
+
+
+def test_clock_hands_in_radians_zero() -> None:
+    hands = ClockHands(second=0.0, minute=0.0, hour=0.0)
+
+    second, minute, hour = clock_hands_in_radians(hands)
+
+    assert second == pytest.approx(0.0)
+    assert minute == pytest.approx(0.0)
+    assert hour == pytest.approx(0.0)
+
+
+def test_clock_hands_in_radians_quarter_turn() -> None:
+    hands = ClockHands(second=15.0, minute=15.0, hour=3.0)
+
+    second, minute, hour = clock_hands_in_radians(hands)
+
+    assert second == pytest.approx(math.pi / 2.0)
+    assert minute == pytest.approx(math.pi / 2.0)
+    assert hour == pytest.approx(math.pi / 2.0)
+
+
+def test_clock_hands_in_radians_half_turn() -> None:
+    hands = ClockHands(second=30.0, minute=30.0, hour=6.0)
+
+    second, minute, hour = clock_hands_in_radians(hands)
+
+    assert second == pytest.approx(math.pi)
+    assert minute == pytest.approx(math.pi)
+    assert hour == pytest.approx(math.pi)
+
+
+def test_clock_hands_in_radians_full_turn() -> None:
+    hands = ClockHands(second=60.0, minute=60.0, hour=12.0)
+
+    second, minute, hour = clock_hands_in_radians(hands)
+
+    assert second == pytest.approx(2.0 * math.pi)
+    assert minute == pytest.approx(2.0 * math.pi)
+    assert hour == pytest.approx(2.0 * math.pi)
+
+
+def test_clock_hands_in_radians_fractional_values() -> None:
+    hands = ClockHands(second=7.5, minute=22.5, hour=1.5)
+
+    second, minute, hour = clock_hands_in_radians(hands)
+
+    assert second == pytest.approx(math.pi / 4.0)
+    assert minute == pytest.approx(3.0 * math.pi / 4.0)
+    assert hour == pytest.approx(math.pi / 4.0)
+
+
+def test_clock_hands_in_radians_large_values() -> None:
+    hands = ClockHands(second=90.0, minute=90.0, hour=18.0)
+
+    second, minute, hour = clock_hands_in_radians(hands)
+
+    assert second == pytest.approx(3.0 * math.pi)
+    assert minute == pytest.approx(3.0 * math.pi)
+    assert hour == pytest.approx(3.0 * math.pi)
 
 
 def test_midnight_clock_hands_angles() -> None:
