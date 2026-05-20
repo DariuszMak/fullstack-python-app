@@ -14,6 +14,7 @@ from src.api.time_providers import (
     LocalTimeProvider,
     TimeProvider,
     TimeSyncContext,
+    default_time_sync_context,
 )
 
 
@@ -196,7 +197,13 @@ async def test_context_falls_back_to_local_when_all_http_fail(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    context = TimeSyncContext(providers=[GettimeApiProvider(), AisenseApiProvider(), LocalTimeProvider()])
+    context = TimeSyncContext(
+        providers=[
+            GettimeApiProvider(),
+            AisenseApiProvider(),
+            LocalTimeProvider(),
+        ]
+    )
     result = await context.get_current_time()
     assert result.tzinfo is not None
 
@@ -209,13 +216,12 @@ def test_context_raises_when_no_providers_configured() -> None:
 def test_time_route_returns_aware_datetime() -> None:
     with TestClient(app) as client:
         response = client.get("/time")
+
     assert response.status_code == 200
     _assert_datetime_response(response.json())
 
 
-def test_time_route_uses_injected_context(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_time_route_uses_injected_context() -> None:
     fixed_utc = datetime(2025, 1, 1, 12, 0, 0, tzinfo=UTC)
 
     class _FixedProvider(TimeProvider):
@@ -233,8 +239,6 @@ def test_time_route_uses_injected_context(
         dt = datetime.fromisoformat(data["datetime"]).astimezone(UTC)
         assert dt == fixed_utc
     finally:
-        from src.api.time_providers import default_time_sync_context
-
         set_time_sync_context(default_time_sync_context())
 
 

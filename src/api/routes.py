@@ -9,12 +9,19 @@ from src.api.time_providers import TimeSyncContext, default_time_sync_context
 logger = structlog.get_logger(__name__)
 router = APIRouter()
 
-_time_sync_context: TimeSyncContext = default_time_sync_context()
+
+class TimeSyncContextContainer:
+    def __init__(self, context: TimeSyncContext) -> None:
+        self.context = context
+
+
+time_sync_context_container = TimeSyncContextContainer(
+    default_time_sync_context()
+)
 
 
 def set_time_sync_context(context: TimeSyncContext) -> None:
-    global _time_sync_context
-    _time_sync_context = context
+    time_sync_context_container.context = context
 
 
 @router.get("/favicon.ico", include_in_schema=False)
@@ -29,7 +36,7 @@ async def ping() -> dict[str, str]:
 
 @router.get("/time")
 async def current_time() -> dict[str, str]:
-    dt = await _time_sync_context.get_current_time()
+    dt = await time_sync_context_container.context.get_current_time()
     return {"datetime": dt.isoformat()}
 
 
