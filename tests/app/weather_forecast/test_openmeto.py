@@ -10,14 +10,8 @@ from src.app.openmeteo.parser import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
-from src.app.openmeteo.places.places import (
-    DEFAULT_PLACE,
-    LATITUDE,
-    LONGITUDE,
-    PLACES,
-    TIMEZONE,
-    Place,
-)
+from src.app.openmeteo.places.place import Place
+from src.app.openmeteo.places.places import DEFAULT_PLACE, LATITUDE, LONGITUDE, PLACES, TIMEZONE
 from src.app.openmeteo.request_builder import FORECAST_DAYS, build_request_parameters
 
 HOURLY_COLUMNS = [
