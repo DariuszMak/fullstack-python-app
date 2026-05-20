@@ -4,7 +4,7 @@ from src.ui.shared.model.pid import PID
 from src.ui.shared.model.strategy.interface.movement_strategy import MovementStrategy
 
 
-class PIDMovementStrategy(MovementStrategy):
+class PIDMovement(MovementStrategy):
     def __init__(self, kp: float, ki: float, kd: float) -> None:
         self._pid = PID(kp=kp, ki=ki, kd=kd)
 

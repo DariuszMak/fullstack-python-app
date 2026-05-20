@@ -220,4 +220,4 @@ def test_clock_widget_current_datetime_advances(monkeypatch: pytest.MonkeyPatch)
 
 def test_no_inline_pid_classes(monkeypatch: pytest.MonkeyPatch) -> None:
     assert not hasattr(module, "PID"), "time_panel should not define its own PID class"
-    assert not hasattr(module, "PIDMovementStrategy"), "time_panel should not define its own PIDMovementStrategy"
+    assert not hasattr(module, "PIDMovement"), "time_panel should not define its own PIDMovement"

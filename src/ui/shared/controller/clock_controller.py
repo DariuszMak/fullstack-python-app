@@ -7,7 +7,7 @@ import structlog
 from src.ui.shared.controller.update_logic import update_clock_hands
 from src.ui.shared.helpers import calculate_clock_hands_angles
 from src.ui.shared.model.data_types import ClockHands
-from src.ui.shared.model.strategy.pid_movement import PIDMovementStrategy
+from src.ui.shared.model.strategy.pid_movement import PIDMovement
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -20,9 +20,9 @@ class ClockController:
         self._start_time = start_time
 
         self._strategies = (
-            PIDMovementStrategy(0.15, 0.005, 0.005),
-            PIDMovementStrategy(0.08, 0.004, 0.004),
-            PIDMovementStrategy(0.08, 0.002, 0.002),
+            PIDMovement(0.15, 0.005, 0.005),
+            PIDMovement(0.08, 0.004, 0.004),
+            PIDMovement(0.08, 0.002, 0.002),
         )
 
         self._clock_hands = ClockHands(0.0, 0.0, 0.0)

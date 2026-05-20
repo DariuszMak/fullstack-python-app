@@ -11,7 +11,7 @@ from src.ui.shared.controller.clock_controller import ClockController
 from src.ui.shared.model.data_types import ClockHands
 
 if TYPE_CHECKING:
-    from src.ui.shared.model.strategy.pid_movement import PIDMovementStrategy
+    from src.ui.shared.model.strategy.pid_movement import PIDMovement
 
 
 def make_dt(hour: int = 12, minute: int = 0, second: int = 0, tz: timezone = UTC) -> datetime:
@@ -118,7 +118,7 @@ def test_reset_calls_strategy_reset() -> None:
     mock_strategies = [MagicMock() for _ in range(3)]
 
     controller._strategies = cast(
-        "tuple[PIDMovementStrategy, PIDMovementStrategy, PIDMovementStrategy]",
+        "tuple[PIDMovement, PIDMovement, PIDMovement]",
         tuple(mock_strategies),
     )
 
@@ -134,7 +134,7 @@ def test_reset_logs_warning_when_strategy_reset_raises(caplog: pytest.LogCapture
     failing_strategy = MagicMock()
     failing_strategy.reset.side_effect = RuntimeError("boom")
     controller._strategies = cast(
-        "tuple[PIDMovementStrategy, PIDMovementStrategy, PIDMovementStrategy]",
+        "tuple[PIDMovement, PIDMovement, PIDMovement]",
         (failing_strategy, failing_strategy, failing_strategy),
     )
 

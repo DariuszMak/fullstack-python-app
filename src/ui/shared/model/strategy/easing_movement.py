@@ -3,7 +3,7 @@ from __future__ import annotations
 from src.ui.shared.model.strategy.interface.movement_strategy import MovementStrategy
 
 
-class EasingMovementStrategy(MovementStrategy):
+class EasingMovement(MovementStrategy):
     def __init__(self, factor: float = 0.1) -> None:
         self._factor = float(factor)
 
