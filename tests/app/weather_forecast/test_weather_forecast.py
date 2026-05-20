@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.app.weather_forecast.client import build_openmeteo_client
+from src.app.weather_forecast.client_builder import build_openmeteo_client
 from src.app.weather_forecast.gather import fetch_weather_response, gather_data
 from src.app.weather_forecast.params import (
     FORECAST_DAYS,

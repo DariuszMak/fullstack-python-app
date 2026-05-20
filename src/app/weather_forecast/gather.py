@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 import structlog
 
-from src.app.weather_forecast.client import build_openmeteo_client
+from src.app.weather_forecast.client_builder import build_openmeteo_client
 from src.app.weather_forecast.params import API_URL, build_request_params
 from src.app.weather_forecast.parsers import parse_daily_dataframe, parse_hourly_dataframe
 
