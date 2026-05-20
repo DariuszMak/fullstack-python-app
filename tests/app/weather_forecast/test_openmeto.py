@@ -151,9 +151,11 @@ def test_all_places_have_non_empty_timezone() -> None:
 
 
 def test_place_is_frozen() -> None:
+    from dataclasses import FrozenInstanceError
+
     place = PLACES["jarocin"]
-    with pytest.raises(Exception):
-        place.latitude = 0.0
+    with pytest.raises(FrozenInstanceError, match="cannot assign to field"):
+        setattr(place, "latitude", 0.0)  # noqa: B010
 
 
 def test_default_place_is_jarocin() -> None:
