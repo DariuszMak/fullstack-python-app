@@ -142,26 +142,26 @@ def test_timezone_default() -> None:
     assert build_request_params()["timezone"] == TIMEZONE
 
 
-@patch("src.app.weather_forecast.client.openmeteo_requests.Client")
-@patch("src.app.weather_forecast.client.retry")
-@patch("src.app.weather_forecast.client.requests_cache.CachedSession")
+@patch("src.app.weather_forecast.client_builder.openmeteo_requests.Client")
+@patch("src.app.weather_forecast.client_builder.retry")
+@patch("src.app.weather_forecast.client_builder.requests_cache.CachedSession")
 def test_returns_client(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     client = build_openmeteo_client()
     mock_client_cls.assert_called_once()
     assert client is mock_client_cls.return_value
 
 
-@patch("src.app.weather_forecast.client.openmeteo_requests.Client")
-@patch("src.app.weather_forecast.client.retry")
-@patch("src.app.weather_forecast.client.requests_cache.CachedSession")
+@patch("src.app.weather_forecast.client_builder.openmeteo_requests.Client")
+@patch("src.app.weather_forecast.client_builder.retry")
+@patch("src.app.weather_forecast.client_builder.requests_cache.CachedSession")
 def test_cache_params_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(cache_name="custom", expire_after=999)
     mock_session.assert_called_once_with("custom", expire_after=999)
 
 
-@patch("src.app.weather_forecast.client.openmeteo_requests.Client")
-@patch("src.app.weather_forecast.client.retry")
-@patch("src.app.weather_forecast.client.requests_cache.CachedSession")
+@patch("src.app.weather_forecast.client_builder.openmeteo_requests.Client")
+@patch("src.app.weather_forecast.client_builder.retry")
+@patch("src.app.weather_forecast.client_builder.requests_cache.CachedSession")
 def test_retry_params_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(retries=3, backoff_factor=0.5)
     mock_retry.assert_called_once_with(mock_session.return_value, retries=3, backoff_factor=0.5)
