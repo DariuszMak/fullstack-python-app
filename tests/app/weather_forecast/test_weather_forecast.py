@@ -5,7 +5,8 @@ import pandas as pd
 import pytest
 
 from src.app.openmeteo.client_builder import build_openmeteo_client
-from src.app.openmeteo.gather import fetch_weather_response, gather_data
+from src.app.openmeteo.fetch import fetch_weather_response
+from src.app.openmeteo.gather import gather_data
 from src.app.openmeteo.parameters import (
     FORECAST_DAYS,
     LATITUDE,
@@ -266,7 +267,7 @@ def _make_response_mock() -> MagicMock:
 
 
 @patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather.fetch_weather_response")
+@patch("src.app.openmeteo.fetch.fetch_weather_response")
 def test_returns_two_dataframes(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     mock_fetch.return_value = _make_response_mock()
     hourly_df, daily_df = gather_data()
@@ -275,7 +276,7 @@ def test_returns_two_dataframes(mock_fetch: MagicMock, mock_client: MagicMock) -
 
 
 @patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather.fetch_weather_response")
+@patch("src.app.openmeteo.fetch.fetch_weather_response")
 def test_hourly_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     mock_fetch.return_value = _make_response_mock()
     hourly_df, _ = gather_data()
@@ -284,7 +285,7 @@ def test_hourly_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMo
 
 
 @patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather.fetch_weather_response")
+@patch("src.app.openmeteo.fetch.fetch_weather_response")
 def test_daily_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     mock_fetch.return_value = _make_response_mock()
     _, daily_df = gather_data()
@@ -293,7 +294,7 @@ def test_daily_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMoc
 
 
 @patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather.fetch_weather_response")
+@patch("src.app.openmeteo.fetch.fetch_weather_response")
 def test_uses_utc_offset_from_response(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     response = _make_response_mock()
     mock_fetch.return_value = response
