@@ -10,7 +10,14 @@ from src.app.openmeteo.parser import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
-from src.app.openmeteo.places.jarocin import LATITUDE, LONGITUDE, TIMEZONE
+from src.app.openmeteo.places.jarocin import (
+    DEFAULT_PLACE,
+    LATITUDE,
+    LONGITUDE,
+    PLACES,
+    TIMEZONE,
+    Place,
+)
 from src.app.openmeteo.request_builder import FORECAST_DAYS, build_request_parameters
 
 HOURLY_COLUMNS = [
@@ -99,6 +106,99 @@ def _make_daily_mock(n: int = N_DAYS) -> MagicMock:
     return mock
 
 
+
+
+
+
+EXPECTED_PLACE_KEYS = {
+    "jarocin",
+    "swinoujscie",
+    "mielno",
+    "leba",
+    "hel",
+    "gdansk",
+    "karpacz",
+    "zakopane",
+    "rysy",
+    "giewont",
+    "sniezka",
+}
+
+
+def test_places_contains_all_expected_keys() -> None:
+    assert EXPECTED_PLACE_KEYS == set(PLACES.keys())
+
+
+def test_all_places_are_place_instances() -> None:
+    for key, place in PLACES.items():
+        assert isinstance(place, Place), f"{key} is not a Place instance"
+
+
+def test_all_places_have_non_empty_name() -> None:
+    for key, place in PLACES.items():
+        assert place.name, f"{key} has an empty name"
+
+
+def test_all_places_have_valid_latitude() -> None:
+    for key, place in PLACES.items():
+        assert -90.0 <= place.latitude <= 90.0, f"{key} has invalid latitude {place.latitude}"
+
+
+def test_all_places_have_valid_longitude() -> None:
+    for key, place in PLACES.items():
+        assert -180.0 <= place.longitude <= 180.0, f"{key} has invalid longitude {place.longitude}"
+
+
+def test_all_places_have_non_empty_timezone() -> None:
+    for key, place in PLACES.items():
+        assert place.timezone, f"{key} has an empty timezone"
+
+
+def test_place_is_frozen() -> None:
+    place = PLACES["jarocin"]
+    with pytest.raises(Exception):
+        place.latitude = 0.0  
+
+
+def test_default_place_is_jarocin() -> None:
+    assert DEFAULT_PLACE is PLACES["jarocin"]
+
+
+def test_backwards_compat_latitude() -> None:
+    assert LATITUDE == pytest.approx(PLACES["jarocin"].latitude)
+
+
+def test_backwards_compat_longitude() -> None:
+    assert LONGITUDE == pytest.approx(PLACES["jarocin"].longitude)
+
+
+def test_backwards_compat_timezone() -> None:
+    assert TIMEZONE == PLACES["jarocin"].timezone
+
+
+def test_sea_places_are_in_northern_poland() -> None:
+    sea_keys = {"swinoujscie", "mielno", "leba", "hel", "gdansk"}
+    for key in sea_keys:
+        assert PLACES[key].latitude > 53.0, f"{key} latitude unexpectedly low"
+
+
+def test_mountain_towns_are_in_southern_poland() -> None:
+    mountain_keys = {"karpacz", "zakopane"}
+    for key in mountain_keys:
+        assert PLACES[key].latitude < 51.0, f"{key} latitude unexpectedly high"
+
+
+def test_mountain_peaks_are_in_southern_poland() -> None:
+    peak_keys = {"rysy", "giewont", "sniezka"}
+    for key in peak_keys:
+        assert PLACES[key].latitude < 51.0, f"{key} latitude unexpectedly high"
+
+
+
+
+
+
+
 def test_returns_required_keys() -> None:
     parameters = build_request_parameters()
     for key in ("latitude", "longitude", "daily", "hourly", "timezone", "forecast_days"):
@@ -137,6 +237,19 @@ def test_timezone_default() -> None:
     assert build_request_parameters()["timezone"] == TIMEZONE
 
 
+def test_build_request_parameters_from_place() -> None:
+    place = PLACES["zakopane"]
+    params = build_request_parameters(latitude=place.latitude, longitude=place.longitude, timezone=place.timezone)
+    assert params["latitude"] == pytest.approx(place.latitude)
+    assert params["longitude"] == pytest.approx(place.longitude)
+    assert params["timezone"] == place.timezone
+
+
+
+
+
+
+
 @patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
 @patch("src.app.openmeteo.client_builder.retry")
 @patch("src.app.openmeteo.client_builder.requests_cache.CachedSession")
@@ -160,6 +273,11 @@ def test_cache_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMo
 def test_retry_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(retries=3, backoff_factor=0.5)
     mock_retry.assert_called_once_with(mock_session.return_value, retries=3, backoff_factor=0.5)
+
+
+
+
+
 
 
 def test_returns_hourly_dataframe() -> None:
@@ -192,6 +310,11 @@ def test_date_interval_is_one_hour() -> None:
     diffs = df["date"].diff().dropna().unique()
     assert len(diffs) == 1
     assert diffs[0] == pd.Timedelta(hours=1)
+
+
+
+
+
 
 
 def test_returns_daily_dataframe() -> None:
@@ -230,6 +353,11 @@ def test_sunrise_sunset_are_integer() -> None:
     df = parse_daily_dataframe(_make_daily_mock(), UTC_OFFSET)
     assert pd.api.types.is_integer_dtype(df["sunrise"])
     assert pd.api.types.is_integer_dtype(df["sunset"])
+
+
+
+
+
 
 
 def test_returns_first_element() -> None:
