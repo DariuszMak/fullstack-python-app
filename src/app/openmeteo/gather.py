@@ -10,7 +10,7 @@ from src.app.openmeteo.parser import parse_daily_dataframe, parse_hourly_datafra
 logger = structlog.get_logger(__name__)
 
 
-def fetch_weather_response(client: Any, parameters: dict[str, Any]) -> Any:
+def _fetch_weather_response(client: Any, parameters: dict[str, Any]) -> Any:
     log = logger.bind(api_url=API_URL, parameters=parameters)
     log.info("requesting_weather_data")
 
@@ -26,7 +26,7 @@ def gather_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     client = build_openmeteo_client()
     parameters = build_request_parameters()
 
-    response = fetch_weather_response(client, parameters)
+    response = _fetch_weather_response(client, parameters)
     utc_offset = response.UtcOffsetSeconds()
 
     logger.info("parsing_weather_response", utc_offset=utc_offset)
