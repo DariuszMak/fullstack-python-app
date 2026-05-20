@@ -1,4 +1,4 @@
-from src.api.time_provider.time_provider import HttpTimeProvider
+from .HttpTimeProvider import HttpTimeProvider
 
 
 class AisenseApiProvider(HttpTimeProvider):
