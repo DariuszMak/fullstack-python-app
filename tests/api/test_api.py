@@ -12,9 +12,9 @@ from src.api.time_provider.context import (
     default_time_sync_context,
 )
 from src.api.time_provider.get_time_api_provider import GetTimeApiProvider
-from src.api.time_provider.http_time_provider import HttpTimeProvider
+from src.api.time_provider.interface.http_time_provider import HttpTimeProvider
 from src.api.time_provider.local_time_provider import LocalTimeProvider
-from src.api.time_provider.time_provider import TimeProvider
+from src.api.time_provider.interface.time_provider import TimeProvider
 from src.api.time_provider.time_sync_context import TimeSyncContext
 
 
