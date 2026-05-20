@@ -7,7 +7,7 @@ from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
 from PySide6.QtWidgets import QSystemTrayIcon
 
 from src.api.models import ServerTimeResponse
-from src.api.time_client import TimeClient
+from src.api.client.time_client import TimeClient
 from src.app.weather_forecast.gather import gather_data
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
