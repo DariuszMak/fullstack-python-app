@@ -3,7 +3,7 @@ from datetime import datetime
 import httpx
 import structlog
 
-from src.api.time_provider.interface.time_provider import TimeProvider
+from src.api.time_provider.strategy.interface.time_provider import TimeProvider
 
 logger = structlog.get_logger(__name__)
 

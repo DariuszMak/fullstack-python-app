@@ -1,6 +1,6 @@
 import structlog
 
-from src.api.time_provider.interface.http_time_provider import HttpTimeProvider
+from src.api.time_provider.strategy.interface.http_time_provider import HttpTimeProvider
 
 logger = structlog.get_logger(__name__)
 
