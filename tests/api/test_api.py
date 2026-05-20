@@ -10,11 +10,11 @@ from src.api.routes import set_time_sync_context
 from src.api.time_provider.context import (
     default_time_sync_context,
 )
-from src.api.time_provider.strategy.ai_sense_api import AiSenseApiProvider
-from src.api.time_provider.strategy.get_time_api import GetTimeApiProvider
+from src.api.time_provider.strategy.ai_sense_api import AiSenseApi
+from src.api.time_provider.strategy.get_time_api import GetTimeApi
 from src.api.time_provider.strategy.interface.http_time_provider import HttpTimeProvider
 from src.api.time_provider.strategy.interface.time_provider import TimeProvider
-from src.api.time_provider.strategy.local_time import LocalTimeProvider
+from src.api.time_provider.strategy.local_time import LocalTime
 from src.api.time_provider.time_sync_context import TimeSyncContext
 
 
@@ -60,7 +60,7 @@ def _assert_datetime_response(data: dict[str, str]) -> datetime:
 
 @pytest.mark.asyncio
 async def test_local_time_provider_always_succeeds() -> None:
-    provider = LocalTimeProvider()
+    provider = LocalTime()
     result = await provider.fetch_time()
     assert result is not None
     assert result.tzinfo is not None
@@ -76,7 +76,7 @@ async def test_http_provider_returns_none_on_http_error(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    provider = GetTimeApiProvider()
+    provider = GetTimeApi()
     result = await provider.fetch_time()
     assert result is None
 
@@ -98,7 +98,7 @@ async def test_http_provider_returns_none_when_key_missing(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    provider = GetTimeApiProvider()
+    provider = GetTimeApi()
     result = await provider.fetch_time()
     assert result is None
 
@@ -122,7 +122,7 @@ async def test_gettime_api_provider_parses_iso8601_key(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    provider = GetTimeApiProvider()
+    provider = GetTimeApi()
     result = await provider.fetch_time()
     assert result is not None
     assert result.astimezone(UTC) == datetime.fromisoformat(iso_time)
@@ -147,7 +147,7 @@ async def test_aisense_api_provider_parses_datetime_key(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    provider = AiSenseApiProvider()
+    provider = AiSenseApi()
     result = await provider.fetch_time()
     assert result is not None
     assert result.astimezone(UTC) == datetime.fromisoformat(iso_time)
@@ -199,9 +199,9 @@ async def test_context_falls_back_to_local_when_all_http_fail(
 
     context = TimeSyncContext(
         providers=[
-            GetTimeApiProvider(),
-            AiSenseApiProvider(),
-            LocalTimeProvider(),
+            GetTimeApi(),
+            AiSenseApi(),
+            LocalTime(),
         ]
     )
     result = await context.get_current_time()
