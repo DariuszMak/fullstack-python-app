@@ -1,7 +1,8 @@
-from src.api.time_provider.time_provider import TimeProvider, logger
-
-
 from datetime import datetime
+
+import httpx
+
+from src.api.time_provider.time_provider import TimeProvider, logger
 
 
 class HttpTimeProvider(TimeProvider):
