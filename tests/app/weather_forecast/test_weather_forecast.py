@@ -4,16 +4,16 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.app.weather_forecast.client_builder import build_openmeteo_client
-from src.app.weather_forecast.gather import fetch_weather_response, gather_data
-from src.app.weather_forecast.params import (
+from src.app.openmeteo.client_builder import build_openmeteo_client
+from src.app.openmeteo.gather import fetch_weather_response, gather_data
+from src.app.openmeteo.params import (
     FORECAST_DAYS,
     LATITUDE,
     LONGITUDE,
     TIMEZONE,
     build_request_params,
 )
-from src.app.weather_forecast.parsers import (
+from src.app.openmeteo.parsers import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )

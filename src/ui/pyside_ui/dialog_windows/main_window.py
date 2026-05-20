@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QSystemTrayIcon
 
 from src.api.client.time_client import TimeClient
 from src.api.models import ServerTimeResponse
-from src.app.weather_forecast.gather import gather_data
+from src.app.openmeteo.gather import gather_data
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.clock_widget.view.clock_widget import ClockWidget
