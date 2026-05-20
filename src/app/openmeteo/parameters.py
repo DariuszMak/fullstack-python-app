@@ -32,7 +32,7 @@ HOURLY_VARIABLES: list[str] = [
 ]
 
 
-def build_request_params(
+def build_request_parameters(
     latitude: float = LATITUDE,
     longitude: float = LONGITUDE,
     timezone: str = TIMEZONE,

@@ -11,7 +11,7 @@ from src.app.openmeteo.parameters import (
     LATITUDE,
     LONGITUDE,
     TIMEZONE,
-    build_request_params,
+    build_request_parameters,
 )
 from src.app.openmeteo.parser import (
     parse_daily_dataframe,
@@ -105,41 +105,41 @@ def _make_daily_mock(n: int = N_DAYS) -> MagicMock:
 
 
 def test_returns_required_keys() -> None:
-    params = build_request_params()
+    parameters = build_request_parameters()
     for key in ("latitude", "longitude", "daily", "hourly", "timezone", "forecast_days"):
-        assert key in params
+        assert key in parameters
 
 
 def test_default_coordinates() -> None:
-    params = build_request_params()
-    assert params["latitude"] == LATITUDE
-    assert params["longitude"] == LONGITUDE
+    parameters = build_request_parameters()
+    assert parameters["latitude"] == LATITUDE
+    assert parameters["longitude"] == LONGITUDE
 
 
 def test_custom_coordinates() -> None:
-    params = build_request_params(latitude=52.0, longitude=18.0)
-    assert params["latitude"] == pytest.approx(52.0)
-    assert params["longitude"] == pytest.approx(18.0)
+    parameters = build_request_parameters(latitude=52.0, longitude=18.0)
+    assert parameters["latitude"] == pytest.approx(52.0)
+    assert parameters["longitude"] == pytest.approx(18.0)
 
 
 def test_daily_and_hourly_are_lists() -> None:
-    params = build_request_params()
-    assert isinstance(params["daily"], list)
-    assert isinstance(params["hourly"], list)
-    assert len(params["daily"]) > 0
-    assert len(params["hourly"]) > 0
+    parameters = build_request_parameters()
+    assert isinstance(parameters["daily"], list)
+    assert isinstance(parameters["hourly"], list)
+    assert len(parameters["daily"]) > 0
+    assert len(parameters["hourly"]) > 0
 
 
 def test_forecast_days_default() -> None:
-    assert build_request_params()["forecast_days"] == FORECAST_DAYS
+    assert build_request_parameters()["forecast_days"] == FORECAST_DAYS
 
 
 def test_custom_forecast_days() -> None:
-    assert build_request_params(forecast_days=7)["forecast_days"] == 7
+    assert build_request_parameters(forecast_days=7)["forecast_days"] == 7
 
 
 def test_timezone_default() -> None:
-    assert build_request_params()["timezone"] == TIMEZONE
+    assert build_request_parameters()["timezone"] == TIMEZONE
 
 
 @patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
@@ -154,7 +154,7 @@ def test_returns_client(mock_session: MagicMock, mock_retry: MagicMock, mock_cli
 @patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
 @patch("src.app.openmeteo.client_builder.retry")
 @patch("src.app.openmeteo.client_builder.requests_cache.CachedSession")
-def test_cache_params_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
+def test_cache_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(cache_name="custom", expire_after=999)
     mock_session.assert_called_once_with("custom", expire_after=999)
 
@@ -162,7 +162,7 @@ def test_cache_params_forwarded(mock_session: MagicMock, mock_retry: MagicMock, 
 @patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
 @patch("src.app.openmeteo.client_builder.retry")
 @patch("src.app.openmeteo.client_builder.requests_cache.CachedSession")
-def test_retry_params_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
+def test_retry_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(retries=3, backoff_factor=0.5)
     mock_retry.assert_called_once_with(mock_session.return_value, retries=3, backoff_factor=0.5)
 
@@ -245,16 +245,16 @@ def test_returns_first_element() -> None:
     assert result is sentinel
 
 
-def test_passes_params_to_api() -> None:
+def test_passes_parameters_to_api() -> None:
     mock_client = MagicMock()
     mock_client.weather_api.return_value = [MagicMock()]
-    params = {"foo": "bar"}
-    fetch_weather_response(mock_client, params)
+    parameters = {"foo": "bar"}
+    fetch_weather_response(mock_client, parameters)
     mock_client.weather_api.assert_called_once()
     _, call_kwargs = mock_client.weather_api.call_args
 
     call_args_pos = mock_client.weather_api.call_args[0]
-    assert params in call_args_pos or call_kwargs.get("params") == params
+    assert parameters in call_args_pos or call_kwargs.get("parameters") == parameters
 
 
 def _make_response_mock() -> MagicMock:

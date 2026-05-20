@@ -4,18 +4,18 @@ import pandas as pd
 import structlog
 
 from src.app.openmeteo.client_builder import build_openmeteo_client
-from src.app.openmeteo.parameters import API_URL, build_request_params
+from src.app.openmeteo.parameters import API_URL, build_request_parameters
 from src.app.openmeteo.parser import parse_daily_dataframe, parse_hourly_dataframe
 
 logger = structlog.get_logger(__name__)
 
 
-def fetch_weather_response(client: Any, params: dict[str, Any]) -> Any:
-    log = logger.bind(api_url=API_URL, params=params)
+def fetch_weather_response(client: Any, parameters: dict[str, Any]) -> Any:
+    log = logger.bind(api_url=API_URL, parameters=parameters)
     log.info("requesting_weather_data")
 
     try:
-        responses = client.weather_api(API_URL, params=params)
+        responses = client.weather_api(API_URL, parameters=parameters)
         return responses[0]
     except Exception as e:
         log.exception("weather_api_request_failed", error=str(e))
@@ -24,9 +24,9 @@ def fetch_weather_response(client: Any, params: dict[str, Any]) -> Any:
 
 def gather_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     client = build_openmeteo_client()
-    params = build_request_params()
+    parameters = build_request_parameters()
 
-    response = fetch_weather_response(client, params)
+    response = fetch_weather_response(client, parameters)
     utc_offset = response.UtcOffsetSeconds()
 
     logger.info("parsing_weather_response", utc_offset=utc_offset)
