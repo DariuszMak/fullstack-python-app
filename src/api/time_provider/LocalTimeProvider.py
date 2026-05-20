@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from .time_provider import TimeProvider, logger
+from src.api.time_provider.time_provider import TimeProvider, logger
 
 
 class LocalTimeProvider(TimeProvider):
