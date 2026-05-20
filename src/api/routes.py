@@ -5,7 +5,7 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 
-from src.api.time_provider.time_provider import default_time_sync_context
+from src.api.time_provider.context import default_time_sync_context
 from src.api.time_provider.time_sync_context import TimeSyncContext
 
 logger = structlog.get_logger(__name__)
