@@ -13,11 +13,13 @@ def polar_to_cartesian(center: QPointF, length: float, angle_radians: float) -> 
     y = center.y() - math.cos(angle_radians) * length
     return QPointF(x, y)
 
+
 def clock_hands_in_radians(hands: ClockHands) -> tuple[float, float, float]:
     second_angle = (hands.second / 60.0) * 2.0 * math.pi
     minute_angle = (hands.minute / 60.0) * 2.0 * math.pi
     hour_angle = (hands.hour / 12.0) * 2.0 * math.pi
     return second_angle, minute_angle, hour_angle
+
 
 def convert_clock_pid_to_cartesian(clock_hands: ClockHands, center: QPointF, radius: float) -> HandsPosition:
     second_polar, minute_polar, hour_polar = clock_hands_in_radians(clock_hands)
@@ -59,6 +61,3 @@ def format_datetime(datetime: datetime) -> str:
     formatted = f"{datetime.hour:02}:{datetime.minute:02}:{datetime.second:02}."
     formatted += f"{int(datetime.microsecond / 1000):03}"
     return formatted
-
-
-
