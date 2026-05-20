@@ -3,10 +3,10 @@ from datetime import datetime
 
 import structlog
 
-from src.api.time_provider.AisenseApiProvider import AisenseApiProvider
-from src.api.time_provider.GettimeApiProvider import GettimeApiProvider
-from src.api.time_provider.LocalTimeProvider import LocalTimeProvider
-from src.api.time_provider.TimeSyncContext import TimeSyncContext
+from src.api.time_provider.aisense_api_provider import AisenseApiProvider
+from src.api.time_provider.gettime_api_provider import GettimeApiProvider
+from src.api.time_provider.local_time_provider import LocalTimeProvider
+from src.api.time_provider.time_sync_context import TimeSyncContext
 
 logger = structlog.get_logger(__name__)
 
