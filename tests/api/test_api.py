@@ -11,11 +11,11 @@ from src.api.time_provider.AisenseApiProvider import AisenseApiProvider
 from src.api.time_provider.GettimeApiProvider import GettimeApiProvider
 from src.api.time_provider.HttpTimeProvider import HttpTimeProvider
 from src.api.time_provider.LocalTimeProvider import LocalTimeProvider
+from src.api.time_provider.TimeSyncContext import TimeSyncContext
 from src.api.time_provider.time_provider import (
     TimeProvider,
     default_time_sync_context,
 )
-from src.api.time_provider.TimeSyncContext import TimeSyncContext
 
 
 def test_chrome_devtools_json_not_found() -> None:
