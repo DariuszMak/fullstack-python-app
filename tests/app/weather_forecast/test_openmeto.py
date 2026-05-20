@@ -6,7 +6,7 @@ import pytest
 
 from src.app.openmeteo.client_builder import build_openmeteo_client
 from src.app.openmeteo.gather import _fetch_weather_response, gather_data
-from src.app.openmeteo.parameters import LATITUDE, LONGITUDE, TIMEZONE
+from src.app.openmeteo.places.parameters import LATITUDE, LONGITUDE, TIMEZONE
 from src.app.openmeteo.parser import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
