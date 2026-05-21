@@ -76,7 +76,7 @@ tasks:
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/build_release.ps1
 
-  run-linux:
+  run-linux-release:
     desc: Run Linux GUI in WSL
     cmds:
       - docker-compose run app sh -c "dos2unix tasks/run_linux_application.ps1" ; 
@@ -115,7 +115,7 @@ tasks:
     cmds:
       - task: build-release
 
-      - task: run-linux
+      - task: run-linux-release
       - task: wait-linux-api
       - task: test-linux-api
 
