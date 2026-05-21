@@ -36,6 +36,10 @@ tasks:
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/generate_diagrams.ps1
 
+  local-dev-windows-run:
+    desc: Local dev Windows run
+    cmds:
+      - powershell -ExecutionPolicy Bypass -File tasks/run_windows_dev_application.ps1
 
   full-dev-windows:
     desc: Fast native Windows development flow
@@ -45,8 +49,8 @@ tasks:
       - task: dev-env
       - task: static-tests
       - task: kibana-elastic
+      - task: local-dev-windows-run
 
-      - powershell -ExecutionPolicy Bypass -File tasks/run_windows_dev_application.ps1
       - powershell -ExecutionPolicy Bypass -File tasks/wait_for_windows_api.ps1
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
 
