@@ -21,7 +21,7 @@ from src.ui.pyside_ui.settings import (
     MAINWINDOW_WIDTH,
 )
 from src.ui.pyside_ui.tray_manager import TrayManager
-from src.ui.shared.client.httpx_client import TimeClient
+from src.ui.shared.client.httpx_client import HttpxClient
 
 logger = structlog.get_logger(__name__)
 
@@ -35,7 +35,7 @@ class MainWindow(DraggableMainWindow):
         self._server_time_task: asyncio.Task[None] | None = None
 
         config = Config()
-        self._time_client = TimeClient(config.api_base_url)
+        self._time_client = HttpxClient(config.api_base_url)
 
         self._tray: TrayManager | None
         if QSystemTrayIcon.isSystemTrayAvailable() and platform.system() != "Linux":

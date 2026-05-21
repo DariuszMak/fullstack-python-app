@@ -10,7 +10,7 @@ from src.backend.api.models import ServerTimeResponse
 logger = structlog.get_logger(__name__)
 
 
-class TimeClient:
+class HttpxClient:
     def __init__(self, base_url: str) -> None:
         self._base_url = base_url.rstrip("/")
 
