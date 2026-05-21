@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.ui.react_ui.node_setup import (
+from src.ui.node_setup import (
     NPM_CMD,
     build_frontend,
     build_react_frontend,
@@ -134,7 +134,7 @@ def test_build_react_frontend_calls_all_steps() -> None:
 def test_npm_cmd_windows(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(platform, "system", lambda: "Windows")
 
-    import src.ui.react_ui.node_setup as module
+    import src.ui.node_setup as module
 
     reload(module)
 
