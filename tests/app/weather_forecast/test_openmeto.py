@@ -232,26 +232,26 @@ def test_build_request_parameters_from_place() -> None:
     assert params["timezone"] == place.timezone
 
 
-@patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
-@patch("src.app.openmeteo.client_builder.retry")
-@patch("src.app.openmeteo.client_builder.requests_cache.CachedSession")
+@patch("src.backend.openmeteo.client_builder.openmeteo_requests.Client")
+@patch("src.backend.openmeteo.client_builder.retry")
+@patch("src.backend.openmeteo.client_builder.requests_cache.CachedSession")
 def test_returns_client(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     client = build_openmeteo_client()
     mock_client_cls.assert_called_once()
     assert client is mock_client_cls.return_value
 
 
-@patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
-@patch("src.app.openmeteo.client_builder.retry")
-@patch("src.app.openmeteo.client_builder.requests_cache.CachedSession")
+@patch("src.backend.openmeteo.client_builder.openmeteo_requests.Client")
+@patch("src.backend.openmeteo.client_builder.retry")
+@patch("src.backend.openmeteo.client_builder.requests_cache.CachedSession")
 def test_cache_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(cache_name="custom", expire_after=999)
     mock_session.assert_called_once_with("custom", expire_after=999)
 
 
-@patch("src.app.openmeteo.client_builder.openmeteo_requests.Client")
-@patch("src.app.openmeteo.client_builder.retry")
-@patch("src.app.openmeteo.client_builder.requests_cache.CachedSession")
+@patch("src.backend.openmeteo.client_builder.openmeteo_requests.Client")
+@patch("src.backend.openmeteo.client_builder.retry")
+@patch("src.backend.openmeteo.client_builder.requests_cache.CachedSession")
 def test_retry_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(retries=3, backoff_factor=0.5)
     mock_retry.assert_called_once_with(mock_session.return_value, retries=3, backoff_factor=0.5)
@@ -355,8 +355,8 @@ def _make_response_mock() -> MagicMock:
     return response
 
 
-@patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather._fetch_weather_response")
+@patch("src.backend.openmeteo.gather.build_openmeteo_client")
+@patch("src.backend.openmeteo.gather._fetch_weather_response")
 def test_returns_two_dataframes(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     mock_fetch.return_value = _make_response_mock()
     hourly_df, daily_df = gather_data()
@@ -364,8 +364,8 @@ def test_returns_two_dataframes(mock_fetch: MagicMock, mock_client: MagicMock) -
     assert isinstance(daily_df, pd.DataFrame)
 
 
-@patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather._fetch_weather_response")
+@patch("src.backend.openmeteo.gather.build_openmeteo_client")
+@patch("src.backend.openmeteo.gather._fetch_weather_response")
 def test_hourly_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     mock_fetch.return_value = _make_response_mock()
     hourly_df, _ = gather_data()
@@ -373,8 +373,8 @@ def test_hourly_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMo
         assert col in hourly_df.columns
 
 
-@patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather._fetch_weather_response")
+@patch("src.backend.openmeteo.gather.build_openmeteo_client")
+@patch("src.backend.openmeteo.gather._fetch_weather_response")
 def test_daily_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     mock_fetch.return_value = _make_response_mock()
     _, daily_df = gather_data()
@@ -382,8 +382,8 @@ def test_daily_has_expected_columns(mock_fetch: MagicMock, mock_client: MagicMoc
         assert col in daily_df.columns
 
 
-@patch("src.app.openmeteo.gather.build_openmeteo_client")
-@patch("src.app.openmeteo.gather._fetch_weather_response")
+@patch("src.backend.openmeteo.gather.build_openmeteo_client")
+@patch("src.backend.openmeteo.gather._fetch_weather_response")
 def test_uses_utc_offset_from_response(mock_fetch: MagicMock, mock_client: MagicMock) -> None:
     response = _make_response_mock()
     mock_fetch.return_value = response
