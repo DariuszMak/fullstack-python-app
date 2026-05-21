@@ -13,8 +13,8 @@ def test_create_app_wires_everything(qtbot: QtBot) -> None:
         app = QApplication([])
 
     with (
-        patch("src.app.application.QEventLoop") as mock_event_loop_cls,
-        patch("src.app.application.asyncio.set_event_loop") as mock_set_event_loop,
+        patch("src.ui.pyside_ui.application.QEventLoop") as mock_event_loop_cls,
+        patch("src.ui.pyside_ui.application.asyncio.set_event_loop") as mock_set_event_loop,
     ):
         loop = mock_event_loop_cls.return_value
 
