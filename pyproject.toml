@@ -246,13 +246,13 @@ name = "Helpers must be pure"
 type = "forbidden"
 
 source_modules = ["src.helpers"]
-forbidden_modules = ["src.ui", "src.api", "src.app"]
+forbidden_modules = ["src.ui", "src.api", "src.backend"]
 
 [[tool.importlinter.contracts]]
 name = "App must not depend on UI"
 type = "forbidden"
 
-source_modules = ["src.app"]
+source_modules = ["src.backend"]
 forbidden_modules = ["src.ui"]
 
 [[tool.importlinter.contracts]]
