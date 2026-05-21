@@ -9,7 +9,7 @@ from src.ui.pyside_ui.bootstrap import bootstrap
 
 def test_bootstrap_initializes_ui(qtbot: QtBot) -> None:
     with (
-        patch("src.ui.pyside_ui.bootstrap.create_app") as mock_create_app,
+        patch("src.ui.pyside_ui.bootstrap.create_application") as mock_create_app,
         patch("src.ui.pyside_ui.bootstrap.QPixmap") as mock_pixmap_cls,
         patch("src.ui.pyside_ui.bootstrap.QSplashScreen") as mock_splash_cls,
         patch("src.ui.pyside_ui.bootstrap.StyleLoader.center_window") as center_window,

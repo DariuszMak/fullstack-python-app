@@ -12,7 +12,7 @@ from src import STATIC_CATALOGUE_NAME
 from src.helpers.config.config import Config
 
 
-def create_app(config: Config | None = None) -> FastAPI:
+def create_application(config: Config | None = None) -> FastAPI:
     cfg = config or Config()
 
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -51,14 +51,14 @@ def create_app(config: Config | None = None) -> FastAPI:
     return app
 
 
-app = create_app()
+app = create_application()
 
 
 def run_react_ui(host: str | None = None, port: int | None = None, config: Config | None = None) -> None:
     cfg = config or Config()
     host_str: str = str(host or cfg.react_host)
     port_int: int = port or int(cfg.react_port)
-    uvicorn.run(create_app(cfg), host=host_str, port=port_int, log_level="info")
+    uvicorn.run(create_application(cfg), host=host_str, port=port_int, log_level="info")
 
 
 def start_react_ui_in_background() -> None:

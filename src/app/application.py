@@ -10,7 +10,7 @@ from qasync import QEventLoop  # type: ignore
 logger = structlog.get_logger(__name__)
 
 
-def create_app() -> tuple[QCoreApplication, Any]:
+def create_application() -> tuple[QCoreApplication, Any]:
     logger.info("initializing_application")
 
     app = QApplication.instance()

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
-from src.app.application import create_app
+from src.app.application import create_application
 
 
 def test_create_app_wires_everything(qtbot: QtBot) -> None:
@@ -18,7 +18,7 @@ def test_create_app_wires_everything(qtbot: QtBot) -> None:
     ):
         loop = mock_event_loop_cls.return_value
 
-        returned_app, returned_loop = create_app()
+        returned_app, returned_loop = create_application()
 
         assert returned_app is app
         assert returned_loop is loop
