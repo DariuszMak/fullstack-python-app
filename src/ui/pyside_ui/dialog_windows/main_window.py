@@ -21,7 +21,7 @@ from src.ui.pyside_ui.settings import (
     MAINWINDOW_WIDTH,
 )
 from src.ui.pyside_ui.tray_manager import TrayManager
-from src.ui.shared.client.time_client import TimeClient
+from src.ui.shared.client.httpx_client import TimeClient
 
 logger = structlog.get_logger(__name__)
 
