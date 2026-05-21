@@ -79,8 +79,8 @@ tasks:
   run-linux-release:
     desc: Run Linux GUI in WSL
     cmds:
-      - docker-compose run app sh -c "dos2unix tasks/run_linux_application.ps1" ; 
-      - powershell -ExecutionPolicy Bypass -File /tasks/run_linux_application.ps1
+      - docker-compose run app sh -c "dos2unix tasks/run_linux_application.ps1 thorough.env" ; 
+      - powershell -ExecutionPolicy Bypass -File tasks/run_linux_application.ps1
 
   wait-linux-api:
     desc: Wait for Linux API
