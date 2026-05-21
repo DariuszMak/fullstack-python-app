@@ -3,12 +3,13 @@ import sys
 import threading
 from venv import logger
 
-from src import node_setup, pyside_setup
+from src import node_setup
 from src.app import application
 from src.backend.api.app import run_api
 from src.helpers.logging_setup import logging_setup
 from src.ui.panel_ui.server import start_panel_in_background
 from src.ui.pyside_ui.bootstrap import bootstrap
+from src.ui.pyside_ui import pyside_setup
 from src.ui.react_ui.app import start_react_ui_in_background
 
 TRUE_ENV_VARIABLES_VALUES = "true", "1", "t"

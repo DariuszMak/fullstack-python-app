@@ -6,7 +6,7 @@ import pytest
 from PySide6.QtCore import QCoreApplication, QSize
 from PySide6.QtWidgets import QApplication
 
-from src.pyside_setup import UiExtensions, create_moc
+from src.ui.pyside_ui.pyside_setup import UiExtensions, create_moc
 from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
 from src.ui.pyside_ui.settings import MAINWINDOW_HEIGHT, MAINWINDOW_RESIZE_RANGE, MAINWINDOW_WIDTH
 
