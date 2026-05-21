@@ -1,4 +1,4 @@
-from src.app.openmeteo.places.place import Place
+from src.backend.openmeteo.places.place import Place
 
 PLACES: dict[str, Place] = {
     "jarocin": Place(name="Jarocin", latitude=51.9727, longitude=17.5026),

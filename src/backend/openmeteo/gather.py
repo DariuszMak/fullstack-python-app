@@ -3,9 +3,9 @@ from typing import Any
 import pandas as pd
 import structlog
 
-from src.app.openmeteo.client_builder import build_openmeteo_client
-from src.app.openmeteo.parser import parse_daily_dataframe, parse_hourly_dataframe
-from src.app.openmeteo.request_builder import API_URL, build_request_parameters
+from src.backend.openmeteo.client_builder import build_openmeteo_client
+from src.backend.openmeteo.parser import parse_daily_dataframe, parse_hourly_dataframe
+from src.backend.openmeteo.request_builder import API_URL, build_request_parameters
 
 logger = structlog.get_logger(__name__)
 

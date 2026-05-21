@@ -1,4 +1,4 @@
-from src.app.openmeteo.places.places import LATITUDE, LONGITUDE, TIMEZONE
+from src.backend.openmeteo.places.places import LATITUDE, LONGITUDE, TIMEZONE
 
 FORECAST_DAYS: int = 16
 API_URL: str = "https://api.open-meteo.com/v1/forecast"

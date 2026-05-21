@@ -6,7 +6,7 @@ from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
 from PySide6.QtWidgets import QSystemTrayIcon
 
-from src.app.openmeteo.gather import gather_data
+from src.backend.openmeteo.gather import gather_data
 from src.backend.api.client.time_client import TimeClient
 from src.backend.api.models import ServerTimeResponse
 from src.helpers.config.config import Config

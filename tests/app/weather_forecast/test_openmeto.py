@@ -4,15 +4,15 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.app.openmeteo.client_builder import build_openmeteo_client
-from src.app.openmeteo.gather import _fetch_weather_response, gather_data
-from src.app.openmeteo.parser import (
+from src.backend.openmeteo.client_builder import build_openmeteo_client
+from src.backend.openmeteo.gather import _fetch_weather_response, gather_data
+from src.backend.openmeteo.parser import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
-from src.app.openmeteo.places.place import Place
-from src.app.openmeteo.places.places import DEFAULT_PLACE, LATITUDE, LONGITUDE, PLACES, TIMEZONE
-from src.app.openmeteo.request_builder import FORECAST_DAYS, build_request_parameters
+from src.backend.openmeteo.places.place import Place
+from src.backend.openmeteo.places.places import DEFAULT_PLACE, LATITUDE, LONGITUDE, PLACES, TIMEZONE
+from src.backend.openmeteo.request_builder import FORECAST_DAYS, build_request_parameters
 
 HOURLY_COLUMNS = [
     "date",
