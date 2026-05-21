@@ -237,7 +237,6 @@ type = "layers"
 
 layers = [
     "src.ui",
-    "src.app",
     "src.backend",
     "src.helpers",
 ]
