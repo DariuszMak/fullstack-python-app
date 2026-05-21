@@ -3,7 +3,7 @@ import sys
 import threading
 from venv import logger
 
-from src import node_setup
+from src.ui.react_ui import node_setup
 from src.app import application
 from src.backend.api.app import run_api
 from src.helpers.logging_setup import logging_setup
