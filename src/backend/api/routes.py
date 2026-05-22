@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -5,10 +6,11 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse, JSONResponse
 
-from src.backend.api.models.weather_calculation_response import WeatherQueryParams
+from src.backend.api.models.weather_calculation_response import WeatherQueryParams, WeatherCalculationResponse
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 from src.backend.openmeteo.gather import gather_data
+from src.backend.openmeteo.request_builder import build_request_parameters
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -42,11 +44,65 @@ async def current_time() -> dict[str, str]:
     return {"datetime": dt.isoformat()}
 
 
-@router.post("/api/v1/weather/calculate")
+def _sanitize_float(value: float) -> float:
+    """Replace NaN/Inf with 0.0 so JSON serialization never fails."""
+    if math.isnan(value) or math.isinf(value):
+        return 0.0
+    return float(value)
+
+
+@router.post("/api/v1/weather/calculate", response_model=WeatherCalculationResponse)
 def calculate_weather(params: WeatherQueryParams) -> Response:
-    hourly_df, daily_df = gather_data()
-    result = {"data": "data"}
-    return JSONResponse(content=result)
+    parameters = build_request_parameters(
+        latitude=params.latitude,
+        longitude=params.longitude,
+        timezone=params.timezone,
+        forecast_days=params.forecast_days,
+    )
+    hourly_df, daily_df = gather_data(parameters)
+
+    hourly_records = [
+        {
+            "date": row["date"].isoformat(),
+            "temperature_2m": _sanitize_float(row["temperature_2m"]),
+            "cloud_cover": _sanitize_float(row["cloud_cover"]),
+            "precipitation": _sanitize_float(row["precipitation"]),
+            "apparent_temperature": _sanitize_float(row["apparent_temperature"]),
+            "soil_temperature_6cm": _sanitize_float(row["soil_temperature_6cm"]),
+            "relative_humidity_2m": _sanitize_float(row["relative_humidity_2m"]),
+            "surface_pressure": _sanitize_float(row["surface_pressure"]),
+            "wind_speed_10m": _sanitize_float(row["wind_speed_10m"]),
+            "wind_direction_10m": _sanitize_float(row["wind_direction_10m"]),
+            "wind_gusts_10m": _sanitize_float(row["wind_gusts_10m"]),
+            "soil_moisture_0_to_1cm": _sanitize_float(row["soil_moisture_0_to_1cm"]),
+        }
+        for row in hourly_df.to_dict(orient="records")
+    ]
+
+    daily_records = [
+        {
+            "date": row["date"].isoformat(),
+            "sunshine_duration": _sanitize_float(row["sunshine_duration"]),
+            "uv_index_max": _sanitize_float(row["uv_index_max"]),
+            "apparent_temperature_max": _sanitize_float(row["apparent_temperature_max"]),
+            "apparent_temperature_min": _sanitize_float(row["apparent_temperature_min"]),
+            "sunrise": int(row["sunrise"]),
+            "sunset": int(row["sunset"]),
+            "daylight_duration": _sanitize_float(row["daylight_duration"]),
+            "rain_sum": _sanitize_float(row["rain_sum"]),
+            "temperature_2m_max": _sanitize_float(row["temperature_2m_max"]),
+            "temperature_2m_min": _sanitize_float(row["temperature_2m_min"]),
+        }
+        for row in daily_df.to_dict(orient="records")
+    ]
+
+    result = WeatherCalculationResponse(
+        hourly=hourly_records,
+        daily=daily_records,
+        hourly_rows=len(hourly_records),
+        daily_rows=len(daily_records),
+    )
+    return JSONResponse(content=result.model_dump())
 
 
 @router.get("/{full_path:path}", include_in_schema=False)

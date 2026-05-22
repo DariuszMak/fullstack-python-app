@@ -22,9 +22,11 @@ def _fetch_weather_response(client: Any, parameters: dict[str, Any]) -> Any:
         raise
 
 
-def gather_data() -> tuple[pd.DataFrame, pd.DataFrame]:
+def gather_data(parameters: dict[str, Any] | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
     client = build_openmeteo_client()
-    parameters = build_request_parameters()
+
+    if parameters is None:
+        parameters = build_request_parameters()
 
     response = _fetch_weather_response(client, parameters)
     utc_offset = response.UtcOffsetSeconds()
