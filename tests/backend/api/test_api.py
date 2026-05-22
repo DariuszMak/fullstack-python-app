@@ -391,6 +391,210 @@ def test_time_route_fallback_to_local(
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_returns_200(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        response = client.post("/api/v1/weather/calculate", json={})
+
+    assert response.status_code == 200
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_response_has_required_top_level_keys(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    assert "hourly" in data
+    assert "daily" in data
+    assert "hourly_rows" in data
+    assert "daily_rows" in data
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_row_counts_match_dataframes(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(N_HOURS), _make_daily_df(N_DAYS))
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    assert data["hourly_rows"] == N_HOURS
+    assert data["daily_rows"] == N_DAYS
+    assert len(data["hourly"]) == N_HOURS
+    assert len(data["daily"]) == N_DAYS
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_hourly_record_has_all_fields(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    first_hourly = data["hourly"][0]
+    for field in HOURLY_COLUMNS:
+        assert field in first_hourly, f"missing hourly field: {field}"
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_daily_record_has_all_fields(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    first_daily = data["daily"][0]
+    for field in DAILY_COLUMNS:
+        assert field in first_daily, f"missing daily field: {field}"
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_hourly_dates_are_iso_strings(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    for record in data["hourly"]:
+        dt = datetime.fromisoformat(record["date"])
+        assert dt.tzinfo is not None
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_daily_dates_are_iso_strings(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    for record in data["daily"]:
+        dt = datetime.fromisoformat(record["date"])
+        assert dt.tzinfo is not None
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_sunrise_sunset_are_integers(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        data = client.post("/api/v1/weather/calculate", json={}).json()
+
+    for record in data["daily"]:
+        assert isinstance(record["sunrise"], int)
+        assert isinstance(record["sunset"], int)
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_passes_params_to_build_request_parameters(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    payload = {
+        "latitude": 54.352,
+        "longitude": 18.649,
+        "timezone": "Europe/Warsaw",
+        "forecast_days": 7,
+    }
+
+    with TestClient(app) as client:
+        client.post("/api/v1/weather/calculate", json=payload)
+
+    mock_build.assert_called_once_with(
+        latitude=54.352,
+        longitude=18.649,
+        timezone="Europe/Warsaw",
+        forecast_days=7,
+    )
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
+def test_weather_calculate_passes_built_parameters_to_gather_data(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    sentinel_params = {"sentinel": True}
+    mock_build.return_value = sentinel_params
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        client.post("/api/v1/weather/calculate", json={})
+
+    mock_gather.assert_called_once_with(sentinel_params)
+
+
+def test_weather_calculate_default_params_are_valid() -> None:
+    """Empty body should use defaults without validation error."""
+    with (
+        patch("src.backend.api.routes.gather_data") as mock_gather,
+        patch("src.backend.api.routes.build_request_parameters") as mock_build,
+    ):
+        mock_build.return_value = {}
+        mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+        with TestClient(app) as client:
+            response = client.post("/api/v1/weather/calculate", json={})
+
+    assert response.status_code == 200
+
+
+def test_weather_calculate_rejects_forecast_days_out_of_range() -> None:
+    with TestClient(app) as client:
+        response = client.post("/api/v1/weather/calculate", json={"forecast_days": 0})
+    assert response.status_code == 422
+
+    with TestClient(app) as client:
+        response = client.post("/api/v1/weather/calculate", json={"forecast_days": 17})
+    assert response.status_code == 422
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
 def test_weather_calculate_sanitizes_nan_in_hourly(
     mock_build: MagicMock,
     mock_gather: MagicMock,
