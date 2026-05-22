@@ -6,7 +6,7 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse, JSONResponse
 
-from src.backend.api.models.weather_calculation_response import WeatherQueryParams, WeatherCalculationResponse
+from src.backend.api.models.weather_calculation_response import WeatherCalculationResponse, WeatherQueryParams
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 from src.backend.openmeteo.gather import gather_data

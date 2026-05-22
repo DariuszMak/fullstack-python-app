@@ -1,5 +1,4 @@
 import asyncio
-import math
 from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
 
@@ -23,7 +22,7 @@ from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 # Shared test fixtures / helpers
 # ---------------------------------------------------------------------------
 
-N_HOURS = 384   # 16 days × 24 h — matches real API response
+N_HOURS = 384  # 16 days × 24 h — matches real API response
 N_DAYS = 16
 UTC_OFFSET = 7200  # Europe/Berlin CEST (+02:00) — matches logged utc_offset
 
@@ -62,17 +61,32 @@ DAILY_PREVIEW = {
 }
 
 HOURLY_COLUMNS = [
-    "date", "temperature_2m", "cloud_cover", "precipitation",
-    "apparent_temperature", "soil_temperature_6cm", "relative_humidity_2m",
-    "surface_pressure", "wind_speed_10m", "wind_direction_10m",
-    "wind_gusts_10m", "soil_moisture_0_to_1cm",
+    "date",
+    "temperature_2m",
+    "cloud_cover",
+    "precipitation",
+    "apparent_temperature",
+    "soil_temperature_6cm",
+    "relative_humidity_2m",
+    "surface_pressure",
+    "wind_speed_10m",
+    "wind_direction_10m",
+    "wind_gusts_10m",
+    "soil_moisture_0_to_1cm",
 ]
 
 DAILY_COLUMNS = [
-    "date", "sunshine_duration", "uv_index_max",
-    "apparent_temperature_max", "apparent_temperature_min",
-    "sunrise", "sunset", "daylight_duration",
-    "rain_sum", "temperature_2m_max", "temperature_2m_min",
+    "date",
+    "sunshine_duration",
+    "uv_index_max",
+    "apparent_temperature_max",
+    "apparent_temperature_min",
+    "sunrise",
+    "sunset",
+    "daylight_duration",
+    "rain_sum",
+    "temperature_2m_max",
+    "temperature_2m_min",
 ]
 
 
@@ -133,6 +147,7 @@ def _assert_datetime_response(data: dict[str, str]) -> datetime:
 # Infrastructure / meta routes
 # ---------------------------------------------------------------------------
 
+
 def test_chrome_devtools_json_not_found() -> None:
     with TestClient(app) as client:
         response = client.get("/.well-known/appspecific/com.chrome.devtools.json")
@@ -169,6 +184,7 @@ def test_ping_route() -> None:
 # ---------------------------------------------------------------------------
 # Time providers — unit tests
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_local_time_provider_always_succeeds() -> None:
@@ -305,9 +321,7 @@ async def test_context_falls_back_to_local_when_all_http_fail(
 
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
-    context = TimeSyncContext(
-        providers=[GetTimeApi(), AiSenseApi(), LocalTime()]
-    )
+    context = TimeSyncContext(providers=[GetTimeApi(), AiSenseApi(), LocalTime()])
     result = await context.get_current_time()
     assert result.tzinfo is not None
 
@@ -320,6 +334,7 @@ def test_context_raises_when_no_providers_configured() -> None:
 # ---------------------------------------------------------------------------
 # /time route
 # ---------------------------------------------------------------------------
+
 
 def test_time_route_returns_aware_datetime() -> None:
     with TestClient(app) as client:
@@ -394,6 +409,7 @@ def test_time_route_fallback_to_local(
 # ---------------------------------------------------------------------------
 # /api/v1/weather/calculate — happy path (fully mocked gather_data)
 # ---------------------------------------------------------------------------
+
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
@@ -578,10 +594,13 @@ def test_weather_calculate_passes_built_parameters_to_gather_data(
 # /api/v1/weather/calculate — query parameter validation
 # ---------------------------------------------------------------------------
 
+
 def test_weather_calculate_default_params_are_valid() -> None:
     """Empty body should use defaults without validation error."""
-    with patch("src.backend.api.routes.gather_data") as mock_gather, \
-         patch("src.backend.api.routes.build_request_parameters") as mock_build:
+    with (
+        patch("src.backend.api.routes.gather_data") as mock_gather,
+        patch("src.backend.api.routes.build_request_parameters") as mock_build,
+    ):
         mock_build.return_value = {}
         mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
 
@@ -604,6 +623,7 @@ def test_weather_calculate_rejects_forecast_days_out_of_range() -> None:
 # ---------------------------------------------------------------------------
 # /api/v1/weather/calculate — NaN / Inf sanitization
 # ---------------------------------------------------------------------------
+
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
@@ -660,8 +680,10 @@ def test_weather_calculate_sanitizes_nan_in_daily(
 # _sanitize_float unit tests
 # ---------------------------------------------------------------------------
 
+
 def test_sanitize_float_passes_normal_values() -> None:
     from src.backend.api.routes import _sanitize_float
+
     assert _sanitize_float(3.14) == pytest.approx(3.14)
     assert _sanitize_float(0.0) == 0.0
     assert _sanitize_float(-273.15) == pytest.approx(-273.15)
@@ -669,11 +691,13 @@ def test_sanitize_float_passes_normal_values() -> None:
 
 def test_sanitize_float_replaces_nan() -> None:
     from src.backend.api.routes import _sanitize_float
+
     assert _sanitize_float(float("nan")) == 0.0
 
 
 def test_sanitize_float_replaces_inf() -> None:
     from src.backend.api.routes import _sanitize_float
+
     assert _sanitize_float(float("inf")) == 0.0
     assert _sanitize_float(float("-inf")) == 0.0
 
@@ -681,6 +705,7 @@ def test_sanitize_float_replaces_inf() -> None:
 # ---------------------------------------------------------------------------
 # gather_data — parameters forwarding
 # ---------------------------------------------------------------------------
+
 
 @patch("src.backend.openmeteo.gather.build_openmeteo_client")
 @patch("src.backend.openmeteo.gather._fetch_weather_response")
@@ -693,7 +718,8 @@ def test_gather_data_uses_provided_parameters(
     response_mock = MagicMock()
     response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
 
-    from tests.openmeteo.test_openmeto import _make_hourly_mock, _make_daily_mock  # type: ignore[import]
+    from tests.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock  # type: ignore[import]
+
     response_mock.Hourly.return_value = _make_hourly_mock()
     response_mock.Daily.return_value = _make_daily_mock()
     mock_fetch.return_value = response_mock
@@ -720,7 +746,8 @@ def test_gather_data_uses_defaults_when_no_parameters_given(
     response_mock = MagicMock()
     response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
 
-    from tests.openmeteo.test_openmeto import _make_hourly_mock, _make_daily_mock  # type: ignore[import]
+    from tests.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock  # type: ignore[import]
+
     response_mock.Hourly.return_value = _make_hourly_mock()
     response_mock.Daily.return_value = _make_daily_mock()
     mock_fetch.return_value = response_mock
