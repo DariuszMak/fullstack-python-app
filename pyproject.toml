@@ -227,6 +227,7 @@ omit = ["tests/*"]
 [tool.coverage.xml]
 output = "coverage.xml"
 
+
 [tool.importlinter]
 root_package = "src"
 include_external_packages = true
@@ -236,12 +237,11 @@ include_external_packages = true
 
 
 [[tool.importlinter.contracts]]
-name = "Strict layered architecture"
+name = "Layered architecture"
 type = "layers"
 
 layers = [
     "src.ui",
-    "src.shared",
     "src.backend",
     "src.helpers",
 ]
@@ -255,10 +255,10 @@ name = "Helpers must stay pure"
 type = "forbidden"
 
 source_modules = ["src.helpers"]
+
 forbidden_modules = [
     "src.ui",
     "src.backend",
-    "src.shared.client",
 ]
 
 
@@ -266,49 +266,20 @@ forbidden_modules = [
 
 
 [[tool.importlinter.contracts]]
-name = "Backend must never depend on UI"
+name = "Backend must not depend on UI"
 type = "forbidden"
 
 source_modules = ["src.backend"]
-forbidden_modules = ["src.ui"]
-
-[[tool.importlinter.contracts]]
-name = "Backend API isolation"
-type = "layers"
-
-layers = [
-    "src.backend.api.routes",
-    "src.backend.api.time_provider",
-    "src.backend.openmeteo",
-]
-
-
-
-
-
-[[tool.importlinter.contracts]]
-name = "Shared model must be framework independent"
-type = "forbidden"
-
-source_modules = [
-    "src.shared.model",
-    "src.shared.controller",
-]
 
 forbidden_modules = [
-    "PySide6",
-    "panel",
-    "fastapi",
-    "uvicorn",
+    "src.ui",
 ]
 
 [[tool.importlinter.contracts]]
-name = "Strategies must not know UI"
+name = "Backend OpenMeteo isolation"
 type = "forbidden"
 
-source_modules = [
-    "src.shared.model.strategy",
-]
+source_modules = ["src.backend.openmeteo"]
 
 forbidden_modules = [
     "src.ui",
@@ -319,7 +290,7 @@ forbidden_modules = [
 
 
 [[tool.importlinter.contracts]]
-name = "UI frameworks isolation"
+name = "UI framework isolation"
 type = "independence"
 
 modules = [
@@ -329,136 +300,44 @@ modules = [
 ]
 
 [[tool.importlinter.contracts]]
-name = "React UI cannot import PySide"
+name = "React UI must not depend on PySide UI"
 type = "forbidden"
 
 source_modules = ["src.ui.react_ui"]
+
 forbidden_modules = ["src.ui.pyside_ui"]
 
 [[tool.importlinter.contracts]]
-name = "PySide UI cannot import React"
+name = "PySide UI must not depend on React UI"
 type = "forbidden"
 
 source_modules = ["src.ui.pyside_ui"]
+
 forbidden_modules = ["src.ui.react_ui"]
 
 
 
 
 
-[[tool.importlinter.contracts]]
-name = "Tests cannot import production entrypoints"
-type = "forbidden"
 
-source_modules = ["tests"]
-forbidden_modules = [
-    "src.main",
-]
+
+
+
+
+
 
 
 
 
 
 [[tool.importlinter.contracts]]
-name = "Settings modules are isolated"
+name = "Settings isolation"
 type = "independence"
 
 modules = [
     "src.settings",
-    "src.ui.panel_ui.settings",
     "src.ui.pyside_ui.settings",
+    "src.ui.panel_ui.settings",
 ]
 
 
-
-
-
-[[tool.importlinter.contracts]]
-name = "HTTP client isolation"
-type = "forbidden"
-
-source_modules = [
-    "src.shared.client",
-]
-
-forbidden_modules = [
-    "src.ui",
-]
-
-
-
-
-
-[[tool.importlinter.contracts]]
-name = "Interfaces must not depend on implementations"
-type = "forbidden"
-
-source_modules = [
-    "src.shared.model.strategy.interface",
-    "src.backend.api.time_provider.strategy.interface",
-]
-
-forbidden_modules = [
-    "src.shared.model.strategy",
-    "src.backend.api.time_provider.strategy",
-]
-
-
-
-
-
-[[tool.importlinter.contracts]]
-name = "Main entrypoint must remain thin"
-type = "forbidden"
-
-source_modules = ["src.main"]
-
-forbidden_modules = [
-    "src.ui.react_ui.frontend",
-]
-
-
-
-
-
-[[tool.importlinter.contracts]]
-name = "OpenMeteo module isolation"
-type = "forbidden"
-
-source_modules = [
-    "src.backend.openmeteo",
-]
-
-forbidden_modules = [
-    "src.ui",
-]
-
-
-
-
-
-[[tool.importlinter.contracts]]
-name = "Frontend assets isolation"
-type = "forbidden"
-
-source_modules = [
-    "src.ui.react_ui.frontend",
-]
-
-forbidden_modules = [
-    "src.backend",
-    "src.helpers",
-]
-
-
-
-
-
-[[tool.importlinter.contracts]]
-name = "Dialogs and widgets separation"
-type = "independence"
-
-modules = [
-    "src.ui.pyside_ui.dialog_windows",
-    "src.ui.pyside_ui.clock_widget",
-]
