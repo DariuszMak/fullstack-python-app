@@ -4,9 +4,14 @@ from pathlib import Path
 
 import structlog
 from fastapi import APIRouter, Response
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 
-from src.backend.api.models.weather_calculation_response import WeatherCalculationResponse, WeatherQueryParams
+from src.backend.api.models.weather_calculation_response import (
+    DailyRecord,
+    HourlyRecord,
+    WeatherCalculationResponse,
+    WeatherQueryParams,
+)
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 from src.backend.openmeteo.gather import gather_data
@@ -52,47 +57,48 @@ def _sanitize_float(value: float) -> float:
 
 
 @router.post("/api/v1/weather/calculate", response_model=WeatherCalculationResponse)
-def calculate_weather(params: WeatherQueryParams) -> Response:
+def calculate_weather(params: WeatherQueryParams) -> WeatherCalculationResponse:
     parameters = build_request_parameters(
         latitude=params.latitude,
         longitude=params.longitude,
         timezone=params.timezone,
         forecast_days=params.forecast_days,
     )
+
     hourly_df, daily_df = gather_data(parameters)
 
     hourly_records = [
-        {
-            "date": row["date"].isoformat(),
-            "temperature_2m": _sanitize_float(row["temperature_2m"]),
-            "cloud_cover": _sanitize_float(row["cloud_cover"]),
-            "precipitation": _sanitize_float(row["precipitation"]),
-            "apparent_temperature": _sanitize_float(row["apparent_temperature"]),
-            "soil_temperature_6cm": _sanitize_float(row["soil_temperature_6cm"]),
-            "relative_humidity_2m": _sanitize_float(row["relative_humidity_2m"]),
-            "surface_pressure": _sanitize_float(row["surface_pressure"]),
-            "wind_speed_10m": _sanitize_float(row["wind_speed_10m"]),
-            "wind_direction_10m": _sanitize_float(row["wind_direction_10m"]),
-            "wind_gusts_10m": _sanitize_float(row["wind_gusts_10m"]),
-            "soil_moisture_0_to_1cm": _sanitize_float(row["soil_moisture_0_to_1cm"]),
-        }
+        HourlyRecord(
+            date=row["date"].isoformat(),
+            temperature_2m=_sanitize_float(row["temperature_2m"]),
+            cloud_cover=_sanitize_float(row["cloud_cover"]),
+            precipitation=_sanitize_float(row["precipitation"]),
+            apparent_temperature=_sanitize_float(row["apparent_temperature"]),
+            soil_temperature_6cm=_sanitize_float(row["soil_temperature_6cm"]),
+            relative_humidity_2m=_sanitize_float(row["relative_humidity_2m"]),
+            surface_pressure=_sanitize_float(row["surface_pressure"]),
+            wind_speed_10m=_sanitize_float(row["wind_speed_10m"]),
+            wind_direction_10m=_sanitize_float(row["wind_direction_10m"]),
+            wind_gusts_10m=_sanitize_float(row["wind_gusts_10m"]),
+            soil_moisture_0_to_1cm=_sanitize_float(row["soil_moisture_0_to_1cm"]),
+        )
         for row in hourly_df.to_dict(orient="records")
     ]
 
     daily_records = [
-        {
-            "date": row["date"].isoformat(),
-            "sunshine_duration": _sanitize_float(row["sunshine_duration"]),
-            "uv_index_max": _sanitize_float(row["uv_index_max"]),
-            "apparent_temperature_max": _sanitize_float(row["apparent_temperature_max"]),
-            "apparent_temperature_min": _sanitize_float(row["apparent_temperature_min"]),
-            "sunrise": int(row["sunrise"]),
-            "sunset": int(row["sunset"]),
-            "daylight_duration": _sanitize_float(row["daylight_duration"]),
-            "rain_sum": _sanitize_float(row["rain_sum"]),
-            "temperature_2m_max": _sanitize_float(row["temperature_2m_max"]),
-            "temperature_2m_min": _sanitize_float(row["temperature_2m_min"]),
-        }
+        DailyRecord(
+            date=row["date"].isoformat(),
+            sunshine_duration=_sanitize_float(row["sunshine_duration"]),
+            uv_index_max=_sanitize_float(row["uv_index_max"]),
+            apparent_temperature_max=_sanitize_float(row["apparent_temperature_max"]),
+            apparent_temperature_min=_sanitize_float(row["apparent_temperature_min"]),
+            sunrise=int(row["sunrise"]),
+            sunset=int(row["sunset"]),
+            daylight_duration=_sanitize_float(row["daylight_duration"]),
+            rain_sum=_sanitize_float(row["rain_sum"]),
+            temperature_2m_max=_sanitize_float(row["temperature_2m_max"]),
+            temperature_2m_min=_sanitize_float(row["temperature_2m_min"]),
+        )
         for row in daily_df.to_dict(orient="records")
     ]
 
@@ -102,7 +108,8 @@ def calculate_weather(params: WeatherQueryParams) -> Response:
         hourly_rows=len(hourly_records),
         daily_rows=len(daily_records),
     )
-    return JSONResponse(content=result.model_dump())
+
+    return result
 
 
 @router.get("/{full_path:path}", include_in_schema=False)
