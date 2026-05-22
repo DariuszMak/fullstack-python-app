@@ -19,19 +19,15 @@ from src.backend.api.time_provider.strategy.local_time import LocalTime
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 from tests.backend.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock
 
-# ---------------------------------------------------------------------------
-# Shared test fixtures / helpers
-# ---------------------------------------------------------------------------
-
-N_HOURS = 384  # 16 days × 24 h — matches real API response
+N_HOURS = 384
 N_DAYS = 16
-UTC_OFFSET = 7200  # Europe/Berlin CEST (+02:00) — matches logged utc_offset
+UTC_OFFSET = 7200
 
 START_TS = int(pd.Timestamp("2026-05-22", tz="UTC").timestamp())
 END_TS_HOURLY = START_TS + N_HOURS * 3600
 END_TS_DAILY = START_TS + N_DAYS * 86400
 
-# Realistic single-row values taken directly from the log preview
+
 HOURLY_PREVIEW = {
     "date": "2026-05-22T00:00:00+00:00",
     "temperature_2m": 11.911,
@@ -144,11 +140,6 @@ def _assert_datetime_response(data: dict[str, str]) -> datetime:
     return dt
 
 
-# ---------------------------------------------------------------------------
-# Infrastructure / meta routes
-# ---------------------------------------------------------------------------
-
-
 def test_chrome_devtools_json_not_found() -> None:
     with TestClient(app) as client:
         response = client.get("/.well-known/appspecific/com.chrome.devtools.json")
@@ -180,11 +171,6 @@ def test_ping_route() -> None:
         response = client.get("/ping")
         assert response.status_code == 200
         assert response.json() == {"message": "pong"}
-
-
-# ---------------------------------------------------------------------------
-# Time providers — unit tests
-# ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
@@ -332,11 +318,6 @@ def test_context_raises_when_no_providers_configured() -> None:
         TimeSyncContext(providers=[])
 
 
-# ---------------------------------------------------------------------------
-# /time route
-# ---------------------------------------------------------------------------
-
-
 def test_time_route_returns_aware_datetime() -> None:
     with TestClient(app) as client:
         response = client.get("/time")
@@ -405,11 +386,6 @@ def test_time_route_fallback_to_local(
 
     assert response.status_code == 200
     _assert_datetime_response(response.json())
-
-
-# ---------------------------------------------------------------------------
-# /api/v1/weather/calculate — happy path (fully mocked gather_data)
-# ---------------------------------------------------------------------------
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -591,11 +567,6 @@ def test_weather_calculate_passes_built_parameters_to_gather_data(
     mock_gather.assert_called_once_with(sentinel_params)
 
 
-# ---------------------------------------------------------------------------
-# /api/v1/weather/calculate — query parameter validation
-# ---------------------------------------------------------------------------
-
-
 def test_weather_calculate_default_params_are_valid() -> None:
     """Empty body should use defaults without validation error."""
     with (
@@ -619,11 +590,6 @@ def test_weather_calculate_rejects_forecast_days_out_of_range() -> None:
     with TestClient(app) as client:
         response = client.post("/api/v1/weather/calculate", json={"forecast_days": 17})
     assert response.status_code == 422
-
-
-# ---------------------------------------------------------------------------
-# /api/v1/weather/calculate — NaN / Inf sanitization
-# ---------------------------------------------------------------------------
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -677,11 +643,6 @@ def test_weather_calculate_sanitizes_nan_in_daily(
     assert data["daily"][0]["rain_sum"] == 0.0
 
 
-# ---------------------------------------------------------------------------
-# _sanitize_float unit tests
-# ---------------------------------------------------------------------------
-
-
 def test_sanitize_float_passes_normal_values() -> None:
     from src.backend.api.routes import _sanitize_float
 
@@ -701,11 +662,6 @@ def test_sanitize_float_replaces_inf() -> None:
 
     assert _sanitize_float(float("inf")) == 0.0
     assert _sanitize_float(float("-inf")) == 0.0
-
-
-# ---------------------------------------------------------------------------
-# gather_data — parameters forwarding
-# ---------------------------------------------------------------------------
 
 
 @patch("src.backend.openmeteo.gather.build_openmeteo_client")
