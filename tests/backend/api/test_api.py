@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.backend.api.app import app
-from src.backend.api.routes import set_time_sync_context
+from src.backend.api.routes import _sanitize_float, set_time_sync_context
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.strategy.ai_sense_api import AiSenseApi
 from src.backend.api.time_provider.strategy.get_time_api import GetTimeApi
@@ -17,6 +17,7 @@ from src.backend.api.time_provider.strategy.interface.http_time_provider import 
 from src.backend.api.time_provider.strategy.interface.time_provider import TimeProvider
 from src.backend.api.time_provider.strategy.local_time import LocalTime
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
+from src.backend.openmeteo.gather import gather_data
 from tests.backend.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock
 
 N_HOURS = 384
@@ -644,22 +645,16 @@ def test_weather_calculate_sanitizes_nan_in_daily(
 
 
 def test_sanitize_float_passes_normal_values() -> None:
-    from src.backend.api.routes import _sanitize_float
-
     assert _sanitize_float(3.14) == pytest.approx(3.14)
     assert _sanitize_float(0.0) == 0.0
     assert _sanitize_float(-273.15) == pytest.approx(-273.15)
 
 
 def test_sanitize_float_replaces_nan() -> None:
-    from src.backend.api.routes import _sanitize_float
-
     assert _sanitize_float(float("nan")) == 0.0
 
 
 def test_sanitize_float_replaces_inf() -> None:
-    from src.backend.api.routes import _sanitize_float
-
     assert _sanitize_float(float("inf")) == 0.0
     assert _sanitize_float(float("-inf")) == 0.0
 
@@ -670,8 +665,6 @@ def test_gather_data_uses_provided_parameters(
     mock_fetch: MagicMock,
     mock_client: MagicMock,
 ) -> None:
-    from src.backend.openmeteo.gather import gather_data
-
     response_mock = MagicMock()
     response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
 
@@ -695,8 +688,6 @@ def test_gather_data_uses_defaults_when_no_parameters_given(
     mock_client: MagicMock,
     mock_build: MagicMock,
 ) -> None:
-    from src.backend.openmeteo.gather import gather_data
-
     mock_build.return_value = {"default": True}
     response_mock = MagicMock()
     response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
