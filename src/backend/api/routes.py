@@ -44,8 +44,8 @@ async def current_time() -> dict[str, str]:
 
 @router.post("/api/v1/weather/calculate")
 def calculate_weather(params: WeatherQueryParams) -> Response:
-    _hourly_df, _daily_df = gather_data()
-    result = {"temperature": params.Temperature}
+    hourly_df, daily_df = gather_data()
+    result = {"temperature": params.Temperature, "hourly": hourly_df, "daily": daily_df}
     return JSONResponse(content=result)
 
 
