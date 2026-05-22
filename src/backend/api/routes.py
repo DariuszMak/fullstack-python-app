@@ -3,11 +3,12 @@ from pathlib import Path
 
 import structlog
 from fastapi import APIRouter, Response
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from src.backend.api.models.weather_calculation_response import WeatherQueryParams
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
+from src.backend.openmeteo.gather import gather_data
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -42,9 +43,10 @@ async def current_time() -> dict[str, str]:
 
 
 @router.post("/api/v1/weather/calculate")
-def calculate_weather(params: WeatherQueryParams):
+def calculate_weather(params: WeatherQueryParams) -> Response:
+    _hourly_df, _daily_df = gather_data()
     result = {"temperature": params.Temperature}
-    return result
+    return JSONResponse(content=result)
 
 
 @router.get("/{full_path:path}", include_in_schema=False)

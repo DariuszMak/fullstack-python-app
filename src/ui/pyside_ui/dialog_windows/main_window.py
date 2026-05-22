@@ -7,7 +7,6 @@ from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
 from PySide6.QtWidgets import QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
-from src.backend.openmeteo.gather import gather_data
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.clock_widget.view.clock_widget import ClockWidget
@@ -134,7 +133,7 @@ class MainWindow(DraggableMainWindow):
 
         if dlg.exec_():
             logger.info("dialog_accepted")
-            gather_data()
+
         else:
             logger.info("dialog_cancelled")
 
