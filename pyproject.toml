@@ -227,14 +227,9 @@ omit = ["tests/*"]
 [tool.coverage.xml]
 output = "coverage.xml"
 
-
 [tool.importlinter]
 root_package = "src"
 include_external_packages = true
-
-
-
-
 
 [[tool.importlinter.contracts]]
 name = "Layered architecture"
@@ -246,10 +241,6 @@ layers = [
     "src.helpers",
 ]
 
-
-
-
-
 [[tool.importlinter.contracts]]
 name = "Helpers must stay pure"
 type = "forbidden"
@@ -260,10 +251,6 @@ forbidden_modules = [
     "src.ui",
     "src.backend",
 ]
-
-
-
-
 
 [[tool.importlinter.contracts]]
 name = "Backend must not depend on UI"
@@ -284,10 +271,6 @@ source_modules = ["src.backend.openmeteo"]
 forbidden_modules = [
     "src.ui",
 ]
-
-
-
-
 
 [[tool.importlinter.contracts]]
 name = "UI framework isolation"
@@ -315,21 +298,6 @@ source_modules = ["src.ui.pyside_ui"]
 
 forbidden_modules = ["src.ui.react_ui"]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 [[tool.importlinter.contracts]]
 name = "Settings isolation"
 type = "independence"
@@ -339,5 +307,3 @@ modules = [
     "src.ui.pyside_ui.settings",
     "src.ui.panel_ui.settings",
 ]
-
-
