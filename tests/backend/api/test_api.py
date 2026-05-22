@@ -17,6 +17,7 @@ from src.backend.api.time_provider.strategy.interface.http_time_provider import 
 from src.backend.api.time_provider.strategy.interface.time_provider import TimeProvider
 from src.backend.api.time_provider.strategy.local_time import LocalTime
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
+from tests.backend.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock
 
 # ---------------------------------------------------------------------------
 # Shared test fixtures / helpers
@@ -718,8 +719,6 @@ def test_gather_data_uses_provided_parameters(
     response_mock = MagicMock()
     response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
 
-    from tests.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock  # type: ignore[import]
-
     response_mock.Hourly.return_value = _make_hourly_mock()
     response_mock.Daily.return_value = _make_daily_mock()
     mock_fetch.return_value = response_mock
@@ -745,8 +744,6 @@ def test_gather_data_uses_defaults_when_no_parameters_given(
     mock_build.return_value = {"default": True}
     response_mock = MagicMock()
     response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
-
-    from tests.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock  # type: ignore[import]
 
     response_mock.Hourly.return_value = _make_hourly_mock()
     response_mock.Daily.return_value = _make_daily_mock()
