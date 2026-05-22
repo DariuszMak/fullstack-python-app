@@ -607,7 +607,7 @@ def test_weather_calculate_sanitizes_nan_in_hourly(
     with TestClient(app) as client:
         data = client.post("/api/v1/weather/calculate", json={}).json()
 
-    assert data["hourly"][0]["temperature_2m"] == 0.0
+    assert data["hourly"][0]["temperature_2m"] == pytest.approx(0.0)
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -624,7 +624,7 @@ def test_weather_calculate_sanitizes_inf_in_hourly(
     with TestClient(app) as client:
         data = client.post("/api/v1/weather/calculate", json={}).json()
 
-    assert data["hourly"][0]["wind_speed_10m"] == 0.0
+    assert data["hourly"][0]["wind_speed_10m"] == pytest.approx(0.0)
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -641,12 +641,12 @@ def test_weather_calculate_sanitizes_nan_in_daily(
     with TestClient(app) as client:
         data = client.post("/api/v1/weather/calculate", json={}).json()
 
-    assert data["daily"][0]["rain_sum"] == 0.0
+    assert data["daily"][0]["rain_sum"] == pytest.approx(0.0)
 
 
 def test_sanitize_float_passes_normal_values() -> None:
     assert _sanitize_float(3.14) == pytest.approx(3.14)
-    assert _sanitize_float(0.0) == 0.0
+    assert _sanitize_float(0.0) == pytest.approx(0.0)
     assert _sanitize_float(-273.15) == pytest.approx(-273.15)
 
 
