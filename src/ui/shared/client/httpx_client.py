@@ -5,7 +5,7 @@ from datetime import datetime
 import httpx
 import structlog
 
-from src.backend.api.models import ServerTimeResponse
+from src.backend.api.models.models import ServerTimeResponse
 
 logger = structlog.get_logger(__name__)
 
