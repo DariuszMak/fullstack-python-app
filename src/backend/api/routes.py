@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from src.backend.api.models.weather_info_response import (
     DailyRecord,
     HourlyRecord,
-    WeatherCalculationResponse,
+    WeatherInfoResponse,
     WeatherQueryParams,
 )
 from src.backend.api.time_provider.context import default_time_sync_context
@@ -55,8 +55,8 @@ def _sanitize_float(value: float) -> float:
     return float(value)
 
 
-@router.post("/api/v1/weather/info", response_model=WeatherCalculationResponse)
-def info_weather(params: WeatherQueryParams) -> WeatherCalculationResponse:
+@router.post("/api/v1/weather/info", response_model=WeatherInfoResponse)
+def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     parameters = build_request_parameters(
         latitude=params.latitude,
         longitude=params.longitude,
@@ -101,7 +101,7 @@ def info_weather(params: WeatherQueryParams) -> WeatherCalculationResponse:
         for row in daily_df.to_dict(orient="records")
     ]
 
-    result = WeatherCalculationResponse(
+    result = WeatherInfoResponse(
         hourly=hourly_records,
         daily=daily_records,
         hourly_rows=len(hourly_records),

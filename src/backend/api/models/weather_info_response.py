@@ -39,7 +39,7 @@ class DailyRecord(BaseModel):
     temperature_2m_min: float
 
 
-class WeatherCalculationResponse(BaseModel):
+class WeatherInfoResponse(BaseModel):
     hourly: list[HourlyRecord]
     daily: list[DailyRecord]
     hourly_rows: int
