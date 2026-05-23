@@ -115,6 +115,47 @@ EXPECTED_PLACE_KEYS = {
 }
 
 
+@patch("src.backend.openmeteo.gather.build_openmeteo_client")
+@patch("src.backend.openmeteo.gather._fetch_weather_response")
+def test_gather_data_uses_provided_parameters(
+    mock_fetch: MagicMock,
+    mock_client: MagicMock,
+) -> None:
+    response_mock = MagicMock()
+    response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
+
+    response_mock.Hourly.return_value = _make_hourly_mock()
+    response_mock.Daily.return_value = _make_daily_mock()
+    mock_fetch.return_value = response_mock
+
+    custom_params = {"latitude": 54.352, "longitude": 18.649, "timezone": "Europe/Warsaw"}
+    gather_data(custom_params)
+
+    mock_fetch.assert_called_once()
+    _, call_kwargs = mock_fetch.call_args
+    assert custom_params in mock_fetch.call_args[0] or call_kwargs.get("parameters") == custom_params
+
+
+@patch("src.backend.openmeteo.gather.build_request_parameters")
+@patch("src.backend.openmeteo.gather.build_openmeteo_client")
+@patch("src.backend.openmeteo.gather._fetch_weather_response")
+def test_gather_data_uses_defaults_when_no_parameters_given(
+    mock_fetch: MagicMock,
+    mock_client: MagicMock,
+    mock_build: MagicMock,
+) -> None:
+    mock_build.return_value = {"default": True}
+    response_mock = MagicMock()
+    response_mock.UtcOffsetSeconds.return_value = UTC_OFFSET
+
+    response_mock.Hourly.return_value = _make_hourly_mock()
+    response_mock.Daily.return_value = _make_daily_mock()
+    mock_fetch.return_value = response_mock
+
+    gather_data()
+    mock_build.assert_called_once()
+
+
 def test_places_contains_all_expected_keys() -> None:
     assert set(PLACES.keys()) == EXPECTED_PLACE_KEYS
 
