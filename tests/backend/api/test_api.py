@@ -9,7 +9,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.backend.api.app import app
-from src.backend.api.routes import _sanitize_float, set_time_sync_context
+from src.backend.api.models.helpers.weather_info_parse import _sanitize_float
+from src.backend.api.routes import set_time_sync_context
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.strategy.ai_sense_api import AiSenseApi
 from src.backend.api.time_provider.strategy.get_time_api import GetTimeApi
