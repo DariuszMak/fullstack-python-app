@@ -20,5 +20,7 @@ class TickEventSubject:
             self._observers.remove(observer)
 
     def notify(self) -> None:
-        for observer in list(self._observers):
+        observers_snapshot = tuple(self._observers)
+
+        for observer in observers_snapshot:
             observer.on_tick()
