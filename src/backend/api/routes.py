@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+import pandas as pd
 import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
@@ -72,7 +73,9 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     return result
 
 
-def parse_weather_records(hourly_df, daily_df):
+def parse_weather_records(
+    hourly_df: pd.DataFrame, daily_df: pd.DataFrame
+) -> tuple[list[HourlyRecord], list[DailyRecord]]:
     hourly_records = [
         HourlyRecord(
             date=row["date"].isoformat(),
