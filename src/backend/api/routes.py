@@ -1,4 +1,3 @@
-import math
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -6,6 +5,7 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 
+from src.backend.api.models.helpers.weather_info_parse import _sanitize_float
 from src.backend.api.models.weather_info_response import (
     DailyRecord,
     HourlyRecord,
@@ -47,12 +47,6 @@ async def ping() -> dict[str, str]:
 async def current_time() -> dict[str, str]:
     dt = await time_sync_context_container.context.get_current_time()
     return {"datetime": dt.isoformat()}
-
-
-def _sanitize_float(value: float) -> float:
-    if math.isnan(value) or math.isinf(value):
-        return 0.0
-    return float(value)
 
 
 @router.post("/api/v1/weather/info", response_model=WeatherInfoResponse)
