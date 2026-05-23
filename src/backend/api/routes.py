@@ -55,8 +55,8 @@ def _sanitize_float(value: float) -> float:
     return float(value)
 
 
-@router.post("/api/v1/weather/calculate", response_model=WeatherCalculationResponse)
-def calculate_weather(params: WeatherQueryParams) -> WeatherCalculationResponse:
+@router.post("/api/v1/weather/info", response_model=WeatherCalculationResponse)
+def info_weather(params: WeatherQueryParams) -> WeatherCalculationResponse:
     parameters = build_request_parameters(
         latitude=params.latitude,
         longitude=params.longitude,
