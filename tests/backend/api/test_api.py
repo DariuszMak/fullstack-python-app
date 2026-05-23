@@ -19,7 +19,7 @@ from src.backend.api.time_provider.strategy.interface.time_provider import TimeP
 from src.backend.api.time_provider.strategy.local_time import LocalTime
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 from src.backend.openmeteo.gather import gather_data
-from tests.backend.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock
+from tests.backend.api.openmeteo.test_openmeto import _make_daily_mock, _make_hourly_mock
 
 N_HOURS = 384
 N_DAYS = 16
