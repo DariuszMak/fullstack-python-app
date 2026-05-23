@@ -569,7 +569,6 @@ def test_weather_calculate_passes_built_parameters_to_gather_data(
 
 
 def test_weather_calculate_default_params_are_valid() -> None:
-    """Empty body should use defaults without validation error."""
     with (
         patch("src.backend.api.routes.gather_data") as mock_gather,
         patch("src.backend.api.routes.build_request_parameters") as mock_build,

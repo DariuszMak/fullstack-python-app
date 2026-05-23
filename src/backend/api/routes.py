@@ -50,7 +50,6 @@ async def current_time() -> dict[str, str]:
 
 
 def _sanitize_float(value: float) -> float:
-    """Replace NaN/Inf with 0.0 so JSON serialization never fails."""
     if math.isnan(value) or math.isinf(value):
         return 0.0
     return float(value)
