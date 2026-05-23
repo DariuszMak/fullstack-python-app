@@ -60,6 +60,19 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
 
     hourly_df, daily_df = gather_data(parameters)
 
+    hourly_records, daily_records = parse_weather_records(hourly_df, daily_df)
+
+    result = WeatherInfoResponse(
+        hourly=hourly_records,
+        daily=daily_records,
+        hourly_rows=len(hourly_records),
+        daily_rows=len(daily_records),
+    )
+
+    return result
+
+
+def parse_weather_records(hourly_df, daily_df):
     hourly_records = [
         HourlyRecord(
             date=row["date"].isoformat(),
@@ -95,14 +108,7 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
         for row in daily_df.to_dict(orient="records")
     ]
 
-    result = WeatherInfoResponse(
-        hourly=hourly_records,
-        daily=daily_records,
-        hourly_rows=len(hourly_records),
-        daily_rows=len(daily_records),
-    )
-
-    return result
+    return hourly_records, daily_records
 
 
 @router.get("/{full_path:path}", include_in_schema=False)
