@@ -15,6 +15,7 @@ def _sanitize_float(value: float) -> float:
         return 0.0
     return float(value)
 
+
 def parse_weather_records(
     hourly_df: pd.DataFrame, daily_df: pd.DataFrame
 ) -> tuple[list[HourlyRecord], list[DailyRecord]]:

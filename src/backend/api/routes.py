@@ -5,6 +5,7 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 
+from src.backend.api.models.helpers.weather_info_parse import parse_weather_records
 from src.backend.api.models.weather_info_response import (
     WeatherInfoResponse,
     WeatherQueryParams,
@@ -67,8 +68,6 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     )
 
     return result
-
-
 
 
 @router.get("/{full_path:path}", include_in_schema=False)
