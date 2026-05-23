@@ -1,16 +1,12 @@
-from src.backend.api.routes import set_time_sync_context
-from src.backend.api.app import app
-
 import asyncio
 from datetime import UTC, datetime
-from unittest.mock import MagicMock, patch
 
 import httpx
-import numpy as np
-import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
+from src.backend.api.app import app
+from src.backend.api.routes import set_time_sync_context
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.strategy.ai_sense_api import AiSenseApi
 from src.backend.api.time_provider.strategy.get_time_api import GetTimeApi
@@ -18,6 +14,7 @@ from src.backend.api.time_provider.strategy.interface.http_time_provider import 
 from src.backend.api.time_provider.strategy.interface.time_provider import TimeProvider
 from src.backend.api.time_provider.strategy.local_time import LocalTime
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
+from tests.backend.api.test_api import _assert_datetime_response
 
 
 @pytest.mark.asyncio
@@ -191,4 +188,3 @@ def test_time_route_uses_injected_context() -> None:
         assert dt == fixed_utc
     finally:
         set_time_sync_context(default_time_sync_context())
-
