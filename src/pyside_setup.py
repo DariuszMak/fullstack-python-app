@@ -49,7 +49,7 @@ def create_moc(dir_path: str, file_name: str, extension: UiExtensions) -> None:
 
     if process.returncode != 0:
         log.error("moc_generation_failed", stdout=process.stdout, stderr=process.stderr, return_code=process.returncode)
-        raise Exception(f"Mocking UI file failed! ({file_name})")
+        raise RuntimeError(f"Mocking UI file failed! ({file_name})")
 
 
 def create_mocs() -> None:
