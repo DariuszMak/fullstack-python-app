@@ -6,7 +6,7 @@ import pytest
 
 from src.backend.openmeteo.client_builder import build_openmeteo_client
 from src.backend.openmeteo.gather import _fetch_weather_response, gather_data
-from src.backend.openmeteo.parser import (
+from src.backend.openmeteo.parse import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
