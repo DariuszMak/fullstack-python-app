@@ -6,7 +6,7 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 
-from src.backend.api.models.weather_calculation_response import (
+from src.backend.api.models.weather_info_response import (
     DailyRecord,
     HourlyRecord,
     WeatherCalculationResponse,
