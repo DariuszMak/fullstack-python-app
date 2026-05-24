@@ -5,6 +5,7 @@ PLACES: dict[str, Place] = {
     "swinoujscie": Place(name="Świnoujście", latitude=53.9105, longitude=14.2471),
     "mielno": Place(name="Mielno", latitude=54.2609, longitude=16.0621),
     "leba": Place(name="Łeba", latitude=54.761, longitude=17.5555),
+    "debki": Place(name="Dębki", latitude=54.8299, longitude=18.0881),
     "hel": Place(name="Hel", latitude=54.6038, longitude=18.8035),
     "gdansk": Place(name="Gdańsk", latitude=54.3523, longitude=18.6491),
     "karpacz": Place(name="Karpacz", latitude=50.7767, longitude=15.7559),
@@ -14,7 +15,6 @@ PLACES: dict[str, Place] = {
     "sniezka": Place(name="Śnieżka", latitude=50.7361, longitude=15.7398),
 }
 
-# Default place kept for backwards compatibility
 DEFAULT_PLACE = PLACES["jarocin"]
 
 LATITUDE: float = DEFAULT_PLACE.latitude
