@@ -5,6 +5,8 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 
+from src.backend.api.models.best_score_response import BestScoreQueryParams, BestScoreResponse
+from src.backend.api.models.helpers.best_score_calculator import calculate_best_scores
 from src.backend.api.models.helpers.weather_info_parse import parse_weather_records
 from src.backend.api.models.weather_info_response import (
     WeatherInfoResponse,
@@ -68,6 +70,16 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     )
 
     return result
+
+
+@router.post("/api/v1/weather/best_score")
+def best_score(params: BestScoreQueryParams) -> BestScoreResponse:
+    results = calculate_best_scores(params)
+    return BestScoreResponse(
+        results=results,
+        threshold=params.apparent_temperature_threshold,
+        penalize_rain=params.penalize_rain,
+    )
 
 
 @router.get("/{full_path:path}", include_in_schema=False)
