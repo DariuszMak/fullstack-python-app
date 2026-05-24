@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -152,7 +153,7 @@ def test_calculate_best_scores_sorted_descending(
     mock_build.return_value = {}
     call_count = 0
 
-    def side_effect(params: dict) -> tuple:
+    def side_effect(params: dict[str, Any]) -> tuple[pd.DataFrame, pd.DataFrame]:
         nonlocal call_count
         apparent_max = 20.0 + call_count * 1.0
         call_count += 1
