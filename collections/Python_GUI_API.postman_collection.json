@@ -199,6 +199,117 @@
 					]
 				}
 			}
+		},
+		{
+			"name": "weather info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains required top-level fields\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property(\"hourly\");",
+							"    pm.expect(jsonData).to.have.property(\"daily\");",
+							"    pm.expect(jsonData).to.have.property(\"hourly_rows\");",
+							"    pm.expect(jsonData).to.have.property(\"daily_rows\");",
+							"});",
+							"",
+							"pm.test(\"Hourly and daily are arrays\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData.hourly).to.be.an(\"array\");",
+							"    pm.expect(jsonData.daily).to.be.an(\"array\");",
+							"});",
+							"",
+							"pm.test(\"Row counters match array lengths\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData.hourly_rows).to.eql(jsonData.hourly.length);",
+							"    pm.expect(jsonData.daily_rows).to.eql(jsonData.daily.length);",
+							"});",
+							"",
+							"pm.test(\"Hourly record contains expected fields\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    if (jsonData.hourly.length > 0) {",
+							"        const hourly = jsonData.hourly[0];",
+							"",
+							"        pm.expect(hourly).to.have.property(\"date\");",
+							"        pm.expect(hourly).to.have.property(\"temperature_2m\");",
+							"        pm.expect(hourly).to.have.property(\"cloud_cover\");",
+							"        pm.expect(hourly).to.have.property(\"precipitation\");",
+							"        pm.expect(hourly).to.have.property(\"apparent_temperature\");",
+							"        pm.expect(hourly).to.have.property(\"soil_temperature_6cm\");",
+							"        pm.expect(hourly).to.have.property(\"relative_humidity_2m\");",
+							"        pm.expect(hourly).to.have.property(\"surface_pressure\");",
+							"        pm.expect(hourly).to.have.property(\"wind_speed_10m\");",
+							"        pm.expect(hourly).to.have.property(\"wind_direction_10m\");",
+							"        pm.expect(hourly).to.have.property(\"wind_gusts_10m\");",
+							"        pm.expect(hourly).to.have.property(\"soil_moisture_0_to_1cm\");",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Daily record contains expected fields\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    if (jsonData.daily.length > 0) {",
+							"        const daily = jsonData.daily[0];",
+							"",
+							"        pm.expect(daily).to.have.property(\"date\");",
+							"        pm.expect(daily).to.have.property(\"sunshine_duration\");",
+							"        pm.expect(daily).to.have.property(\"uv_index_max\");",
+							"        pm.expect(daily).to.have.property(\"apparent_temperature_max\");",
+							"        pm.expect(daily).to.have.property(\"apparent_temperature_min\");",
+							"        pm.expect(daily).to.have.property(\"sunrise\");",
+							"        pm.expect(daily).to.have.property(\"sunset\");",
+							"        pm.expect(daily).to.have.property(\"daylight_duration\");",
+							"        pm.expect(daily).to.have.property(\"rain_sum\");",
+							"        pm.expect(daily).to.have.property(\"temperature_2m_max\");",
+							"        pm.expect(daily).to.have.property(\"temperature_2m_min\");",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"latitude\": 51.9727,\n    \"longitude\": 17.5026,\n    \"timezone\": \"Europe/Berlin\",\n    \"forecast_days\": 3\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/api/v1/weather/info",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"weather",
+						"info"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
