@@ -72,8 +72,8 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     return result
 
 
-@router.post("/api/v1/weather/best_score")
-def best_score(params: BestScoreQueryParams) -> BestScoreResponse:
+@router.post("/api/v1/weather/calculate_weather_score")
+def calculate_weather_score(params: BestScoreQueryParams) -> BestScoreResponse:
     results = calculate_best_scores(params)
     return BestScoreResponse(
         results=results,
