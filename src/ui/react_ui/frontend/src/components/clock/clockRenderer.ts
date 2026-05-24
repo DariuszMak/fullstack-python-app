@@ -11,14 +11,14 @@ interface RenderState {
 }
 
 function isDarkMode(): boolean {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return globalThis.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
 function resizeCanvas(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
 ): { size: number; cx: number; cy: number; radius: number } {
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = globalThis.devicePixelRatio || 1;
   const size = canvas.clientWidth;
 
   if (canvas.width !== size * dpr || canvas.height !== size * dpr) {
@@ -149,7 +149,9 @@ export function renderClock(
   state: RenderState,
 ): void {
   const { size, cx, cy, radius } = resizeCanvas(canvas, ctx);
+
   ctx.clearRect(0, 0, size, size);
+
   drawFace(ctx, cx, cy, radius);
   drawTicks(ctx, cx, cy, radius);
   drawNumbers(ctx, cx, cy, radius);
