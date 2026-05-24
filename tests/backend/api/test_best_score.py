@@ -205,7 +205,7 @@ def test_calculate_best_scores_passes_forecast_days(
         assert call.kwargs.get("forecast_days") == 7
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_returns_200(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
@@ -215,7 +215,7 @@ def test_best_score_endpoint_returns_200(mock_calc: MagicMock) -> None:
     assert response.status_code == 200
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_response_has_required_keys(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
@@ -227,7 +227,7 @@ def test_best_score_endpoint_response_has_required_keys(mock_calc: MagicMock) ->
     assert "penalize_rain" in data
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_reflects_threshold(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
@@ -237,7 +237,7 @@ def test_best_score_endpoint_reflects_threshold(mock_calc: MagicMock) -> None:
     assert data["threshold"] == pytest.approx(18.5)
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_reflects_penalize_rain(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
@@ -247,7 +247,7 @@ def test_best_score_endpoint_reflects_penalize_rain(mock_calc: MagicMock) -> Non
     assert data["penalize_rain"] is True
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_rejects_forecast_days_out_of_range(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
@@ -259,7 +259,7 @@ def test_best_score_endpoint_rejects_forecast_days_out_of_range(mock_calc: Magic
     assert r2.status_code == 422
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_passes_params_to_calculator(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
@@ -279,7 +279,7 @@ def test_best_score_endpoint_passes_params_to_calculator(mock_calc: MagicMock) -
     assert called_params.forecast_days == 5
 
 
-@patch("src.backend.api.models.helpers.best_score_calculator.calculate_best_scores")
+@patch("src.backend.api.routes.calculate_best_scores")
 def test_best_score_endpoint_result_fields(mock_calc: MagicMock) -> None:
     mock_calc.return_value = [
         PlaceBestScoreRecord(
