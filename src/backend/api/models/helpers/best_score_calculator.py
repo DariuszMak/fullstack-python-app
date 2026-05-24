@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-import pandas as pd
+from typing import TYPE_CHECKING
 
 from src.backend.api.models.best_score_response import BestScoreQueryParams, PlaceBestScoreRecord
 from src.backend.openmeteo.gather import gather_data
 from src.backend.openmeteo.places.places import PLACES
 from src.backend.openmeteo.request_builder import build_request_parameters
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 def _day_weight(day_index: int, total_days: int) -> float:
