@@ -488,7 +488,9 @@ def test_best_score_endpoint_reflects_threshold(mock_calc: MagicMock) -> None:
     mock_calc.return_value = []
 
     with TestClient(app) as client:
-        data = client.post("/api/v1/weather/calculate_weather_score", json={"apparent_temperature_threshold": 18.5}).json()
+        data = client.post(
+            "/api/v1/weather/calculate_weather_score", json={"apparent_temperature_threshold": 18.5}
+        ).json()
 
     assert data["threshold"] == pytest.approx(18.5)
 
