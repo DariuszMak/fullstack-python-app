@@ -60,7 +60,7 @@ def test_backwards_compat_timezone() -> None:
 
 
 def test_sea_places_are_in_northern_poland() -> None:
-    sea_keys = {"swinoujscie", "mielno", "leba", "hel", "gdansk"}
+    sea_keys = {"swinoujscie", "mielno", "leba", "debki", "hel", "gdansk"}
     for key in sea_keys:
         assert PLACES[key].latitude > 53.0, f"{key} latitude unexpectedly low"
 
