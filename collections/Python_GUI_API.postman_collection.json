@@ -264,7 +264,7 @@
 					"path": [
 						"api",
 						"v1",
-						"weather",
+						"forecast",
 						"info"
 					]
 				}
@@ -340,7 +340,7 @@
 					"path": [
 						"api",
 						"v1",
-						"weather",
+						"forecast",
 						"info"
 					]
 				}
