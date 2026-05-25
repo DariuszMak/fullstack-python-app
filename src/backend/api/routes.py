@@ -49,7 +49,7 @@ async def current_time() -> dict[str, str]:
     return {"datetime": dt.isoformat()}
 
 
-@router.post("/api/v1/weather/info")
+@router.post("/api/v1/forecast/info")
 def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     parameters = build_request_parameters(
         latitude=params.latitude,
@@ -72,7 +72,7 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
     return result
 
 
-@router.post("/api/v1/weather/calculate_weather_score")
+@router.post("/api/v1/forecast/calculate_weather_score")
 def calculate_weather_score(params: BestScoreQueryParams) -> BestScoreResponse:
     results = calculate_best_scores(params)
     return BestScoreResponse(
