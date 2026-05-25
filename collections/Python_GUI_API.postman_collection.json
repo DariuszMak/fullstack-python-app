@@ -252,7 +252,7 @@
 					"raw": "{\n  \"latitude\": 51.9727,\n  \"longitude\": 17.5026,\n  \"timezone\": \"Europe/Berlin\",\n  \"forecast_days\": 16\n}"
 				},
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/info",
+					"raw": "http://127.0.0.1:{{port}}/api/v1/weather/info",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -328,7 +328,7 @@
 					"raw": "{\n  \"latitude\": 51.7522,\n  \"longitude\": -1.256,\n  \"timezone\": \"Europe/London\",\n  \"forecast_days\": 16\n}"
 				},
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/info",
+					"raw": "http://127.0.0.1:{{port}}/api/v1/weather/info",
 					"protocol": "http",
 					"host": [
 						"127",
