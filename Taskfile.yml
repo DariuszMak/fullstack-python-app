@@ -1,10 +1,9 @@
-version: '3'
+version: "3"
 
 env:
   UV_ENV_FILE: .dev.env
 
 tasks:
-
   cleanup:
     desc: Full project cleanup (docker, git, ports, caches)
     cmds:
@@ -47,7 +46,6 @@ tasks:
       - powershell -ExecutionPolicy Bypass -File tasks/wait_for_windows_api.ps1
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
 
-
   full-dev-windows:
     desc: Fast native Windows development flow
     deps:
@@ -59,7 +57,6 @@ tasks:
       - task: local-dev-windows-run
       - task: local-dev-windows-api-tests
 
-
   full-static-analyzis:
     desc: Full static analysis + SonarQube + diagrams
     deps:
@@ -70,7 +67,6 @@ tasks:
       - task: sonarqube
       - task: generate-diagrams
 
-
   build-release:
     desc: Build both Linux + Windows releases
     cmds:
@@ -79,7 +75,7 @@ tasks:
   run-linux-release:
     desc: Run Linux GUI in WSL
     cmds:
-      - docker-compose run app sh -c "dos2unix tasks/run_linux_application.ps1 thorough.env" ; 
+      - docker-compose run app sh -c "dos2unix tasks/run_linux_application.ps1 thorough.env" ;
       - powershell -ExecutionPolicy Bypass -File tasks/run_linux_application.ps1
 
   wait-linux-api:
@@ -106,7 +102,6 @@ tasks:
     desc: Test Windows API
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
-
 
   full-release-setup:
     desc: Full setup from scratch (Windows + Linux + releases)
