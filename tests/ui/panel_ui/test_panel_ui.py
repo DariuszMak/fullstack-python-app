@@ -25,7 +25,7 @@ async def test_fetch_time_success(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("API_PORT", "80")
 
     with respx.mock:
-        respx.get("http://testserver:80/time").mock(
+        respx.get("http://testserver:80/api/v1/time").mock(
             return_value=Response(
                 200,
                 json={"datetime": "2026-01-25T12:00:00Z"},
@@ -43,7 +43,7 @@ async def test_fetch_time_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("API_PORT", "80")
 
     with respx.mock:
-        respx.get("http://testserver:80/time").mock(return_value=Response(500))
+        respx.get("http://testserver:80/api/v1/time").mock(return_value=Response(500))
 
         with pytest.raises(HTTPStatusError):
             await fetch_time()

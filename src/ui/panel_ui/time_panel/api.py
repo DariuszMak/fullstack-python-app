@@ -11,7 +11,7 @@ async def fetch_time() -> str:
     timeout = httpx.Timeout(10.0, connect=5.0)
 
     async with httpx.AsyncClient(timeout=timeout) as client:
-        resp = await client.get(f"{config.api_base_url}/time")
+        resp = await client.get(f"{config.api_base_url}/api/v1/time")
         resp.raise_for_status()
         data: Any = resp.json()
         return str(data["datetime"])

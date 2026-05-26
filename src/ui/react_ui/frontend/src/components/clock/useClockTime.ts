@@ -19,7 +19,7 @@ interface UseClockTimeResult extends ClockTimeRefs {
 }
 
 async function fetchTimeData(): Promise<{ datetime: string }> {
-  const res = await fetch(`${getApiBaseUrl()}/time`);
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/time`);
   if (!res.ok) throw new Error(`HTTP ${String(res.status)}`);
   return (await res.json()) as { datetime: string };
 }

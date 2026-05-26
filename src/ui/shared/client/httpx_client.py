@@ -15,7 +15,7 @@ class HttpxClient:
         self._base_url = base_url.rstrip("/")
 
     async def fetch_time(self) -> ServerTimeResponse:
-        url = f"{self._base_url}/time"
+        url = f"{self._base_url}/api/v1/time"
         log = logger.bind(url=url)
 
         async with httpx.AsyncClient() as client:
