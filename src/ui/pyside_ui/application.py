@@ -1,6 +1,5 @@
 import asyncio
 import sys
-from typing import Any
 
 import structlog
 from PySide6.QtCore import QCoreApplication
@@ -10,7 +9,7 @@ from qasync import QEventLoop  # type: ignore
 logger = structlog.get_logger(__name__)
 
 
-def create_application() -> tuple[QCoreApplication, Any]:
+def create_application() -> tuple[QCoreApplication, QEventLoop]:
     logger.info("initializing_application")
 
     app = QApplication.instance()
@@ -24,7 +23,7 @@ def create_application() -> tuple[QCoreApplication, Any]:
     return app, loop
 
 
-def run(loop: Any) -> None:
+def run(loop: QEventLoop) -> None:
     try:
         logger.info("application_started", loop_type="QEventLoop")
         with loop:
