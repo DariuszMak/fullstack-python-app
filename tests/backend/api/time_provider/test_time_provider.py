@@ -164,7 +164,7 @@ def test_context_raises_when_no_providers_configured() -> None:
 
 def test_time_route_returns_aware_datetime() -> None:
     with TestClient(app) as client:
-        response = client.get("/time")
+        response = client.get("/api/v1/time")
     assert response.status_code == 200
     _assert_datetime_response(response.json())
 
@@ -180,7 +180,7 @@ def test_time_route_uses_injected_context() -> None:
 
     try:
         with TestClient(app) as client:
-            response = client.get("/time")
+            response = client.get("/api/v1/time")
 
         assert response.status_code == 200
         data = response.json()

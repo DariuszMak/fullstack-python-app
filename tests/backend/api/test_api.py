@@ -160,7 +160,7 @@ def test_favicon() -> None:
 
 def test_ping_route() -> None:
     with TestClient(app) as client:
-        response = client.get("/ping")
+        response = client.get("/api/v1/ping")
         assert response.status_code == 200
         assert response.json() == {"message": "pong"}
 
@@ -184,7 +184,7 @@ def test_time_route_remote_via_monkeypatch(
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
     with TestClient(app) as client:
-        response = client.get("/time")
+        response = client.get("/api/v1/time")
 
     assert response.status_code == 200
     dt = _assert_datetime_response(response.json())
@@ -201,7 +201,7 @@ def test_time_route_fallback_to_local(
     monkeypatch.setattr(httpx.AsyncClient, "get", mock_get)
 
     with TestClient(app) as client:
-        response = client.get("/time")
+        response = client.get("/api/v1/time")
 
     assert response.status_code == 200
     _assert_datetime_response(response.json())
