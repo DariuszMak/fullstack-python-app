@@ -1,5 +1,6 @@
 from typing import Any
 
+import openmeteo_requests
 import pandas as pd
 import structlog
 
@@ -10,7 +11,7 @@ from src.backend.openmeteo.request_builder import API_URL, build_request_paramet
 logger = structlog.get_logger(__name__)
 
 
-def _fetch_weather_response(client: Any, parameters: dict[str, Any]) -> Any:
+def _fetch_weather_response(client: openmeteo_requests.Client, parameters: dict[str, Any]) -> Any:
     log = logger.bind(api_url=API_URL, parameters=parameters)
     log.info("requesting_weather_data")
 
