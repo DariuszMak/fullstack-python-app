@@ -1,5 +1,6 @@
 from typing import Any
 
+import structlog
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QSplashScreen
@@ -7,6 +8,8 @@ from PySide6.QtWidgets import QSplashScreen
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.application import create_application
 from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
+
+logger = structlog.get_logger(__name__)
 
 
 def bootstrap() -> tuple[Any, Any, MainWindow]:
@@ -23,6 +26,8 @@ def bootstrap() -> tuple[Any, Any, MainWindow]:
 
     StyleLoader.center_window(splash)
 
+    logger.info("showing splashscreen")
+
     splash.show()
     app.processEvents()
 
@@ -31,6 +36,8 @@ def bootstrap() -> tuple[Any, Any, MainWindow]:
     window.show()
 
     splash.finish(window)
+
+    logger.info("splashscreen closed")
 
     QTimer.singleShot(0, window.fetch_server_time)
 
