@@ -1,7 +1,5 @@
-from typing import Any
-
 import structlog
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QCoreApplication, Qt, QTimer
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QSplashScreen
 from qasync import QEventLoop  # type: ignore
@@ -13,7 +11,7 @@ from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
 logger = structlog.get_logger(__name__)
 
 
-def bootstrap() -> tuple[Any, QEventLoop, MainWindow]:
+def bootstrap() -> tuple[QCoreApplication, QEventLoop, MainWindow]:
     app, loop = create_application()
 
     pixmap = QPixmap(":/logos/icons/images/program_icon.ico").scaled(
