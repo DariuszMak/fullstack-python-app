@@ -30,7 +30,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/ping",
+					"raw": "http://127.0.0.1:{{port}}/api/v1/ping",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -40,6 +40,8 @@
 					],
 					"port": "{{port}}",
 					"path": [
+						"api",
+						"v1",
 						"ping"
 					]
 				}
@@ -72,7 +74,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:{{port}}/time",
+					"raw": "http://127.0.0.1:{{port}}/api/v1/time",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -82,6 +84,8 @@
 					],
 					"port": "{{port}}",
 					"path": [
+						"api",
+						"v1",
 						"time"
 					]
 				}
