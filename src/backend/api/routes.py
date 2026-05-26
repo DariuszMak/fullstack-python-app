@@ -38,12 +38,12 @@ async def favicon() -> FileResponse:
     return FileResponse(Path("src/ui/pyside_ui/forms/icons/images/program_icon.ico"))
 
 
-@router.get("/ping")
+@router.get("/api/v1/ping")
 async def ping() -> dict[str, str]:
     return {"message": "pong"}
 
 
-@router.get("/time")
+@router.get("/api/v1/time")
 async def current_time() -> dict[str, str]:
     dt = await time_sync_context_container.context.get_current_time()
     return {"datetime": dt.isoformat()}
