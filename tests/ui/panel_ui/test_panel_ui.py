@@ -3,12 +3,13 @@ from __future__ import annotations
 import asyncio
 import re
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import panel as pn
 import pytest
 import respx
 from httpx import HTTPStatusError, Response
+from panel.io.callbacks import PeriodicCallback
 
 import src.ui.panel_ui.time_panel.layout as module
 from src.ui.panel_ui.time_panel.api import fetch_time
@@ -22,8 +23,21 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
 
 
-class FakePeriodicCallback:
+class SchedulerProtocol(Protocol):
+    def add_periodic_callback(
+        self,
+        callback: Callable[[], None],
+        period: int,
+    ) -> PeriodicCallback: ...
+
+    def on_session_destroyed(self, callback: Callable[..., None]) -> None: ...
+
+
+class FakePeriodicCallback(PeriodicCallback):
     """Mimics panel.io.callbacks.PeriodicCallback well enough for tests."""
+
+    def __init__(self) -> None:
+        pass
 
     def stop(self) -> None:
         pass
@@ -40,7 +54,7 @@ class FakeScheduler:
         self,
         callback: Callable[[], None],
         period: int,
-    ) -> FakePeriodicCallback:
+    ) -> PeriodicCallback:
         _ = period
         self.registered_cb = callback
         return FakePeriodicCallback()
@@ -89,7 +103,11 @@ def _make_layout(
     hooks = FakeHooks(fake_fetch)
     scheduler = FakeScheduler()
 
-    col = create_layout(hooks=hooks, scheduler=scheduler, time_fetcher=fake_fetch)
+    col = create_layout(
+        hooks=hooks,
+        scheduler=cast("SchedulerProtocol", scheduler),
+        time_fetcher=fake_fetch,
+    )
 
     if trigger_onload and hooks.onload_cb is not None:
         hooks.onload_cb()
@@ -99,7 +117,10 @@ def _make_layout(
 
 def _make_clock_widget() -> tuple[ClockWidget, FakeScheduler]:
     scheduler = FakeScheduler()
-    widget = ClockWidget(size=300, scheduler=scheduler)
+    widget = ClockWidget(
+        size=300,
+        scheduler=cast("SchedulerProtocol", scheduler),
+    )
     return widget, scheduler
 
 
@@ -249,6 +270,7 @@ def test_clock_widget_tick_updates_bokeh_sources() -> None:
     for key in ("hour", "minute", "second"):
         xs = widget._sources[key].data["x"]
         ys = widget._sources[key].data["y"]
+
         assert len(xs) == 2
         assert len(ys) == 2
         assert not (xs[1] == pytest.approx(0.0) and ys[1] == pytest.approx(0.0)), f"{key} hand tip is still at origin"
@@ -298,4 +320,7 @@ def test_clock_widget_tick_via_scheduler() -> None:
 
 def test_no_inline_pid_classes() -> None:
     assert not hasattr(module, "PID"), "time_panel should not define its own PID class"
-    assert not hasattr(module, "PIDMovement"), "time_panel should not define its own PIDMovement"
+    assert not hasattr(
+        module,
+        "PIDMovement",
+    ), "time_panel should not define its own PIDMovement"
