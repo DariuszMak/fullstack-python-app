@@ -5,7 +5,8 @@ import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import FileResponse
 
-from src.backend.api.models.best_score_response import BestScoreQueryParams, BestScoreResponse
+from src.backend.api.models.best_score_query_params import BestScoreQueryParams
+from src.backend.api.models.best_score_response import BestScoreResponse
 from src.backend.api.models.helpers.best_score_calculator import calculate_best_scores
 from src.backend.api.models.helpers.weather_info_parse import parse_weather_records
 from src.backend.api.models.weather_info_response import (

@@ -7,7 +7,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.backend.api.models.best_score_response import BestScoreQueryParams, PlaceBestScoreRecord
+from src.backend.api.models.best_score_query_params import BestScoreQueryParams
+from src.backend.api.models.best_score_response import PlaceBestScoreRecord
 from src.backend.api.models.helpers.best_score_calculator import (
     _OPENMETEO_CONCURRENCY,
     _day_weight,

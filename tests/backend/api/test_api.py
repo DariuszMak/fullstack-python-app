@@ -1,5 +1,6 @@
 import asyncio
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
@@ -9,7 +10,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.backend.api.app import app
-from src.backend.api.models.best_score_response import BestScoreQueryParams, PlaceBestScoreRecord
+from src.backend.api.models.best_score_response import PlaceBestScoreRecord
+
+if TYPE_CHECKING:
+    from src.backend.api.models.best_score_query_params import BestScoreQueryParams
 
 N_HOURS = 384
 N_DAYS = 16
