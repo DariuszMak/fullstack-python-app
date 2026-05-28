@@ -11,9 +11,9 @@ from src.backend.openmeteo.request_builder import build_request_parameters
 if TYPE_CHECKING:
     import pandas as pd
 
-# Open-Meteo free tier allows only 1 concurrent request.
-# A semaphore of 2 gives a small parallelism benefit (cache hits are instant)
-# while staying well within the limit in practice.
+
+
+
 _OPENMETEO_CONCURRENCY = 2
 
 
@@ -59,8 +59,8 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
     _, daily_df = gather_data(parameters)
     daily_df = daily_df.reset_index(drop=True)
 
-    # Slice to the requested day window [start_day, end_day)
-    # end_day is always resolved (never None) thanks to the model validator
+    
+    
     daily_df = daily_df.iloc[params.start_day : params.end_day]
 
     score = _score_place(

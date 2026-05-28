@@ -21,9 +21,9 @@ from src.ui.shared.model.data_types import ClockHands
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
 
-# ---------------------------------------------------------------------------
-# Test doubles — no pn.state touched at all
-# ---------------------------------------------------------------------------
+
+
+
 
 
 class FakePeriodicCallback:
@@ -74,9 +74,9 @@ class FakeHooks:
         self.onload_cb = callback
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def _make_layout(
@@ -101,9 +101,9 @@ def _make_clock_widget() -> tuple[ClockWidget, FakeScheduler]:
     return widget, scheduler
 
 
-# ---------------------------------------------------------------------------
-# fetch_time (HTTP layer)
-# ---------------------------------------------------------------------------
+
+
+
 
 
 @pytest.mark.asyncio
@@ -132,9 +132,9 @@ async def test_fetch_time_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
             await fetch_time()
 
 
-# ---------------------------------------------------------------------------
-# create_layout — button / onload behaviour
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_on_click_success() -> None:
@@ -175,18 +175,18 @@ def test_on_click_sets_clock_datetime() -> None:
 
     col, _, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
-    # Capture set_current_datetime calls on the already-constructed widget
-    col[1].object.renderers  # type: ignore[attr-defined]
+    
+    col[1].object.renderers  
 
-    # Reach into the column to grab the ClockWidget instance via the pane
+    
     cast("pn.pane.Bokeh", col[1])
-    # Reconstruct by wrapping the layout's button click instead
+    
     time_display = cast("pn.pane.Markdown", col[3])
     button = cast("pn.widgets.Button", col[2])
 
     button.clicks += 1
 
-    # The time display being updated proves set_current_datetime was called
+    
     assert "2026-01-25T12:00:00+00:00" in time_display.object
 
 
@@ -212,9 +212,9 @@ def test_layout_structure() -> None:
     assert isinstance(col[3], pn.pane.Markdown)
 
 
-# ---------------------------------------------------------------------------
-# ClockWidget
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_clock_widget_uses_shared_clock_controller() -> None:
