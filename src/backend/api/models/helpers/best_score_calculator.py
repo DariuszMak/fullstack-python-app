@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING
 
 from src.backend.api.models.best_score_response import BestScoreQueryParams, PlaceBestScoreRecord
@@ -40,36 +41,48 @@ def _score_place(
     return score
 
 
-def calculate_best_scores(params: BestScoreQueryParams) -> list[PlaceBestScoreRecord]:
-    records: list[PlaceBestScoreRecord] = []
+def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScoreRecord:
+    """Synchronous per-place fetch + score. Run in a thread pool for concurrency."""
+    place = PLACES[key]
+    parameters = build_request_parameters(
+        latitude=place.latitude,
+        longitude=place.longitude,
+        timezone=place.timezone,
+        forecast_days=params.forecast_days,
+    )
 
-    for key, place in PLACES.items():
-        parameters = build_request_parameters(
-            latitude=place.latitude,
-            longitude=place.longitude,
-            timezone=place.timezone,
-            forecast_days=params.forecast_days,
-        )
+    _, daily_df = gather_data(parameters)
+    daily_df = daily_df.reset_index(drop=True)
 
-        _, daily_df = gather_data(parameters)
-        daily_df = daily_df.reset_index(drop=True)
+    # Slice to the requested day window [start_day, end_day)
+    # end_day is always resolved (never None) thanks to the model validator
+    daily_df = daily_df.iloc[params.start_day : params.end_day]
 
-        score = _score_place(
-            daily_df,
-            params.apparent_temperature_threshold,
-            params.penalize_rain,
-        )
+    score = _score_place(
+        daily_df,
+        params.apparent_temperature_threshold,
+        params.penalize_rain,
+    )
 
-        records.append(
-            PlaceBestScoreRecord(
-                key=key,
-                name=place.name,
-                latitude=place.latitude,
-                longitude=place.longitude,
-                timezone=place.timezone,
-                score=round(score, 4),
-            )
-        )
+    return PlaceBestScoreRecord(
+        key=key,
+        name=place.name,
+        latitude=place.latitude,
+        longitude=place.longitude,
+        timezone=place.timezone,
+        score=round(score, 4),
+    )
+
+
+async def calculate_best_scores(params: BestScoreQueryParams) -> list[PlaceBestScoreRecord]:
+    """Fetch all places concurrently (thread pool) then sort by score descending."""
+    loop = asyncio.get_event_loop()
+
+    tasks = [
+        loop.run_in_executor(None, _fetch_place_score, key, params)
+        for key in PLACES
+    ]
+    records: list[PlaceBestScoreRecord] = await asyncio.gather(*tasks)
 
     records.sort(key=lambda r: r.score, reverse=True)
-    return records
+    return list(records)

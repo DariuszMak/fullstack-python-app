@@ -73,12 +73,14 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
 
 
 @router.post("/api/v1/forecast/weather-score")
-def weather_score(params: BestScoreQueryParams) -> BestScoreResponse:
-    results = calculate_best_scores(params)
+async def weather_score(params: BestScoreQueryParams) -> BestScoreResponse:
+    results = await calculate_best_scores(params)
     return BestScoreResponse(
         results=results,
         threshold=params.apparent_temperature_threshold,
         penalize_rain=params.penalize_rain,
+        start_day=params.start_day,
+        end_day=params.end_day,  # always resolved by validator
     )
 
 
