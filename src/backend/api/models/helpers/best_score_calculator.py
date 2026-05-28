@@ -94,9 +94,7 @@ async def calculate_best_scores(params: BestScoreQueryParams) -> list[PlaceBestS
         async with semaphore:
             return await loop.run_in_executor(None, _fetch_place_score, key, params)
 
-    records: list[PlaceBestScoreRecord] = await asyncio.gather(
-        *(_guarded(key) for key in PLACES)
-    )
+    records: list[PlaceBestScoreRecord] = await asyncio.gather(*(_guarded(key) for key in PLACES))
 
     records.sort(key=lambda r: r.score, reverse=True)
     return list(records)
