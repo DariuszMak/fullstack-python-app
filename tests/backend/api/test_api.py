@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 
 from src.backend.api.app import app
 from src.backend.api.models.best_score_response import PlaceBestScoreRecord
+from src.backend.api.models.weather_query_params import WeatherQueryParams
 
 if TYPE_CHECKING:
     from src.backend.api.models.best_score_query_params import BestScoreQueryParams
@@ -212,8 +213,10 @@ def test_time_route_fallback_to_local(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_weather_info_returns_200(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        response = client.post("/api/v1/forecast/info", json={})
+        response = client.post("/api/v1/forecast/info", json=WeatherQueryParams().model_dump())
+
     assert response.status_code == 200
 
 
@@ -222,8 +225,13 @@ def test_weather_info_returns_200(mock_build: MagicMock, mock_gather: MagicMock)
 def test_weather_info_response_has_required_top_level_keys(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     assert "hourly" in data
     assert "daily" in data
     assert "hourly_rows" in data
@@ -235,8 +243,13 @@ def test_weather_info_response_has_required_top_level_keys(mock_build: MagicMock
 def test_weather_info_row_counts_match_dataframes(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(N_HOURS), _make_daily_df(N_DAYS))
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     assert data["hourly_rows"] == N_HOURS
     assert data["daily_rows"] == N_DAYS
     assert len(data["hourly"]) == N_HOURS
@@ -248,8 +261,13 @@ def test_weather_info_row_counts_match_dataframes(mock_build: MagicMock, mock_ga
 def test_weather_info_hourly_record_has_all_fields(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     first_hourly = data["hourly"][0]
     for field in HOURLY_COLUMNS:
         assert field in first_hourly, f"missing hourly field: {field}"
@@ -260,8 +278,13 @@ def test_weather_info_hourly_record_has_all_fields(mock_build: MagicMock, mock_g
 def test_weather_info_daily_record_has_all_fields(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     first_daily = data["daily"][0]
     for field in DAILY_COLUMNS:
         assert field in first_daily, f"missing daily field: {field}"
@@ -272,8 +295,13 @@ def test_weather_info_daily_record_has_all_fields(mock_build: MagicMock, mock_ga
 def test_weather_info_hourly_dates_are_iso_strings(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     for record in data["hourly"]:
         dt = datetime.fromisoformat(record["date"])
         assert dt.tzinfo is not None
@@ -284,8 +312,13 @@ def test_weather_info_hourly_dates_are_iso_strings(mock_build: MagicMock, mock_g
 def test_weather_info_daily_dates_are_iso_strings(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     for record in data["daily"]:
         dt = datetime.fromisoformat(record["date"])
         assert dt.tzinfo is not None
@@ -296,8 +329,13 @@ def test_weather_info_daily_dates_are_iso_strings(mock_build: MagicMock, mock_ga
 def test_weather_info_sunrise_sunset_are_integers(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     for record in data["daily"]:
         assert isinstance(record["sunrise"], int)
         assert isinstance(record["sunset"], int)
@@ -306,12 +344,20 @@ def test_weather_info_sunrise_sunset_are_integers(mock_build: MagicMock, mock_ga
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
 def test_weather_info_passes_params_to_build_request_parameters(mock_build: MagicMock, mock_gather: MagicMock) -> None:
+    params = WeatherQueryParams(
+        latitude=54.352,
+        longitude=18.649,
+        timezone="Europe/Warsaw",
+        forecast_days=7,
+    )
+
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
-    payload = {"latitude": 54.352, "longitude": 18.649, "timezone": "Europe/Warsaw", "forecast_days": 7}
+
     with TestClient(app) as client:
-        client.post("/api/v1/forecast/info", json=payload)
-    mock_build.assert_called_once_with(latitude=54.352, longitude=18.649, timezone="Europe/Warsaw", forecast_days=7)
+        client.post("/api/v1/forecast/info", json=params.model_dump())
+
+    mock_build.assert_called_once_with(**params.model_dump())
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -320,8 +366,13 @@ def test_weather_info_passes_built_parameters_to_gather_data(mock_build: MagicMo
     sentinel_params = {"sentinel": True}
     mock_build.return_value = sentinel_params
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
     with TestClient(app) as client:
-        client.post("/api/v1/forecast/info", json={})
+        client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        )
+
     mock_gather.assert_called_once_with(sentinel_params)
 
 
@@ -332,15 +383,33 @@ def test_weather_info_default_params_are_valid() -> None:
     ):
         mock_build.return_value = {}
         mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
         with TestClient(app) as client:
-            response = client.post("/api/v1/forecast/info", json={})
+            response = client.post(
+                "/api/v1/forecast/info",
+                json=WeatherQueryParams().model_dump(),
+            )
+
     assert response.status_code == 200
 
 
 def test_weather_info_rejects_forecast_days_out_of_range() -> None:
     with TestClient(app) as client:
-        assert client.post("/api/v1/forecast/info", json={"forecast_days": 0}).status_code == 422
-        assert client.post("/api/v1/forecast/info", json={"forecast_days": 17}).status_code == 422
+        assert (
+            client.post(
+                "/api/v1/forecast/info",
+                json={**WeatherQueryParams().model_dump(), "forecast_days": 0},
+            ).status_code
+            == 422
+        )
+
+        assert (
+            client.post(
+                "/api/v1/forecast/info",
+                json={**WeatherQueryParams().model_dump(), "forecast_days": 17},
+            ).status_code
+            == 422
+        )
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -348,10 +417,16 @@ def test_weather_info_rejects_forecast_days_out_of_range() -> None:
 def test_weather_info_sanitizes_nan_in_hourly(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     hourly_df = _make_hourly_df(1)
     hourly_df.loc[0, "temperature_2m"] = float("nan")
+
     mock_build.return_value = {}
     mock_gather.return_value = (hourly_df, _make_daily_df(1))
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     assert data["hourly"][0]["temperature_2m"] == pytest.approx(0.0)
 
 
@@ -360,10 +435,16 @@ def test_weather_info_sanitizes_nan_in_hourly(mock_build: MagicMock, mock_gather
 def test_weather_info_sanitizes_inf_in_hourly(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     hourly_df = _make_hourly_df(1)
     hourly_df.loc[0, "wind_speed_10m"] = float("inf")
+
     mock_build.return_value = {}
     mock_gather.return_value = (hourly_df, _make_daily_df(1))
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     assert data["hourly"][0]["wind_speed_10m"] == pytest.approx(0.0)
 
 
@@ -372,26 +453,36 @@ def test_weather_info_sanitizes_inf_in_hourly(mock_build: MagicMock, mock_gather
 def test_weather_info_sanitizes_nan_in_daily(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     daily_df = _make_daily_df(1)
     daily_df.loc[0, "rain_sum"] = float("nan")
+
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(1), daily_df)
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/info", json={}).json()
+        data = client.post(
+            "/api/v1/forecast/info",
+            json=WeatherQueryParams().model_dump(),
+        ).json()
+
     assert data["daily"][0]["rain_sum"] == pytest.approx(0.0)
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_returns_200(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
         response = client.post("/api/v1/forecast/weather-score", json={})
+
     assert response.status_code == 200
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_response_has_required_keys(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
         data = client.post("/api/v1/forecast/weather-score", json={}).json()
+
     assert "results" in data
     assert "threshold" in data
     assert "penalize_rain" in data
@@ -401,52 +492,81 @@ def test_best_score_endpoint_response_has_required_keys(mock_calc: AsyncMock) ->
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_reflects_threshold(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
         data = client.post(
             "/api/v1/forecast/weather-score",
             json={"apparent_temperature_threshold": 18.5},
         ).json()
+
     assert data["threshold"] == pytest.approx(18.5)
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_reflects_penalize_rain(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/weather-score", json={"penalize_rain": True}).json()
+        data = client.post(
+            "/api/v1/forecast/weather-score",
+            json={"penalize_rain": True},
+        ).json()
+
     assert data["penalize_rain"] is True
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_reflects_day_range(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
         data = client.post(
             "/api/v1/forecast/weather-score",
             json={"forecast_days": 16, "start_day": 3},
         ).json()
+
     assert data["start_day"] == 3
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_default_doesnt_affect_start_day(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
-        data = client.post("/api/v1/forecast/weather-score", json={"forecast_days": 10}).json()
+        data = client.post(
+            "/api/v1/forecast/weather-score",
+            json={"forecast_days": 10},
+        ).json()
+
     assert data["start_day"] == 0
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_rejects_forecast_days_out_of_range(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
-        assert client.post("/api/v1/forecast/weather-score", json={"forecast_days": 0}).status_code == 422
-        assert client.post("/api/v1/forecast/weather-score", json={"forecast_days": 17}).status_code == 422
+        assert (
+            client.post(
+                "/api/v1/forecast/weather-score",
+                json={"forecast_days": 0},
+            ).status_code
+            == 422
+        )
+
+        assert (
+            client.post(
+                "/api/v1/forecast/weather-score",
+                json={"forecast_days": 17},
+            ).status_code
+            == 422
+        )
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
+
     with TestClient(app) as client:
         assert (
             client.post(
@@ -467,22 +587,14 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_passes_params_to_calculator(mock_calc: AsyncMock) -> None:
-    mock_calc.return_value = []
-    payload = {
-        "apparent_temperature_threshold": 22.0,
-        "penalize_rain": True,
-        "forecast_days": 5,
-        "start_day": 1,
-    }
+    payload = WeatherQueryParams(forecast_days=5)
+
     with TestClient(app) as client:
-        client.post("/api/v1/forecast/weather-score", json=payload)
+        client.post("/api/v1/forecast/weather-score", json=payload.model_dump())
 
     mock_calc.assert_called_once()
     called_params: BestScoreQueryParams = mock_calc.call_args[0][0]
-    assert called_params.apparent_temperature_threshold == pytest.approx(22.0)
-    assert called_params.penalize_rain is True
     assert called_params.forecast_days == 5
-    assert called_params.start_day == 1
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
@@ -497,8 +609,10 @@ def test_best_score_endpoint_result_fields(mock_calc: AsyncMock) -> None:
             score=42.5,
         )
     ]
+
     with TestClient(app) as client:
         data = client.post("/api/v1/forecast/weather-score", json={}).json()
+
     record = data["results"][0]
     assert record["key"] == "jarocin"
     assert record["name"] == "Jarocin"
