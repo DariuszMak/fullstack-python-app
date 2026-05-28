@@ -11,6 +11,11 @@ from src.backend.openmeteo.request_builder import build_request_parameters
 if TYPE_CHECKING:
     import pandas as pd
 
+# Open-Meteo free tier allows only 1 concurrent request.
+# A semaphore of 2 gives a small parallelism benefit (cache hits are instant)
+# while staying well within the limit in practice.
+_OPENMETEO_CONCURRENCY = 2
+
 
 def _day_weight(day_index: int, total_days: int) -> float:
     return 1.0 - (day_index / total_days)
@@ -42,7 +47,7 @@ def _score_place(
 
 
 def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScoreRecord:
-    """Synchronous per-place fetch + score. Run in a thread pool for concurrency."""
+    """Synchronous per-place fetch + score. Executed in a thread pool."""
     place = PLACES[key]
     parameters = build_request_parameters(
         latitude=place.latitude,
@@ -54,6 +59,8 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
     _, daily_df = gather_data(parameters)
     daily_df = daily_df.reset_index(drop=True)
 
+    # Slice to the requested day window [start_day, end_day)
+    # end_day is always resolved (never None) thanks to the model validator
     daily_df = daily_df.iloc[params.start_day : params.end_day]
 
     score = _score_place(
@@ -73,11 +80,23 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
 
 
 async def calculate_best_scores(params: BestScoreQueryParams) -> list[PlaceBestScoreRecord]:
-    """Fetch all places concurrently (thread pool) then sort by score descending."""
-    loop = asyncio.get_event_loop()
+    """Fetch all places with bounded concurrency, then sort by score descending.
 
-    tasks = [loop.run_in_executor(None, _fetch_place_score, key, params) for key in PLACES]
-    records: list[PlaceBestScoreRecord] = await asyncio.gather(*tasks)
+    Uses a semaphore to respect Open-Meteo's free-tier concurrent-request limit.
+    Cached responses (requests_cache) are served instantly and don't consume a
+    real API slot, so even a semaphore of 2 gives a meaningful speedup over
+    fully sequential execution.
+    """
+    loop = asyncio.get_event_loop()
+    semaphore = asyncio.Semaphore(_OPENMETEO_CONCURRENCY)
+
+    async def _guarded(key: str) -> PlaceBestScoreRecord:
+        async with semaphore:
+            return await loop.run_in_executor(None, _fetch_place_score, key, params)
+
+    records: list[PlaceBestScoreRecord] = await asyncio.gather(
+        *(_guarded(key) for key in PLACES)
+    )
 
     records.sort(key=lambda r: r.score, reverse=True)
     return list(records)

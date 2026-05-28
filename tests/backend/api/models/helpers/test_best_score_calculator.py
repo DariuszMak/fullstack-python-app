@@ -32,6 +32,10 @@ def _make_daily_df(
     })
 
 
+# ---------------------------------------------------------------------------
+# _day_weight
+# ---------------------------------------------------------------------------
+
 def test_day_weight_first_day_is_one() -> None:
     assert _day_weight(0, 10) == pytest.approx(1.0)
 
@@ -43,6 +47,10 @@ def test_day_weight_last_day_is_near_zero() -> None:
 def test_day_weight_middle_day() -> None:
     assert _day_weight(5, 10) == pytest.approx(0.5)
 
+
+# ---------------------------------------------------------------------------
+# _score_place
+# ---------------------------------------------------------------------------
 
 def test_score_place_zero_when_all_below_threshold() -> None:
     df = _make_daily_df(apparent_max=15.0)
@@ -124,6 +132,10 @@ def test_score_place_exact_threshold_not_counted() -> None:
     assert score == pytest.approx(0.0)
 
 
+# ---------------------------------------------------------------------------
+# BestScoreQueryParams — day range validation
+# ---------------------------------------------------------------------------
+
 def test_params_end_day_defaults_to_forecast_days() -> None:
     params = BestScoreQueryParams(forecast_days=10)
     assert params.end_day == 10
@@ -149,6 +161,10 @@ def test_params_start_day_gt_end_day_raises() -> None:
     with pytest.raises(ValueError, match="start_day"):
         BestScoreQueryParams(forecast_days=10, start_day=7, end_day=3)
 
+
+# ---------------------------------------------------------------------------
+# calculate_best_scores (async)
+# ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 @patch("src.backend.api.models.helpers.best_score_calculator.gather_data")
@@ -243,6 +259,7 @@ async def test_calculate_best_scores_only_scores_day_range(
     """Scores computed with start_day=3, end_day=7 must use only those 4 rows."""
     mock_build.return_value = {}
 
+    # Days 0-2: very hot (would dominate if included); days 3-6: just above threshold
     n = 10
     apparent_values = [40.0, 40.0, 40.0, 22.0, 22.0, 22.0, 22.0, 5.0, 5.0, 5.0]
     dates = pd.date_range(start=pd.Timestamp("2026-05-22", tz="UTC"), periods=n, freq="D")
@@ -280,7 +297,55 @@ async def test_calculate_best_scores_only_scores_day_range(
     results_range = await calculate_best_scores(params_range)
     scores_range = {r.key: r.score for r in results_range}
 
+    # Range scores must be lower since the hot early days are excluded
     for key in scores_full:
         assert scores_range[key] < scores_full[key], (
             f"Place {key}: range score {scores_range[key]} should be < full score {scores_full[key]}"
         )
+
+
+@pytest.mark.asyncio
+@patch("src.backend.api.models.helpers.best_score_calculator.gather_data")
+@patch("src.backend.api.models.helpers.best_score_calculator.build_request_parameters")
+async def test_calculate_best_scores_concurrency_capped(
+    mock_build: MagicMock,
+    mock_gather: MagicMock,
+) -> None:
+    """Never more than _OPENMETEO_CONCURRENCY threads active at the same time."""
+    from src.backend.api.models.helpers.best_score_calculator import _OPENMETEO_CONCURRENCY
+
+    import threading
+
+    mock_build.return_value = {}
+    active = threading.Semaphore(0)  # counts currently-running fetches
+    peak = 0
+    lock = threading.Lock()
+
+    def side_effect(_params: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+        nonlocal peak
+        active.release()
+        with lock:
+            # count how many threads are inside this function right now
+            current = 0
+            tmp = []
+            while active.acquire(blocking=False):
+                current += 1
+                tmp.append(True)
+            for _ in tmp:
+                active.release()
+            # +1 for ourselves
+            current += 1
+            peak = max(peak, current)
+        import time
+        time.sleep(0.01)          # hold the slot briefly so overlap is detectable
+        active.acquire(blocking=False)
+        return pd.DataFrame(), _make_daily_df()
+
+    mock_gather.side_effect = side_effect
+
+    params = BestScoreQueryParams()
+    await calculate_best_scores(params)
+
+    assert peak <= _OPENMETEO_CONCURRENCY, (
+        f"Peak concurrent fetches {peak} exceeded semaphore limit {_OPENMETEO_CONCURRENCY}"
+    )
