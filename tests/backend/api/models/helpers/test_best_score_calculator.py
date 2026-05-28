@@ -1,9 +1,5 @@
 import threading
 import time
-from src.backend.openmeteo.places.places import PLACES
-
-
-from src.backend.api.models.helpers.best_score_calculator import _OPENMETEO_CONCURRENCY
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -12,7 +8,13 @@ import pandas as pd
 import pytest
 
 from src.backend.api.models.best_score_response import BestScoreQueryParams, PlaceBestScoreRecord
-from src.backend.api.models.helpers.best_score_calculator import _day_weight, _score_place, calculate_best_scores
+from src.backend.api.models.helpers.best_score_calculator import (
+    _OPENMETEO_CONCURRENCY,
+    _day_weight,
+    _score_place,
+    calculate_best_scores,
+)
+from src.backend.openmeteo.places.places import PLACES
 
 N_DAYS = 4
 

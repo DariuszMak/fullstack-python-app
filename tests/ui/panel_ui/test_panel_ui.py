@@ -34,7 +34,6 @@ class SchedulerProtocol(Protocol):
 
 
 class FakePeriodicCallback(PeriodicCallback):
-
     def __init__(self) -> None:
         pass
 
