@@ -99,7 +99,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200 or 404\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200,404]);",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -346,6 +346,259 @@
 						"v1",
 						"forecast",
 						"info"
+					]
+				}
+			}
+		},
+		{
+			"name": "weather score - defaults",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains required top-level fields\", function () {",
+							"    const jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData).to.have.property(\"results\");",
+							"    pm.expect(jsonData).to.have.property(\"threshold\");",
+							"    pm.expect(jsonData).to.have.property(\"penalize_rain\");",
+							"    pm.expect(jsonData).to.have.property(\"start_day\");",
+							"    pm.expect(jsonData).to.have.property(\"end_day\");",
+							"});",
+							"",
+							"pm.test(\"results is an array\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.results).to.be.an(\"array\");",
+							"});",
+							"",
+							"pm.test(\"Default threshold is 20\", function () {",
+							"    pm.expect(pm.response.json().threshold).to.eql(20);",
+							"});",
+							"",
+							"pm.test(\"Default penalize_rain is true\", function () {",
+							"    pm.expect(pm.response.json().penalize_rain).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Default start_day is 0\", function () {",
+							"    pm.expect(pm.response.json().start_day).to.eql(0);",
+							"});",
+							"",
+							"pm.test(\"Default end_day equals forecast_days (16)\", function () {",
+							"    pm.expect(pm.response.json().end_day).to.eql(16);",
+							"});",
+							"",
+							"pm.test(\"Each result has required fields\", function () {",
+							"    const results = pm.response.json().results;",
+							"    results.forEach(function (record) {",
+							"        pm.expect(record).to.have.property(\"key\");",
+							"        pm.expect(record).to.have.property(\"name\");",
+							"        pm.expect(record).to.have.property(\"latitude\");",
+							"        pm.expect(record).to.have.property(\"longitude\");",
+							"        pm.expect(record).to.have.property(\"timezone\");",
+							"        pm.expect(record).to.have.property(\"score\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Results are sorted by score descending\", function () {",
+							"    const scores = pm.response.json().results.map(r => r.score);",
+							"    for (let i = 0; i < scores.length - 1; i++) {",
+							"        pm.expect(scores[i]).to.be.at.least(scores[i + 1]);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/weather-score",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"forecast",
+						"weather-score"
+					]
+				}
+			}
+		},
+		{
+			"name": "weather score - day range",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"start_day and end_day are echoed back correctly\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.start_day).to.eql(3);",
+							"    pm.expect(jsonData.end_day).to.eql(7);",
+							"});",
+							"",
+							"pm.test(\"threshold and penalize_rain are reflected\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.threshold).to.eql(18);",
+							"    pm.expect(jsonData.penalize_rain).to.eql(false);",
+							"});",
+							"",
+							"pm.test(\"Results are sorted by score descending\", function () {",
+							"    const scores = pm.response.json().results.map(r => r.score);",
+							"    for (let i = 0; i < scores.length - 1; i++) {",
+							"        pm.expect(scores[i]).to.be.at.least(scores[i + 1]);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"apparent_temperature_threshold\": 18,\n  \"penalize_rain\": false,\n  \"forecast_days\": 16,\n  \"start_day\": 3,\n  \"end_day\": 7\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/weather-score",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"forecast",
+						"weather-score"
+					]
+				}
+			}
+		},
+		{
+			"name": "weather score - invalid day range (422)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"forecast_days\": 5,\n  \"start_day\": 4,\n  \"end_day\": 4\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/weather-score",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"forecast",
+						"weather-score"
+					]
+				}
+			}
+		},
+		{
+			"name": "weather score - end_day exceeds forecast_days (422)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"forecast_days\": 5,\n  \"start_day\": 0,\n  \"end_day\": 6\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/weather-score",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"forecast",
+						"weather-score"
 					]
 				}
 			}
