@@ -425,7 +425,7 @@ def test_best_score_endpoint_reflects_day_range(mock_calc: AsyncMock) -> None:
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
-def test_best_score_endpoint_default_end_day_equals_forecast_days(mock_calc: AsyncMock) -> None:
+def test_best_score_endpoint_default_doesnt_affect_start_day(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
     with TestClient(app) as client:
         data = client.post("/api/v1/forecast/weather-score", json={"forecast_days": 10}).json()
