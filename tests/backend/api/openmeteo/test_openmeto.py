@@ -10,7 +10,7 @@ from src.backend.openmeteo.parse import (
     parse_daily_dataframe,
     parse_hourly_dataframe,
 )
-from src.backend.openmeteo.request_builder import FORECAST_DAYS, build_request_parameters
+from src.backend.openmeteo.request_builder import MAX_FORECAST_DAYS, build_request_parameters
 
 HOURLY_COLUMNS = [
     "date",
@@ -170,7 +170,7 @@ def test_daily_and_hourly_are_lists() -> None:
 
 
 def test_forecast_days_default() -> None:
-    assert build_request_parameters()["forecast_days"] == FORECAST_DAYS
+    assert build_request_parameters()["forecast_days"] == MAX_FORECAST_DAYS
 
 
 def test_custom_forecast_days() -> None:

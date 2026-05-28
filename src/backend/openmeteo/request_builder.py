@@ -1,6 +1,6 @@
 from src.backend.openmeteo.places.places import LATITUDE, LONGITUDE, TIMEZONE
 
-FORECAST_DAYS: int = 16
+MAX_FORECAST_DAYS: int = 16
 API_URL: str = "https://api.open-meteo.com/v1/forecast"
 
 DAILY_VARIABLES: list[str] = [
@@ -35,7 +35,7 @@ def build_request_parameters(
     latitude: float = LATITUDE,
     longitude: float = LONGITUDE,
     timezone: str = TIMEZONE,
-    forecast_days: int = FORECAST_DAYS,
+    forecast_days: int = MAX_FORECAST_DAYS,
 ) -> dict[str, object]:
     return {
         "latitude": latitude,
