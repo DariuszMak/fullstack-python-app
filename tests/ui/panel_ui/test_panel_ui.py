@@ -39,8 +39,9 @@ class FakeScheduler:
     def add_periodic_callback(
         self,
         callback: Callable[[], None],
-        _period: int,
+        period: int,
     ) -> FakePeriodicCallback:
+        _ = period
         self.registered_cb = callback
         return FakePeriodicCallback()
 
