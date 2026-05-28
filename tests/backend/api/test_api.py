@@ -392,7 +392,6 @@ def test_best_score_endpoint_response_has_required_keys(mock_calc: AsyncMock) ->
     assert "threshold" in data
     assert "penalize_rain" in data
     assert "start_day" in data
-    assert "end_day" in data
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
@@ -420,10 +419,9 @@ def test_best_score_endpoint_reflects_day_range(mock_calc: AsyncMock) -> None:
     with TestClient(app) as client:
         data = client.post(
             "/api/v1/forecast/weather-score",
-            json={"forecast_days": 16, "start_day": 3, "end_day": 7},
+            json={"forecast_days": 16, "start_day": 3},
         ).json()
     assert data["start_day"] == 3
-    assert data["end_day"] == 7
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
@@ -431,7 +429,6 @@ def test_best_score_endpoint_default_end_day_equals_forecast_days(mock_calc: Asy
     mock_calc.return_value = []
     with TestClient(app) as client:
         data = client.post("/api/v1/forecast/weather-score", json={"forecast_days": 10}).json()
-    assert data["end_day"] == 10
     assert data["start_day"] == 0
 
 
@@ -450,7 +447,7 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
-                json={"forecast_days": 5, "end_day": 6},
+                json={"forecast_days": 5},
             ).status_code
             == 422
         )
@@ -458,7 +455,7 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
-                json={"forecast_days": 10, "start_day": 5, "end_day": 5},
+                json={"forecast_days": 10, "start_day": 5},
             ).status_code
             == 422
         )
@@ -472,7 +469,6 @@ def test_best_score_endpoint_passes_params_to_calculator(mock_calc: AsyncMock) -
         "penalize_rain": True,
         "forecast_days": 5,
         "start_day": 1,
-        "end_day": 4,
     }
     with TestClient(app) as client:
         client.post("/api/v1/forecast/weather-score", json=payload)
@@ -483,7 +479,6 @@ def test_best_score_endpoint_passes_params_to_calculator(mock_calc: AsyncMock) -
     assert called_params.penalize_rain is True
     assert called_params.forecast_days == 5
     assert called_params.start_day == 1
-    assert called_params.end_day == 4
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)

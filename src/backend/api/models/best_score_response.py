@@ -16,24 +16,12 @@ class BestScoreQueryParams(BaseModel):
         ge=0,
         description="First day offset from today (0 = today) to include in scoring",
     )
-    end_day: int | None = Field(
-        default=None,
-        description=(
-            "Exclusive end day offset from today. "
-            "Defaults to forecast_days. Must satisfy start_day < end_day <= forecast_days."
-        ),
-    )
 
     @model_validator(mode="after")
     def _validate_day_range(self) -> BestScoreQueryParams:
-        effective_end = self.end_day if self.end_day is not None else self.forecast_days
+        if self.start_day >= self.forecast_days:
+            raise ValueError(f"start_day ({self.start_day}) must be less than forecast_days ({self.forecast_days})")
 
-        if effective_end > self.forecast_days:
-            raise ValueError(f"end_day ({effective_end}) cannot exceed forecast_days ({self.forecast_days})")
-        if self.start_day >= effective_end:
-            raise ValueError(f"start_day ({self.start_day}) must be less than end_day ({effective_end})")
-
-        object.__setattr__(self, "end_day", effective_end)
         return self
 
 
@@ -51,4 +39,3 @@ class BestScoreResponse(BaseModel):
     threshold: float
     penalize_rain: bool
     start_day: int
-    end_day: int

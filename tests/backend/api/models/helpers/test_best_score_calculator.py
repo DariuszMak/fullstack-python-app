@@ -132,30 +132,19 @@ def test_score_place_exact_threshold_not_counted() -> None:
     assert score == pytest.approx(0.0)
 
 
-def test_params_end_day_defaults_to_forecast_days() -> None:
-    params = BestScoreQueryParams(forecast_days=10)
-    assert params.end_day == 10
-
-
 def test_params_explicit_start_end_accepted() -> None:
-    params = BestScoreQueryParams(forecast_days=16, start_day=3, end_day=7)
+    params = BestScoreQueryParams(forecast_days=16, start_day=3)
     assert params.start_day == 3
-    assert params.end_day == 7
-
-
-def test_params_end_day_exceeds_forecast_days_raises() -> None:
-    with pytest.raises(ValueError, match="end_day"):
-        BestScoreQueryParams(forecast_days=5, end_day=6)
 
 
 def test_params_start_day_gte_end_day_raises() -> None:
     with pytest.raises(ValueError, match="start_day"):
-        BestScoreQueryParams(forecast_days=10, start_day=5, end_day=5)
+        BestScoreQueryParams(forecast_days=10, start_day=5)
 
 
 def test_params_start_day_gt_end_day_raises() -> None:
     with pytest.raises(ValueError, match="start_day"):
-        BestScoreQueryParams(forecast_days=10, start_day=7, end_day=3)
+        BestScoreQueryParams(forecast_days=10, start_day=7)
 
 
 @pytest.mark.asyncio
@@ -279,7 +268,6 @@ async def test_calculate_best_scores_only_scores_day_range(
     params_range = BestScoreQueryParams(
         forecast_days=10,
         start_day=3,
-        end_day=7,
         apparent_temperature_threshold=20.0,
         penalize_rain=False,
     )

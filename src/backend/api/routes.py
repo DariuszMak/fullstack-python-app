@@ -76,16 +76,11 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
 async def weather_score(params: BestScoreQueryParams) -> BestScoreResponse:
     results = await calculate_best_scores(params)
 
-    end_day = params.end_day
-    if end_day is None:
-        end_day = params.forecast_days
-
     return BestScoreResponse(
         results=results,
         threshold=params.apparent_temperature_threshold,
         penalize_rain=params.penalize_rain,
         start_day=params.start_day,
-        end_day=end_day,
     )
 
 
