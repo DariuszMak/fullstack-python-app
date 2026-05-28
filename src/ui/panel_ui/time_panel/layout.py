@@ -1,16 +1,14 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Coroutine
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Protocol
+from typing import Any, Protocol
 
 import panel as pn
 import structlog
 
-from src.ui.panel_ui.time_panel.api import fetch_time
+from src.ui.panel_ui.time_panel.api import fetch_time as _default_fetch_time
 from src.ui.panel_ui.time_panel.clock_widget import ClockWidget, PanelStateScheduler, PeriodicScheduler
-
-if TYPE_CHECKING:
-    from collections.abc import Callable, Coroutine
 
 logger = structlog.get_logger(__name__)
 
@@ -40,6 +38,7 @@ class PanelStateHooks:
 def create_layout(
     hooks: LayoutHooks | None = None,
     scheduler: PeriodicScheduler | None = None,
+    time_fetcher: Callable[[], Coroutine[Any, Any, str]] | None = None,
 ) -> pn.Column:
     """Build the Panel layout.
 
@@ -50,12 +49,16 @@ def create_layout(
         adapters; pass a test double in tests.
     scheduler:
         Periodic-callback scheduler for ClockWidget.  Same default rule.
+    time_fetcher:
+        Async callable that returns the current server time as an ISO string.
+        Defaults to the real HTTP fetch; pass a fake in tests.
     """
-    hooks_ = hooks or PanelStateHooks()
-    scheduler_ = scheduler or PanelStateScheduler()
+    _hooks = hooks or PanelStateHooks()
+    _scheduler = scheduler or PanelStateScheduler()
+    _fetch_time = time_fetcher or _default_fetch_time
 
     logger.info("creating_layout")
-    clock = ClockWidget(size=300, scheduler=scheduler_)
+    clock = ClockWidget(size=300, scheduler=_scheduler)
 
     time_display: pn.pane.Markdown = pn.pane.Markdown("No data", sizing_mode="stretch_width")  # type: ignore
 
@@ -70,7 +73,7 @@ def create_layout(
             time_display.object = "Loading..."
             log.info("request_started")
 
-            dt_str = await fetch_time()
+            dt_str = await _fetch_time()
             dt = datetime.fromisoformat(dt_str)
 
             clock.set_current_datetime(dt)
@@ -83,14 +86,14 @@ def create_layout(
 
     def on_click(_: object) -> None:
         logger.debug("button_clicked")
-        hooks_.execute(_fetch)
+        _hooks.execute(_fetch)
 
     def _on_load() -> None:
         logger.info("application_payload_loaded")
-        hooks_.execute(_fetch)
+        _hooks.execute(_fetch)
 
     button.on_click(on_click)
-    hooks_.onload(_on_load)
+    _hooks.onload(_on_load)
 
     return pn.Column(
         "# Server Time",

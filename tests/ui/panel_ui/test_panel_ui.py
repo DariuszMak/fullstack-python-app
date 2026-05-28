@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import re
+from collections.abc import Callable, Coroutine
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any, cast
-from unittest.mock import patch
+from typing import Any, cast
+from unittest.mock import MagicMock
 
 import panel as pn
 import pytest
@@ -13,19 +14,16 @@ from httpx import HTTPStatusError, Response
 
 import src.ui.panel_ui.time_panel.layout as module
 from src.ui.panel_ui.time_panel.api import fetch_time
-from src.ui.panel_ui.time_panel.clock_widget import ClockWidget
-from src.ui.panel_ui.time_panel.layout import create_layout
+from src.ui.panel_ui.time_panel.clock_widget import ClockWidget, PeriodicScheduler
+from src.ui.panel_ui.time_panel.layout import LayoutHooks, create_layout
 from src.ui.shared.controller.clock_controller import ClockController
 from src.ui.shared.helpers import format_datetime
 from src.ui.shared.model.data_types import ClockHands
 
-if TYPE_CHECKING:
-    from collections.abc import Callable, Coroutine
 
 # ---------------------------------------------------------------------------
 # Test doubles — no pn.state touched at all
 # ---------------------------------------------------------------------------
-
 
 class FakePeriodicCallback:
     """Mimics panel.io.callbacks.PeriodicCallback well enough for tests."""
@@ -79,7 +77,6 @@ class FakeHooks:
 # Helpers
 # ---------------------------------------------------------------------------
 
-
 def _make_layout(
     fake_fetch: Callable[[], Coroutine[Any, Any, str]],
     *,
@@ -88,8 +85,7 @@ def _make_layout(
     hooks = FakeHooks(fake_fetch)
     scheduler = FakeScheduler()
 
-    with patch.object(module, "fetch_time", fake_fetch):
-        col = create_layout(hooks=hooks, scheduler=scheduler)
+    col = create_layout(hooks=hooks, scheduler=scheduler, time_fetcher=fake_fetch)
 
     if trigger_onload and hooks.onload_cb is not None:
         hooks.onload_cb()
@@ -106,7 +102,6 @@ def _make_clock_widget() -> tuple[ClockWidget, FakeScheduler]:
 # ---------------------------------------------------------------------------
 # fetch_time (HTTP layer)
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_fetch_time_success(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -138,12 +133,11 @@ async def test_fetch_time_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
 # create_layout — button / onload behaviour
 # ---------------------------------------------------------------------------
 
-
 def test_on_click_success() -> None:
     async def fake_fetch_time() -> str:
         return "2026-01-25T12:00:00Z"
 
-    col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
+    col, hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
     button = cast("pn.widgets.Button", col[2])
     time_display = cast("pn.pane.Markdown", col[3])
@@ -159,7 +153,7 @@ def test_on_click_error() -> None:
     async def fake_fetch_time() -> str:
         raise RuntimeError("boom")
 
-    col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
+    col, hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
     button = cast("pn.widgets.Button", col[2])
     time_display = cast("pn.pane.Markdown", col[3])
@@ -171,6 +165,7 @@ def test_on_click_error() -> None:
 
 
 def test_on_click_sets_clock_datetime() -> None:
+    received: list[datetime] = []
 
     async def fake_fetch_time() -> str:
         return "2026-01-25T12:00:00+00:00"
@@ -178,10 +173,10 @@ def test_on_click_sets_clock_datetime() -> None:
     col, _, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
     # Capture set_current_datetime calls on the already-constructed widget
-    col[1].object.renderers  # type: ignore[attr-defined]
+    clock_widget: ClockWidget = col[1].object.renderers  # type: ignore[attr-defined]
 
     # Reach into the column to grab the ClockWidget instance via the pane
-    cast("pn.pane.Bokeh", col[1])
+    bokeh_pane = cast("pn.pane.Bokeh", col[1])
     # Reconstruct by wrapping the layout's button click instead
     time_display = cast("pn.pane.Markdown", col[3])
     button = cast("pn.widgets.Button", col[2])
@@ -196,7 +191,7 @@ def test_onload_fetches_time_on_startup() -> None:
     async def fake_fetch_time() -> str:
         return "2026-01-25T09:00:00+00:00"
 
-    col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=True)
+    col, hooks, _ = _make_layout(fake_fetch_time, trigger_onload=True)
 
     time_display = cast("pn.pane.Markdown", col[3])
     assert "2026-01-25T09:00:00+00:00" in time_display.object
@@ -217,7 +212,6 @@ def test_layout_structure() -> None:
 # ---------------------------------------------------------------------------
 # ClockWidget
 # ---------------------------------------------------------------------------
-
 
 def test_clock_widget_uses_shared_clock_controller() -> None:
     widget, _ = _make_clock_widget()
@@ -254,7 +248,11 @@ def test_clock_widget_tick_updates_controller() -> None:
     widget._tick()
 
     hands = widget._controller._clock_hands
-    assert hands.second != pytest.approx(0.0) or hands.minute != pytest.approx(0.0) or hands.hour != pytest.approx(0.0)
+    assert (
+        hands.second != pytest.approx(0.0)
+        or hands.minute != pytest.approx(0.0)
+        or hands.hour != pytest.approx(0.0)
+    )
 
 
 def test_clock_widget_tick_updates_bokeh_sources() -> None:
@@ -271,7 +269,9 @@ def test_clock_widget_tick_updates_bokeh_sources() -> None:
         ys = widget._sources[key].data["y"]
         assert len(xs) == 2
         assert len(ys) == 2
-        assert not (xs[1] == pytest.approx(0.0) and ys[1] == pytest.approx(0.0)), f"{key} hand tip is still at origin"
+        assert not (
+            xs[1] == pytest.approx(0.0) and ys[1] == pytest.approx(0.0)
+        ), f"{key} hand tip is still at origin"
 
 
 def test_clock_widget_time_text_uses_format_datetime() -> None:
@@ -313,7 +313,11 @@ def test_clock_widget_tick_via_scheduler() -> None:
     scheduler.tick()
 
     hands = widget._controller._clock_hands
-    assert hands.second != pytest.approx(0.0) or hands.minute != pytest.approx(0.0) or hands.hour != pytest.approx(0.0)
+    assert (
+        hands.second != pytest.approx(0.0)
+        or hands.minute != pytest.approx(0.0)
+        or hands.hour != pytest.approx(0.0)
+    )
 
 
 def test_no_inline_pid_classes() -> None:
