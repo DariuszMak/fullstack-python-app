@@ -12,8 +12,6 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-
-
 _OPENMETEO_CONCURRENCY = 2
 
 
@@ -59,8 +57,6 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
     _, daily_df = gather_data(parameters)
     daily_df = daily_df.reset_index(drop=True)
 
-    
-    
     daily_df = daily_df.iloc[params.start_day : params.end_day]
 
     score = _score_place(
