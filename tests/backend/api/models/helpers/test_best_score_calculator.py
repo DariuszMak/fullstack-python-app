@@ -36,7 +36,6 @@ def _make_daily_df(
 # _day_weight
 # ---------------------------------------------------------------------------
 
-
 def test_day_weight_first_day_is_one() -> None:
     assert _day_weight(0, 10) == pytest.approx(1.0)
 
@@ -52,7 +51,6 @@ def test_day_weight_middle_day() -> None:
 # ---------------------------------------------------------------------------
 # _score_place
 # ---------------------------------------------------------------------------
-
 
 def test_score_place_zero_when_all_below_threshold() -> None:
     df = _make_daily_df(apparent_max=15.0)
@@ -138,7 +136,6 @@ def test_score_place_exact_threshold_not_counted() -> None:
 # BestScoreQueryParams — day range validation
 # ---------------------------------------------------------------------------
 
-
 def test_params_end_day_defaults_to_forecast_days() -> None:
     params = BestScoreQueryParams(forecast_days=10)
     assert params.end_day == 10
@@ -168,7 +165,6 @@ def test_params_start_day_gt_end_day_raises() -> None:
 # ---------------------------------------------------------------------------
 # calculate_best_scores (async)
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 @patch("src.backend.api.models.helpers.best_score_calculator.gather_data")
@@ -317,33 +313,24 @@ async def test_calculate_best_scores_concurrency_capped(
 ) -> None:
     """Never more than _OPENMETEO_CONCURRENCY threads active at the same time."""
     import threading
+    import time
 
     from src.backend.api.models.helpers.best_score_calculator import _OPENMETEO_CONCURRENCY
 
     mock_build.return_value = {}
-    active = threading.Semaphore(0)  # counts currently-running fetches
-    peak = 0
+
+    active_count = 0
+    peak_count = 0
     lock = threading.Lock()
 
     def side_effect(_params: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
-        nonlocal peak
-        active.release()
+        nonlocal active_count, peak_count
         with lock:
-            # count how many threads are inside this function right now
-            current = 0
-            tmp = []
-            while active.acquire(blocking=False):
-                current += 1
-                tmp.append(True)
-            for _ in tmp:
-                active.release()
-            # +1 for ourselves
-            current += 1
-            peak = max(peak, current)
-        import time
-
-        time.sleep(0.01)  # hold the slot briefly so overlap is detectable
-        active.acquire(blocking=False)
+            active_count += 1
+            peak_count = max(peak_count, active_count)
+        time.sleep(0.02)  # hold the slot so threads genuinely overlap
+        with lock:
+            active_count -= 1
         return pd.DataFrame(), _make_daily_df()
 
     mock_gather.side_effect = side_effect
@@ -351,6 +338,6 @@ async def test_calculate_best_scores_concurrency_capped(
     params = BestScoreQueryParams()
     await calculate_best_scores(params)
 
-    assert peak <= _OPENMETEO_CONCURRENCY, (
-        f"Peak concurrent fetches {peak} exceeded semaphore limit {_OPENMETEO_CONCURRENCY}"
+    assert peak_count <= _OPENMETEO_CONCURRENCY, (
+        f"Peak concurrent fetches {peak_count} exceeded semaphore limit {_OPENMETEO_CONCURRENCY}"
     )
