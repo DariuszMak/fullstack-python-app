@@ -136,6 +136,7 @@ def _assert_datetime_response(data: dict[str, str]) -> datetime:
 # Misc / infrastructure
 # ---------------------------------------------------------------------------
 
+
 def test_chrome_devtools_json_not_found() -> None:
     with TestClient(app) as client:
         response = client.get("/.well-known/appspecific/com.chrome.devtools.json")
@@ -172,6 +173,7 @@ def test_ping_route() -> None:
 # ---------------------------------------------------------------------------
 # /api/v1/time
 # ---------------------------------------------------------------------------
+
 
 def test_time_route_remote_via_monkeypatch(monkeypatch: pytest.MonkeyPatch) -> None:
     api_utc_time = "2025-01-01T12:00:00+00:00"
@@ -214,6 +216,7 @@ def test_time_route_fallback_to_local(monkeypatch: pytest.MonkeyPatch) -> None:
 # ---------------------------------------------------------------------------
 # /api/v1/forecast/info
 # ---------------------------------------------------------------------------
+
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
@@ -313,9 +316,7 @@ def test_weather_info_sunrise_sunset_are_integers(mock_build: MagicMock, mock_ga
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
-def test_weather_info_passes_params_to_build_request_parameters(
-    mock_build: MagicMock, mock_gather: MagicMock
-) -> None:
+def test_weather_info_passes_params_to_build_request_parameters(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     mock_build.return_value = {}
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
     payload = {"latitude": 54.352, "longitude": 18.649, "timezone": "Europe/Warsaw", "forecast_days": 7}
@@ -326,9 +327,7 @@ def test_weather_info_passes_params_to_build_request_parameters(
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
-def test_weather_info_passes_built_parameters_to_gather_data(
-    mock_build: MagicMock, mock_gather: MagicMock
-) -> None:
+def test_weather_info_passes_built_parameters_to_gather_data(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     sentinel_params = {"sentinel": True}
     mock_build.return_value = sentinel_params
     mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
@@ -395,6 +394,7 @@ def test_weather_info_sanitizes_nan_in_daily(mock_build: MagicMock, mock_gather:
 # /api/v1/forecast/weather-score
 # ---------------------------------------------------------------------------
 
+
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_returns_200(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
@@ -430,9 +430,7 @@ def test_best_score_endpoint_reflects_threshold(mock_calc: AsyncMock) -> None:
 def test_best_score_endpoint_reflects_penalize_rain(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
     with TestClient(app) as client:
-        data = client.post(
-            "/api/v1/forecast/weather-score", json={"penalize_rain": True}
-        ).json()
+        data = client.post("/api/v1/forecast/weather-score", json={"penalize_rain": True}).json()
     assert data["penalize_rain"] is True
 
 
@@ -452,9 +450,7 @@ def test_best_score_endpoint_reflects_day_range(mock_calc: AsyncMock) -> None:
 def test_best_score_endpoint_default_end_day_equals_forecast_days(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
     with TestClient(app) as client:
-        data = client.post(
-            "/api/v1/forecast/weather-score", json={"forecast_days": 10}
-        ).json()
+        data = client.post("/api/v1/forecast/weather-score", json={"forecast_days": 10}).json()
     assert data["end_day"] == 10
     assert data["start_day"] == 0
 
@@ -472,15 +468,21 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
     mock_calc.return_value = []
     with TestClient(app) as client:
         # end_day > forecast_days
-        assert client.post(
-            "/api/v1/forecast/weather-score",
-            json={"forecast_days": 5, "end_day": 6},
-        ).status_code == 422
+        assert (
+            client.post(
+                "/api/v1/forecast/weather-score",
+                json={"forecast_days": 5, "end_day": 6},
+            ).status_code
+            == 422
+        )
         # start_day >= end_day
-        assert client.post(
-            "/api/v1/forecast/weather-score",
-            json={"forecast_days": 10, "start_day": 5, "end_day": 5},
-        ).status_code == 422
+        assert (
+            client.post(
+                "/api/v1/forecast/weather-score",
+                json={"forecast_days": 10, "start_day": 5, "end_day": 5},
+            ).status_code
+            == 422
+        )
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)

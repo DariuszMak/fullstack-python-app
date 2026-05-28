@@ -29,13 +29,9 @@ class BestScoreQueryParams(BaseModel):
         effective_end = self.end_day if self.end_day is not None else self.forecast_days
 
         if effective_end > self.forecast_days:
-            raise ValueError(
-                f"end_day ({effective_end}) cannot exceed forecast_days ({self.forecast_days})"
-            )
+            raise ValueError(f"end_day ({effective_end}) cannot exceed forecast_days ({self.forecast_days})")
         if self.start_day >= effective_end:
-            raise ValueError(
-                f"start_day ({self.start_day}) must be less than end_day ({effective_end})"
-            )
+            raise ValueError(f"start_day ({self.start_day}) must be less than end_day ({effective_end})")
 
         # Normalise: always store the resolved value so downstream code needs no special-casing
         object.__setattr__(self, "end_day", effective_end)

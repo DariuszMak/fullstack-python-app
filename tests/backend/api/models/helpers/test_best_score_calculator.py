@@ -36,6 +36,7 @@ def _make_daily_df(
 # _day_weight
 # ---------------------------------------------------------------------------
 
+
 def test_day_weight_first_day_is_one() -> None:
     assert _day_weight(0, 10) == pytest.approx(1.0)
 
@@ -51,6 +52,7 @@ def test_day_weight_middle_day() -> None:
 # ---------------------------------------------------------------------------
 # _score_place
 # ---------------------------------------------------------------------------
+
 
 def test_score_place_zero_when_all_below_threshold() -> None:
     df = _make_daily_df(apparent_max=15.0)
@@ -136,6 +138,7 @@ def test_score_place_exact_threshold_not_counted() -> None:
 # BestScoreQueryParams — day range validation
 # ---------------------------------------------------------------------------
 
+
 def test_params_end_day_defaults_to_forecast_days() -> None:
     params = BestScoreQueryParams(forecast_days=10)
     assert params.end_day == 10
@@ -165,6 +168,7 @@ def test_params_start_day_gt_end_day_raises() -> None:
 # ---------------------------------------------------------------------------
 # calculate_best_scores (async)
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 @patch("src.backend.api.models.helpers.best_score_calculator.gather_data")

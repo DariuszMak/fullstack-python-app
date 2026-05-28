@@ -78,10 +78,7 @@ async def calculate_best_scores(params: BestScoreQueryParams) -> list[PlaceBestS
     """Fetch all places concurrently (thread pool) then sort by score descending."""
     loop = asyncio.get_event_loop()
 
-    tasks = [
-        loop.run_in_executor(None, _fetch_place_score, key, params)
-        for key in PLACES
-    ]
+    tasks = [loop.run_in_executor(None, _fetch_place_score, key, params) for key in PLACES]
     records: list[PlaceBestScoreRecord] = await asyncio.gather(*tasks)
 
     records.sort(key=lambda r: r.score, reverse=True)
