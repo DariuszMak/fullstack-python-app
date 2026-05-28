@@ -39,7 +39,7 @@ class FakeScheduler:
     def add_periodic_callback(
         self,
         callback: Callable[[], None],
-        period: int,
+        _period: int,
     ) -> FakePeriodicCallback:
         self.registered_cb = callback
         return FakePeriodicCallback()
@@ -68,6 +68,16 @@ class FakeHooks:
 
     def onload(self, callback: Callable[[], None]) -> None:
         self.onload_cb = callback
+
+
+async def _async_return(value: str) -> str:
+    await asyncio.sleep(0)
+    return value
+
+
+async def _async_raise(exc: Exception) -> str:
+    await asyncio.sleep(0)
+    raise exc
 
 
 def _make_layout(
@@ -120,7 +130,7 @@ async def test_fetch_time_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_on_click_success() -> None:
     async def fake_fetch_time() -> str:
-        return "2026-01-25T12:00:00Z"
+        return await _async_return("2026-01-25T12:00:00Z")
 
     col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
@@ -136,7 +146,7 @@ def test_on_click_success() -> None:
 
 def test_on_click_error() -> None:
     async def fake_fetch_time() -> str:
-        raise RuntimeError("boom")
+        return await _async_raise(RuntimeError("boom"))
 
     col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
@@ -150,15 +160,13 @@ def test_on_click_error() -> None:
 
 
 def test_on_click_sets_clock_datetime() -> None:
-
     async def fake_fetch_time() -> str:
-        return "2026-01-25T12:00:00+00:00"
+        return await _async_return("2026-01-25T12:00:00+00:00")
 
     col, _, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
-    col[1].object.renderers
-
-    cast("pn.pane.Bokeh", col[1])
+    clock_pane = cast("pn.pane.Bokeh", col[1])
+    assert clock_pane.object.renderers is not None
 
     time_display = cast("pn.pane.Markdown", col[3])
     button = cast("pn.widgets.Button", col[2])
@@ -170,7 +178,7 @@ def test_on_click_sets_clock_datetime() -> None:
 
 def test_onload_fetches_time_on_startup() -> None:
     async def fake_fetch_time() -> str:
-        return "2026-01-25T09:00:00+00:00"
+        return await _async_return("2026-01-25T09:00:00+00:00")
 
     col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=True)
 
@@ -180,7 +188,7 @@ def test_onload_fetches_time_on_startup() -> None:
 
 def test_layout_structure() -> None:
     async def fake_fetch_time() -> str:
-        return "2026-01-25T12:00:00Z"
+        return await _async_return("2026-01-25T12:00:00Z")
 
     col, _, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
