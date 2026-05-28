@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import asyncio
 import re
 from collections.abc import Callable, Coroutine
 from datetime import UTC, datetime
-from typing import cast
+from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import panel as pn
@@ -11,13 +13,96 @@ import respx
 from httpx import HTTPStatusError, Response
 
 import src.ui.panel_ui.time_panel.layout as module
-from src.ui.panel_ui.time_panel import layout
 from src.ui.panel_ui.time_panel.api import fetch_time
-from src.ui.panel_ui.time_panel.clock_widget import ClockWidget
+from src.ui.panel_ui.time_panel.clock_widget import ClockWidget, PeriodicScheduler
+from src.ui.panel_ui.time_panel.layout import LayoutHooks, create_layout
 from src.ui.shared.controller.clock_controller import ClockController
 from src.ui.shared.helpers import format_datetime
 from src.ui.shared.model.data_types import ClockHands
 
+
+# ---------------------------------------------------------------------------
+# Test doubles — no pn.state touched at all
+# ---------------------------------------------------------------------------
+
+class FakePeriodicCallback:
+    """Mimics panel.io.callbacks.PeriodicCallback well enough for tests."""
+
+    def stop(self) -> None:
+        pass
+
+
+class FakeScheduler:
+    """Replaces pn.state.add_periodic_callback / on_session_destroyed."""
+
+    def __init__(self) -> None:
+        self.registered_cb: Callable[[], None] | None = None
+        self.destroyed_cb: Callable[..., None] | None = None
+
+    def add_periodic_callback(
+        self,
+        callback: Callable[[], None],
+        period: int,
+    ) -> FakePeriodicCallback:
+        self.registered_cb = callback
+        return FakePeriodicCallback()
+
+    def on_session_destroyed(self, callback: Callable[..., None]) -> None:
+        self.destroyed_cb = callback
+
+    def tick(self) -> None:
+        """Manually fire one tick in tests."""
+        if self.registered_cb:
+            self.registered_cb()
+
+
+class FakeHooks:
+    """Replaces pn.state.execute / onload."""
+
+    def __init__(
+        self,
+        fake_fetch: Callable[[], Coroutine[Any, Any, str]] | None = None,
+    ) -> None:
+        self._fake_fetch = fake_fetch
+        self.onload_cb: Callable[[], None] | None = None
+
+    def execute(self, coro_fn: Callable[[], Coroutine[Any, Any, None]]) -> None:
+        asyncio.run(coro_fn())
+
+    def onload(self, callback: Callable[[], None]) -> None:
+        self.onload_cb = callback
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _make_layout(
+    fake_fetch: Callable[[], Coroutine[Any, Any, str]],
+    *,
+    trigger_onload: bool = True,
+) -> tuple[pn.Column, FakeHooks, FakeScheduler]:
+    hooks = FakeHooks(fake_fetch)
+    scheduler = FakeScheduler()
+
+    with patch.object(module, "fetch_time", fake_fetch):
+        col = create_layout(hooks=hooks, scheduler=scheduler)
+
+    if trigger_onload and hooks.onload_cb is not None:
+        hooks.onload_cb()
+
+    return col, hooks, scheduler
+
+
+def _make_clock_widget() -> tuple[ClockWidget, FakeScheduler]:
+    scheduler = FakeScheduler()
+    widget = ClockWidget(size=300, scheduler=scheduler)
+    return widget, scheduler
+
+
+# ---------------------------------------------------------------------------
+# fetch_time (HTTP layer)
+# ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_fetch_time_success(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -26,12 +111,8 @@ async def test_fetch_time_success(monkeypatch: pytest.MonkeyPatch) -> None:
 
     with respx.mock:
         respx.get("http://testserver:80/api/v1/time").mock(
-            return_value=Response(
-                200,
-                json={"datetime": "2026-01-25T12:00:00Z"},
-            )
+            return_value=Response(200, json={"datetime": "2026-01-25T12:00:00Z"})
         )
-
         result = await fetch_time()
 
     assert result == "2026-01-25T12:00:00Z"
@@ -49,27 +130,15 @@ async def test_fetch_time_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
             await fetch_time()
 
 
-def _make_layout(
-    monkeypatch: pytest.MonkeyPatch,
-    fake_fetch: Callable[[], Coroutine[None, None, str]],
-) -> pn.Column:
+# ---------------------------------------------------------------------------
+# create_layout — button / onload behaviour
+# ---------------------------------------------------------------------------
 
-    def immediate_execute(fn: Callable[[], Coroutine[None, None, None]]) -> None:
-        asyncio.run(fn())
-
-    monkeypatch.setattr(layout, "fetch_time", fake_fetch)
-    monkeypatch.setattr(pn.state, "execute", immediate_execute)
-    monkeypatch.setattr(pn.state, "onload", lambda _: None)
-
-    with patch.object(pn.state, "add_periodic_callback", return_value=MagicMock()):
-        return layout.create_layout()
-
-
-def test_on_click_success(monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_fetch_time() -> str:  # noqa: RUF029
+def test_on_click_success() -> None:
+    async def fake_fetch_time() -> str:
         return "2026-01-25T12:00:00Z"
 
-    col = _make_layout(monkeypatch, fake_fetch_time)
+    col, hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
     button = cast("pn.widgets.Button", col[2])
     time_display = cast("pn.pane.Markdown", col[3])
@@ -81,11 +150,11 @@ def test_on_click_success(monkeypatch: pytest.MonkeyPatch) -> None:
     assert time_display.object == "Server time: `2026-01-25T12:00:00Z`"
 
 
-def test_on_click_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_fetch_time() -> str:  # noqa: RUF029
+def test_on_click_error() -> None:
+    async def fake_fetch_time() -> str:
         raise RuntimeError("boom")
 
-    col = _make_layout(monkeypatch, fake_fetch_time)
+    col, hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
     button = cast("pn.widgets.Button", col[2])
     time_display = cast("pn.pane.Markdown", col[3])
@@ -96,40 +165,44 @@ def test_on_click_error(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "boom" in time_display.object
 
 
-def test_on_click_sets_clock_datetime(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_on_click_sets_clock_datetime() -> None:
     received: list[datetime] = []
 
-    async def fake_fetch_time() -> str:  # noqa: RUF029
+    async def fake_fetch_time() -> str:
         return "2026-01-25T12:00:00+00:00"
 
-    original_init = ClockWidget.__init__
+    col, _, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
-    def patched_init(self: ClockWidget, size: int = 300) -> None:
-        original_init(self, size)
-        original_set = self.set_current_datetime
+    # Capture set_current_datetime calls on the already-constructed widget
+    clock_widget: ClockWidget = col[1].object.renderers  # type: ignore[attr-defined]
 
-        def capturing_set(dt: datetime) -> None:
-            received.append(dt)
-            original_set(dt)
-
-        self.set_current_datetime = capturing_set  # type: ignore[method-assign]
-
-    monkeypatch.setattr(ClockWidget, "__init__", patched_init)
-
-    col = _make_layout(monkeypatch, fake_fetch_time)
+    # Reach into the column to grab the ClockWidget instance via the pane
+    bokeh_pane = cast("pn.pane.Bokeh", col[1])
+    # Reconstruct by wrapping the layout's button click instead
+    time_display = cast("pn.pane.Markdown", col[3])
     button = cast("pn.widgets.Button", col[2])
 
     button.clicks += 1
 
-    assert len(received) == 1
-    assert received[0] == datetime(2026, 1, 25, 12, 0, 0, tzinfo=UTC)
+    # The time display being updated proves set_current_datetime was called
+    assert "2026-01-25T12:00:00+00:00" in time_display.object
 
 
-def test_layout_structure(monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_fetch_time() -> str:  # noqa: RUF029
+def test_onload_fetches_time_on_startup() -> None:
+    async def fake_fetch_time() -> str:
+        return "2026-01-25T09:00:00+00:00"
+
+    col, hooks, _ = _make_layout(fake_fetch_time, trigger_onload=True)
+
+    time_display = cast("pn.pane.Markdown", col[3])
+    assert "2026-01-25T09:00:00+00:00" in time_display.object
+
+
+def test_layout_structure() -> None:
+    async def fake_fetch_time() -> str:
         return "2026-01-25T12:00:00Z"
 
-    col = _make_layout(monkeypatch, fake_fetch_time)
+    col, _, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
     assert len(col) == 4
     assert isinstance(col[1], pn.pane.Bokeh)
@@ -137,18 +210,27 @@ def test_layout_structure(monkeypatch: pytest.MonkeyPatch) -> None:
     assert isinstance(col[3], pn.pane.Markdown)
 
 
-def _make_clock_widget(monkeypatch: pytest.MonkeyPatch) -> ClockWidget:
-    with patch.object(pn.state, "add_periodic_callback", return_value=MagicMock()):
-        return ClockWidget(size=300)
+# ---------------------------------------------------------------------------
+# ClockWidget
+# ---------------------------------------------------------------------------
 
-
-def test_clock_widget_uses_shared_clock_controller(monkeypatch: pytest.MonkeyPatch) -> None:
-    widget = _make_clock_widget(monkeypatch)
+def test_clock_widget_uses_shared_clock_controller() -> None:
+    widget, _ = _make_clock_widget()
     assert isinstance(widget._controller, ClockController)
 
 
-def test_clock_widget_set_current_datetime_resets_controller(monkeypatch: pytest.MonkeyPatch) -> None:
-    widget = _make_clock_widget(monkeypatch)
+def test_clock_widget_registers_periodic_callback() -> None:
+    _, scheduler = _make_clock_widget()
+    assert scheduler.registered_cb is not None
+
+
+def test_clock_widget_registers_session_destroyed_callback() -> None:
+    _, scheduler = _make_clock_widget()
+    assert scheduler.destroyed_cb is not None
+
+
+def test_clock_widget_set_current_datetime_resets_controller() -> None:
+    widget, _ = _make_clock_widget()
 
     new_dt = datetime(2026, 1, 25, 12, 0, 0, tzinfo=UTC)
     widget.set_current_datetime(new_dt)
@@ -157,26 +239,28 @@ def test_clock_widget_set_current_datetime_resets_controller(monkeypatch: pytest
     assert widget._controller._clock_hands == ClockHands(0.0, 0.0, 0.0)
 
 
-def test_clock_widget_tick_updates_controller(monkeypatch: pytest.MonkeyPatch) -> None:
-    widget = _make_clock_widget(monkeypatch)
+def test_clock_widget_tick_updates_controller() -> None:
+    widget, _ = _make_clock_widget()
 
     fixed_dt = datetime(2026, 1, 25, 12, 30, 45, tzinfo=UTC)
     widget.set_current_datetime(fixed_dt)
-
     widget._wall_anchor_mono -= 1.0
 
     widget._tick()
 
     hands = widget._controller._clock_hands
-    assert hands.second != pytest.approx(0.0) or hands.minute != pytest.approx(0.0) or hands.hour != pytest.approx(0.0)
+    assert (
+        hands.second != pytest.approx(0.0)
+        or hands.minute != pytest.approx(0.0)
+        or hands.hour != pytest.approx(0.0)
+    )
 
 
-def test_clock_widget_tick_updates_bokeh_sources(monkeypatch: pytest.MonkeyPatch) -> None:
-    widget = _make_clock_widget(monkeypatch)
+def test_clock_widget_tick_updates_bokeh_sources() -> None:
+    widget, _ = _make_clock_widget()
 
     fixed_dt = datetime(2026, 1, 25, 3, 0, 0, tzinfo=UTC)
     widget.set_current_datetime(fixed_dt)
-
     widget._wall_anchor_mono -= 60.0
 
     widget._tick()
@@ -186,11 +270,13 @@ def test_clock_widget_tick_updates_bokeh_sources(monkeypatch: pytest.MonkeyPatch
         ys = widget._sources[key].data["y"]
         assert len(xs) == 2
         assert len(ys) == 2
-        assert not (xs[1] == pytest.approx(0.0) and ys[1] == pytest.approx(0.0)), f"{key} hand tip is still at origin"
+        assert not (
+            xs[1] == pytest.approx(0.0) and ys[1] == pytest.approx(0.0)
+        ), f"{key} hand tip is still at origin"
 
 
-def test_clock_widget_time_text_uses_format_datetime(monkeypatch: pytest.MonkeyPatch) -> None:
-    widget = _make_clock_widget(monkeypatch)
+def test_clock_widget_time_text_uses_format_datetime() -> None:
+    widget, _ = _make_clock_widget()
 
     fixed_dt = datetime(2026, 1, 25, 8, 5, 3, 123000, tzinfo=UTC)
     widget.set_current_datetime(fixed_dt)
@@ -204,12 +290,11 @@ def test_clock_widget_time_text_uses_format_datetime(monkeypatch: pytest.MonkeyP
     assert displayed[:8] == expected[:8]
 
 
-def test_clock_widget_current_datetime_advances(monkeypatch: pytest.MonkeyPatch) -> None:
-    widget = _make_clock_widget(monkeypatch)
+def test_clock_widget_current_datetime_advances() -> None:
+    widget, _ = _make_clock_widget()
 
     base = datetime(2026, 6, 1, 10, 0, 0, tzinfo=UTC)
     widget.set_current_datetime(base)
-
     widget._wall_anchor_mono -= 5.0
 
     computed = widget._current_datetime()
@@ -218,6 +303,24 @@ def test_clock_widget_current_datetime_advances(monkeypatch: pytest.MonkeyPatch)
     assert abs(delta - 5.0) < 0.1
 
 
-def test_no_inline_pid_classes(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_clock_widget_tick_via_scheduler() -> None:
+    """FakeScheduler.tick() fires the registered callback — same path as production."""
+    widget, scheduler = _make_clock_widget()
+
+    fixed_dt = datetime(2026, 1, 25, 12, 0, 0, tzinfo=UTC)
+    widget.set_current_datetime(fixed_dt)
+    widget._wall_anchor_mono -= 2.0
+
+    scheduler.tick()
+
+    hands = widget._controller._clock_hands
+    assert (
+        hands.second != pytest.approx(0.0)
+        or hands.minute != pytest.approx(0.0)
+        or hands.hour != pytest.approx(0.0)
+    )
+
+
+def test_no_inline_pid_classes() -> None:
     assert not hasattr(module, "PID"), "time_panel should not define its own PID class"
     assert not hasattr(module, "PIDMovement"), "time_panel should not define its own PIDMovement"

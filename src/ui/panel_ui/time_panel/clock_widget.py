@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 import panel as pn
 import structlog
@@ -16,23 +17,59 @@ if TYPE_CHECKING:
     from panel.io.callbacks import PeriodicCallback
 
 logger = structlog.get_logger(__name__)
-pn.extension()
+
+
+class PeriodicScheduler(Protocol):
+    """Minimal interface for registering a repeating callback.
+
+    Keeping this as a Protocol (not an ABC) means the real pn.state and any
+    test double both satisfy it without inheriting anything from Panel.
+    """
+
+    def add_periodic_callback(
+        self,
+        callback: Callable[[], None],
+        period: int,
+    ) -> PeriodicCallback: ...
+
+    def on_session_destroyed(self, callback: Callable[..., None]) -> None: ...
+
+
+class PanelStateScheduler:
+    """Production adapter — thin wrapper around pn.state."""
+
+    def add_periodic_callback(
+        self,
+        callback: Callable[[], None],
+        period: int,
+    ) -> PeriodicCallback:
+        return pn.state.add_periodic_callback(callback, period=period)
+
+    def on_session_destroyed(self, callback: Callable[..., None]) -> None:
+        pn.state.on_session_destroyed(callback)
 
 
 class ClockWidget:
-    def __init__(self, size: int = 300) -> None:
+    def __init__(
+        self,
+        size: int = 300,
+        scheduler: PeriodicScheduler | None = None,
+    ) -> None:
         self._server_anchor: datetime = datetime.now().astimezone()
         self._wall_anchor_mono: float = time.monotonic()
 
         self._controller = ClockController(self._server_anchor)
+        self._scheduler = scheduler or PanelStateScheduler()
 
         self._fig, self._sources = build_clock_figure(size)
         self._pane: pn.pane.Bokeh = pn.pane.Bokeh(self._fig, sizing_mode="fixed")  # type: ignore
 
         logger.info("initializing_clock_widget", size=size, tick_ms=TICK_MS)
-        self._cb: PeriodicCallback = pn.state.add_periodic_callback(self._tick, period=TICK_MS)
+        self._cb: PeriodicCallback = self._scheduler.add_periodic_callback(
+            self._tick, period=TICK_MS
+        )
 
-        pn.state.on_session_destroyed(self._on_session_destroyed)
+        self._scheduler.on_session_destroyed(self._on_session_destroyed)
 
     def _on_session_destroyed(self, _session_context: object) -> None:
         logger.info("session_destroyed_stopping_clock")
