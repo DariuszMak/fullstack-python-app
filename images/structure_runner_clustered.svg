@@ -695,7 +695,7 @@
 <!-- openmeteo_requests -->
 <g id="node36" class="node">
 <title>openmeteo_requests</title><style>.edge>path:hover{stroke-width:8}</style>
-<polygon fill="#3db8b3" stroke="#ffffff" points="2016.5,-858 2013.5,-862 1992.5,-862 1989.5,-858 1909.75,-858 1909.75,-822 2016.5,-822 2016.5,-858"/>
+<polygon fill="#31c4be" stroke="#ffffff" points="2016.5,-858 2013.5,-862 1992.5,-862 1989.5,-858 1909.75,-858 1909.75,-822 2016.5,-822 2016.5,-858"/>
 <text xml:space="preserve" text-anchor="middle" x="1963.12" y="-836.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">openmeteo_requests</text>
 </g>
 <!-- niquests&#45;&gt;openmeteo_requests -->

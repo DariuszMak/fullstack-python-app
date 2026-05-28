@@ -838,7 +838,7 @@
 <!-- openmeteo_requests -->
 <g id="node36" class="node">
 <title>openmeteo_requests</title><style>.edge>path:hover{stroke-width:8}</style>
-<polygon fill="#3db8a5" stroke="#ffffff" points="1439.4,-1854 1436.4,-1858 1415.4,-1858 1412.4,-1854 1332.65,-1854 1332.65,-1818 1439.4,-1818 1439.4,-1854"/>
+<polygon fill="#31c4ad" stroke="#ffffff" points="1439.4,-1854 1436.4,-1858 1415.4,-1858 1412.4,-1854 1332.65,-1854 1332.65,-1818 1439.4,-1818 1439.4,-1854"/>
 <text xml:space="preserve" text-anchor="middle" x="1386.03" y="-1832.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">openmeteo_requests</text>
 </g>
 <!-- niquests&#45;&gt;openmeteo_requests -->
@@ -959,7 +959,7 @@
 <title>openmeteo_requests&#45;&gt;src</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M1406.51,-1854.3C1449.21,-1892.1 1554.52,-1972.78 1645.87,-1942"/>
 <path fill="none" stroke="#ffffff" d="M1647.87,-1942C1667.86,-1930.76 1678.07,-1937.49 1695.84,-1923 1718.48,-1904.53 1714.01,-1891.15 1731.84,-1868 1763.26,-1827.21 1803.83,-1783.6 1829.91,-1756.57"/>
-<polygon fill="#3db8a5" stroke="#ffffff" points="1832.33,-1759.1 1836.79,-1749.49 1827.31,-1754.22 1832.33,-1759.1"/>
+<polygon fill="#31c4ad" stroke="#ffffff" points="1832.33,-1759.1 1836.79,-1749.49 1827.31,-1754.22 1832.33,-1759.1"/>
 </g>
 <!-- openmeteo_sdk&#45;&gt;openmeteo_requests -->
 <g id="edge88" class="edge">
