@@ -305,7 +305,7 @@ async def test_calculate_best_scores_concurrency_capped(
     peak_count = 0
     lock = threading.Lock()
 
-    def side_effect(_params: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def side_effect(_params: dict[str, Any]) -> tuple[pd.DataFrame, pd.DataFrame]:
         nonlocal active_count, peak_count
         with lock:
             active_count += 1
