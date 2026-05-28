@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Protocol
 
@@ -14,6 +13,8 @@ from src.ui.shared.controller.clock_controller import ClockController
 from src.ui.shared.helpers import clock_hands_in_radians, format_datetime
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from panel.io.callbacks import PeriodicCallback
 
 logger = structlog.get_logger(__name__)
@@ -65,9 +66,7 @@ class ClockWidget:
         self._pane: pn.pane.Bokeh = pn.pane.Bokeh(self._fig, sizing_mode="fixed")  # type: ignore
 
         logger.info("initializing_clock_widget", size=size, tick_ms=TICK_MS)
-        self._cb: PeriodicCallback = self._scheduler.add_periodic_callback(
-            self._tick, period=TICK_MS
-        )
+        self._cb: PeriodicCallback = self._scheduler.add_periodic_callback(self._tick, period=TICK_MS)
 
         self._scheduler.on_session_destroyed(self._on_session_destroyed)
 

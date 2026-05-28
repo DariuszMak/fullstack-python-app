@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Coroutine
 from datetime import datetime
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 import panel as pn
 import structlog
 
 from src.ui.panel_ui.time_panel.api import fetch_time
 from src.ui.panel_ui.time_panel.clock_widget import ClockWidget, PanelStateScheduler, PeriodicScheduler
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine
 
 logger = structlog.get_logger(__name__)
 
@@ -49,11 +51,11 @@ def create_layout(
     scheduler:
         Periodic-callback scheduler for ClockWidget.  Same default rule.
     """
-    _hooks = hooks or PanelStateHooks()
-    _scheduler = scheduler or PanelStateScheduler()
+    hooks_ = hooks or PanelStateHooks()
+    scheduler_ = scheduler or PanelStateScheduler()
 
     logger.info("creating_layout")
-    clock = ClockWidget(size=300, scheduler=_scheduler)
+    clock = ClockWidget(size=300, scheduler=scheduler_)
 
     time_display: pn.pane.Markdown = pn.pane.Markdown("No data", sizing_mode="stretch_width")  # type: ignore
 
@@ -81,14 +83,14 @@ def create_layout(
 
     def on_click(_: object) -> None:
         logger.debug("button_clicked")
-        _hooks.execute(_fetch)
+        hooks_.execute(_fetch)
 
     def _on_load() -> None:
         logger.info("application_payload_loaded")
-        _hooks.execute(_fetch)
+        hooks_.execute(_fetch)
 
     button.on_click(on_click)
-    _hooks.onload(_on_load)
+    hooks_.onload(_on_load)
 
     return pn.Column(
         "# Server Time",
