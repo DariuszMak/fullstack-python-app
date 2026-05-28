@@ -32,9 +32,9 @@ def _make_daily_df(
     })
 
 
-# ---------------------------------------------------------------------------
-# _day_weight
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_day_weight_first_day_is_one() -> None:
@@ -49,9 +49,9 @@ def test_day_weight_middle_day() -> None:
     assert _day_weight(5, 10) == pytest.approx(0.5)
 
 
-# ---------------------------------------------------------------------------
-# _score_place
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_score_place_zero_when_all_below_threshold() -> None:
@@ -134,9 +134,9 @@ def test_score_place_exact_threshold_not_counted() -> None:
     assert score == pytest.approx(0.0)
 
 
-# ---------------------------------------------------------------------------
-# BestScoreQueryParams — day range validation
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_params_end_day_defaults_to_forecast_days() -> None:
@@ -165,9 +165,9 @@ def test_params_start_day_gt_end_day_raises() -> None:
         BestScoreQueryParams(forecast_days=10, start_day=7, end_day=3)
 
 
-# ---------------------------------------------------------------------------
-# calculate_best_scores (async)
-# ---------------------------------------------------------------------------
+
+
+
 
 
 @pytest.mark.asyncio
@@ -263,7 +263,7 @@ async def test_calculate_best_scores_only_scores_day_range(
     """Scores computed with start_day=3, end_day=7 must use only those 4 rows."""
     mock_build.return_value = {}
 
-    # Days 0-2: very hot (would dominate if included); days 3-6: just above threshold
+    
     n = 10
     apparent_values = [40.0, 40.0, 40.0, 22.0, 22.0, 22.0, 22.0, 5.0, 5.0, 5.0]
     dates = pd.date_range(start=pd.Timestamp("2026-05-22", tz="UTC"), periods=n, freq="D")
@@ -301,7 +301,7 @@ async def test_calculate_best_scores_only_scores_day_range(
     results_range = await calculate_best_scores(params_range)
     scores_range = {r.key: r.score for r in results_range}
 
-    # Range scores must be lower since the hot early days are excluded
+    
     for key in scores_full:
         assert scores_range[key] < scores_full[key], (
             f"Place {key}: range score {scores_range[key]} should be < full score {scores_full[key]}"

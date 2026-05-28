@@ -33,7 +33,7 @@ class BestScoreQueryParams(BaseModel):
         if self.start_day >= effective_end:
             raise ValueError(f"start_day ({self.start_day}) must be less than end_day ({effective_end})")
 
-        # Normalise: always store the resolved value so downstream code needs no special-casing
+        
         object.__setattr__(self, "end_day", effective_end)
         return self
 

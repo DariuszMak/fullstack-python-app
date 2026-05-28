@@ -132,9 +132,9 @@ def _assert_datetime_response(data: dict[str, str]) -> datetime:
     return dt
 
 
-# ---------------------------------------------------------------------------
-# Misc / infrastructure
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_chrome_devtools_json_not_found() -> None:
@@ -170,9 +170,9 @@ def test_ping_route() -> None:
         assert response.json() == {"message": "pong"}
 
 
-# ---------------------------------------------------------------------------
-# /api/v1/time
-# ---------------------------------------------------------------------------
+
+
+
 
 
 def test_time_route_remote_via_monkeypatch(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -213,9 +213,9 @@ def test_time_route_fallback_to_local(monkeypatch: pytest.MonkeyPatch) -> None:
     _assert_datetime_response(response.json())
 
 
-# ---------------------------------------------------------------------------
-# /api/v1/forecast/info
-# ---------------------------------------------------------------------------
+
+
+
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -390,9 +390,9 @@ def test_weather_info_sanitizes_nan_in_daily(mock_build: MagicMock, mock_gather:
     assert data["daily"][0]["rain_sum"] == pytest.approx(0.0)
 
 
-# ---------------------------------------------------------------------------
-# /api/v1/forecast/weather-score
-# ---------------------------------------------------------------------------
+
+
+
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
@@ -467,7 +467,7 @@ def test_best_score_endpoint_rejects_forecast_days_out_of_range(mock_calc: Async
 def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
     with TestClient(app) as client:
-        # end_day > forecast_days
+        
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
@@ -475,7 +475,7 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
             ).status_code
             == 422
         )
-        # start_day >= end_day
+        
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",

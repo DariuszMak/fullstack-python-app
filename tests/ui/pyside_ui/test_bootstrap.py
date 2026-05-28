@@ -1,4 +1,4 @@
-# tests/ui/pyside_ui/test_bootstrap.py
+
 
 from unittest.mock import MagicMock, patch
 

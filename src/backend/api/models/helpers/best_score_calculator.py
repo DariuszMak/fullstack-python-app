@@ -54,8 +54,8 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
     _, daily_df = gather_data(parameters)
     daily_df = daily_df.reset_index(drop=True)
 
-    # Slice to the requested day window [start_day, end_day)
-    # end_day is always resolved (never None) thanks to the model validator
+    
+    
     daily_df = daily_df.iloc[params.start_day : params.end_day]
 
     score = _score_place(
