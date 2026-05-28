@@ -1,3 +1,9 @@
+import threading
+import time
+from src.backend.openmeteo.places.places import PLACES
+
+
+from src.backend.api.models.helpers.best_score_calculator import _OPENMETEO_CONCURRENCY
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -157,7 +163,6 @@ async def test_calculate_best_scores_returns_all_places(
     mock_build: MagicMock,
     mock_gather: MagicMock,
 ) -> None:
-    from src.backend.openmeteo.places.places import PLACES
 
     mock_build.return_value = {}
     mock_gather.return_value = (pd.DataFrame(), _make_daily_df())
@@ -240,7 +245,6 @@ async def test_calculate_best_scores_only_scores_day_range(
     mock_build: MagicMock,
     mock_gather: MagicMock,
 ) -> None:
-    """Scores computed with start_day=3, end_day=7 must use only those 4 rows."""
     mock_build.return_value = {}
 
     n = 10
@@ -293,11 +297,6 @@ async def test_calculate_best_scores_concurrency_capped(
     mock_build: MagicMock,
     mock_gather: MagicMock,
 ) -> None:
-    """Never more than _OPENMETEO_CONCURRENCY threads active at the same time."""
-    import threading
-    import time
-
-    from src.backend.api.models.helpers.best_score_calculator import _OPENMETEO_CONCURRENCY
 
     mock_build.return_value = {}
 

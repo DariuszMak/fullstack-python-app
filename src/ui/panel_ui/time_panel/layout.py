@@ -16,20 +16,12 @@ logger = structlog.get_logger(__name__)
 
 
 class LayoutHooks(Protocol):
-    """Lifecycle hooks needed by create_layout.
-
-    Separating these from ClockWidget's scheduler lets each be faked
-    independently in tests without touching pn.state at all.
-    """
-
     def execute(self, coro_fn: Callable[[], Coroutine[Any, Any, None]]) -> None: ...
 
     def onload(self, callback: Callable[[], None]) -> None: ...
 
 
 class PanelStateHooks:
-    """Production adapter — thin wrapper around pn.state."""
-
     def execute(self, coro_fn: Callable[[], Coroutine[Any, Any, None]]) -> None:
         pn.state.execute(coro_fn)
 
@@ -42,19 +34,6 @@ def create_layout(
     scheduler: PeriodicScheduler | None = None,
     time_fetcher: Callable[[], Coroutine[Any, Any, str]] | None = None,
 ) -> pn.Column:
-    """Build the Panel layout.
-
-    Parameters
-    ----------
-    hooks:
-        Lifecycle hooks (execute, onload).  Defaults to the real pn.state
-        adapters; pass a test double in tests.
-    scheduler:
-        Periodic-callback scheduler for ClockWidget.  Same default rule.
-    time_fetcher:
-        Async callable that returns the current server time as an ISO string.
-        Defaults to the real HTTP fetch; pass a fake in tests.
-    """
     hooks_ = hooks or PanelStateHooks()
     scheduler_ = scheduler or PanelStateScheduler()
     fetch_time = time_fetcher or _default_fetch_time

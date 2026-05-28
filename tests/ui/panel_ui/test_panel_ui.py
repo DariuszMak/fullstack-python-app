@@ -34,7 +34,6 @@ class SchedulerProtocol(Protocol):
 
 
 class FakePeriodicCallback(PeriodicCallback):
-    """Mimics panel.io.callbacks.PeriodicCallback well enough for tests."""
 
     def __init__(self) -> None:
         pass
@@ -44,8 +43,6 @@ class FakePeriodicCallback(PeriodicCallback):
 
 
 class FakeScheduler:
-    """Replaces pn.state.add_periodic_callback / on_session_destroyed."""
-
     def __init__(self) -> None:
         self.registered_cb: Callable[[], None] | None = None
         self.destroyed_cb: Callable[..., None] | None = None
@@ -63,14 +60,11 @@ class FakeScheduler:
         self.destroyed_cb = callback
 
     def tick(self) -> None:
-        """Manually fire one tick in tests."""
         if self.registered_cb:
             self.registered_cb()
 
 
 class FakeHooks:
-    """Replaces pn.state.execute / onload."""
-
     def __init__(
         self,
         fake_fetch: Callable[[], Coroutine[Any, Any, str]] | None = None,
@@ -305,7 +299,6 @@ def test_clock_widget_current_datetime_advances() -> None:
 
 
 def test_clock_widget_tick_via_scheduler() -> None:
-    """FakeScheduler.tick() fires the registered callback — same path as production."""
     widget, scheduler = _make_clock_widget()
 
     fixed_dt = datetime(2026, 1, 25, 12, 0, 0, tzinfo=UTC)

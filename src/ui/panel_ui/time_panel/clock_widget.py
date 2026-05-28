@@ -21,12 +21,6 @@ logger = structlog.get_logger(__name__)
 
 
 class PeriodicScheduler(Protocol):
-    """Minimal interface for registering a repeating callback.
-
-    Keeping this as a Protocol (not an ABC) means the real pn.state and any
-    test double both satisfy it without inheriting anything from Panel.
-    """
-
     def add_periodic_callback(
         self,
         callback: Callable[[], None],
@@ -37,8 +31,6 @@ class PeriodicScheduler(Protocol):
 
 
 class PanelStateScheduler:
-    """Production adapter — thin wrapper around pn.state."""
-
     def add_periodic_callback(
         self,
         callback: Callable[[], None],

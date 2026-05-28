@@ -45,7 +45,6 @@ def _score_place(
 
 
 def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScoreRecord:
-    """Synchronous per-place fetch + score. Executed in a thread pool."""
     place = PLACES[key]
     parameters = build_request_parameters(
         latitude=place.latitude,
@@ -76,13 +75,6 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
 
 
 async def calculate_best_scores(params: BestScoreQueryParams) -> list[PlaceBestScoreRecord]:
-    """Fetch all places with bounded concurrency, then sort by score descending.
-
-    Uses a semaphore to respect Open-Meteo's free-tier concurrent-request limit.
-    Cached responses (requests_cache) are served instantly and don't consume a
-    real API slot, so even a semaphore of 2 gives a meaningful speedup over
-    fully sequential execution.
-    """
     loop = asyncio.get_event_loop()
     semaphore = asyncio.Semaphore(_OPENMETEO_CONCURRENCY)
 
