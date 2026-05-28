@@ -11,8 +11,8 @@ from src.backend.api.models.helpers.best_score_calculator import calculate_best_
 from src.backend.api.models.helpers.weather_info_parse import parse_weather_records
 from src.backend.api.models.weather_info_response import (
     WeatherInfoResponse,
-    WeatherQueryParams,
 )
+from src.backend.api.models.weather_query_params import WeatherQueryParams
 from src.backend.api.time_provider.context import default_time_sync_context
 from src.backend.api.time_provider.time_sync_context import TimeSyncContext
 from src.backend.openmeteo.gather import gather_data
