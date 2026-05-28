@@ -80,7 +80,7 @@ async def weather_score(params: BestScoreQueryParams) -> BestScoreResponse:
         threshold=params.apparent_temperature_threshold,
         penalize_rain=params.penalize_rain,
         start_day=params.start_day,
-        end_day=params.end_day,  
+        end_day=params.end_day,
     )
 
 

@@ -32,11 +32,6 @@ def _make_daily_df(
     })
 
 
-
-
-
-
-
 def test_day_weight_first_day_is_one() -> None:
     assert _day_weight(0, 10) == pytest.approx(1.0)
 
@@ -47,11 +42,6 @@ def test_day_weight_last_day_is_near_zero() -> None:
 
 def test_day_weight_middle_day() -> None:
     assert _day_weight(5, 10) == pytest.approx(0.5)
-
-
-
-
-
 
 
 def test_score_place_zero_when_all_below_threshold() -> None:
@@ -134,11 +124,6 @@ def test_score_place_exact_threshold_not_counted() -> None:
     assert score == pytest.approx(0.0)
 
 
-
-
-
-
-
 def test_params_end_day_defaults_to_forecast_days() -> None:
     params = BestScoreQueryParams(forecast_days=10)
     assert params.end_day == 10
@@ -163,11 +148,6 @@ def test_params_start_day_gte_end_day_raises() -> None:
 def test_params_start_day_gt_end_day_raises() -> None:
     with pytest.raises(ValueError, match="start_day"):
         BestScoreQueryParams(forecast_days=10, start_day=7, end_day=3)
-
-
-
-
-
 
 
 @pytest.mark.asyncio
@@ -263,7 +243,6 @@ async def test_calculate_best_scores_only_scores_day_range(
     """Scores computed with start_day=3, end_day=7 must use only those 4 rows."""
     mock_build.return_value = {}
 
-    
     n = 10
     apparent_values = [40.0, 40.0, 40.0, 22.0, 22.0, 22.0, 22.0, 5.0, 5.0, 5.0]
     dates = pd.date_range(start=pd.Timestamp("2026-05-22", tz="UTC"), periods=n, freq="D")
@@ -301,7 +280,6 @@ async def test_calculate_best_scores_only_scores_day_range(
     results_range = await calculate_best_scores(params_range)
     scores_range = {r.key: r.score for r in results_range}
 
-    
     for key in scores_full:
         assert scores_range[key] < scores_full[key], (
             f"Place {key}: range score {scores_range[key]} should be < full score {scores_full[key]}"

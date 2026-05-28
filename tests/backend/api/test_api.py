@@ -132,11 +132,6 @@ def _assert_datetime_response(data: dict[str, str]) -> datetime:
     return dt
 
 
-
-
-
-
-
 def test_chrome_devtools_json_not_found() -> None:
     with TestClient(app) as client:
         response = client.get("/.well-known/appspecific/com.chrome.devtools.json")
@@ -168,11 +163,6 @@ def test_ping_route() -> None:
         response = client.get("/api/v1/ping")
         assert response.status_code == 200
         assert response.json() == {"message": "pong"}
-
-
-
-
-
 
 
 def test_time_route_remote_via_monkeypatch(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -211,11 +201,6 @@ def test_time_route_fallback_to_local(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert response.status_code == 200
     _assert_datetime_response(response.json())
-
-
-
-
-
 
 
 @patch("src.backend.api.routes.gather_data")
@@ -390,11 +375,6 @@ def test_weather_info_sanitizes_nan_in_daily(mock_build: MagicMock, mock_gather:
     assert data["daily"][0]["rain_sum"] == pytest.approx(0.0)
 
 
-
-
-
-
-
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_returns_200(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
@@ -467,7 +447,6 @@ def test_best_score_endpoint_rejects_forecast_days_out_of_range(mock_calc: Async
 def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> None:
     mock_calc.return_value = []
     with TestClient(app) as client:
-        
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
@@ -475,7 +454,7 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
             ).status_code
             == 422
         )
-        
+
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
