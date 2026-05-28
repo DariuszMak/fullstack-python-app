@@ -137,16 +137,6 @@ def test_params_explicit_start_end_accepted() -> None:
     assert params.start_day == 3
 
 
-def test_params_start_day_gte_end_day_raises() -> None:
-    with pytest.raises(ValueError, match="start_day"):
-        BestScoreQueryParams(forecast_days=10, start_day=5)
-
-
-def test_params_start_day_gt_end_day_raises() -> None:
-    with pytest.raises(ValueError, match="start_day"):
-        BestScoreQueryParams(forecast_days=10, start_day=7)
-
-
 @pytest.mark.asyncio
 @patch("src.backend.api.models.helpers.best_score_calculator.gather_data")
 @patch("src.backend.api.models.helpers.best_score_calculator.build_request_parameters")

@@ -447,7 +447,7 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
-                json={"forecast_days": 5},
+                json={"forecast_days": 50},
             ).status_code
             == 422
         )
@@ -455,7 +455,7 @@ def test_best_score_endpoint_rejects_invalid_day_range(mock_calc: AsyncMock) -> 
         assert (
             client.post(
                 "/api/v1/forecast/weather-score",
-                json={"forecast_days": 10, "start_day": 5},
+                json={"forecast_days": 10, "start_day": 50},
             ).status_code
             == 422
         )

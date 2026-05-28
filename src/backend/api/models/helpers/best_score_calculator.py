@@ -56,7 +56,7 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
     _, daily_df = gather_data(parameters)
     daily_df = daily_df.reset_index(drop=True)
 
-    daily_df = daily_df.iloc[params.start_day]
+    daily_df = daily_df.iloc[params.start_day : params.forecast_days]
 
     score = _score_place(
         daily_df,
