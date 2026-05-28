@@ -235,8 +235,8 @@
 							"pm.test(\"Forecast days are returned\", function () {",
 							"    const jsonData = pm.response.json();",
 							"",
-							"    pm.expect(jsonData.daily.length).to.eql(16);",
-							"    pm.expect(jsonData.daily_rows).to.eql(16);",
+							"    pm.expect(jsonData.daily.length).to.eql(3);",
+							"    pm.expect(jsonData.daily_rows).to.eql(3);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -253,7 +253,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"latitude\": 51.9727,\n  \"longitude\": 17.5026,\n  \"timezone\": \"Europe/Berlin\",\n  \"forecast_days\": 16\n}"
+					"raw": "{\n  \"latitude\": 51.9727,\n  \"longitude\": 17.5026,\n  \"timezone\": \"Europe/Berlin\",\n  \"forecast_days\": 3\n}"
 				},
 				"url": {
 					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/info",
@@ -311,8 +311,8 @@
 							"pm.test(\"Forecast days are returned\", function () {",
 							"    const jsonData = pm.response.json();",
 							"",
-							"    pm.expect(jsonData.daily.length).to.eql(16);",
-							"    pm.expect(jsonData.daily_rows).to.eql(16);",
+							"    pm.expect(jsonData.daily.length).to.eql(3);",
+							"    pm.expect(jsonData.daily_rows).to.eql(3);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -329,7 +329,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"latitude\": 51.7522,\n  \"longitude\": -1.256,\n  \"timezone\": \"Europe/London\",\n  \"forecast_days\": 16\n}"
+					"raw": "{\n  \"latitude\": 51.7522,\n  \"longitude\": -1.256,\n  \"timezone\": \"Europe/London\",\n  \"forecast_days\": 3\n}"
 				},
 				"url": {
 					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/info",
