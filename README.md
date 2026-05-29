@@ -47,7 +47,6 @@
 
 You can also use VSCode `settings.json` and `launch.json` files to run the project (choose interpreter created by UV).
 
-
 ### Fast Windows dev
 
 ```commandline
