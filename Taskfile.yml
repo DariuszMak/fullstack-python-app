@@ -35,18 +35,18 @@ tasks:
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/generate_diagrams.ps1
 
-  local-dev-windows-run:
+  local-dev-native-run:
     desc: Local dev Windows run
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/run_windows_dev_application.ps1
 
-  local-dev-windows-api-tests:
+  local-dev-native-api-tests:
     desc: Local dev Windows API tests
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/wait_for_windows_api.ps1
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
 
-  full-dev-windows:
+  full-dev-native:
     desc: Fast native Windows development flow
     deps:
       - cleanup
@@ -54,8 +54,8 @@ tasks:
       - task: dev-env
       - task: local-static-tests
       - task: kibana-elastic
-      - task: local-dev-windows-run
-      - task: local-dev-windows-api-tests
+      - task: local-dev-native-run
+      - task: local-dev-native-api-tests
 
   full-static-analyzis:
     desc: Full static analysis + SonarQube + diagrams
@@ -88,17 +88,17 @@ tasks:
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/test_linux_api.ps1
 
-  run-windows-release:
+  run-native-release:
     desc: Run Windows built executable
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/run_windows_application.ps1
 
-  wait-windows-api:
+  wait-native-api:
     desc: Wait for Windows API
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/wait_for_windows_api.ps1
 
-  test-windows-api:
+  test-native-api:
     desc: Test Windows API
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
@@ -114,8 +114,8 @@ tasks:
       - task: wait-linux-api
       - task: test-linux-api
 
-      - task: run-windows-release
-      - task: wait-windows-api
-      - task: test-windows-api
+      - task: run-native-release
+      - task: wait-native-api
+      - task: test-native-api
 
       - powershell -Command "uv sync --dev --locked --no-cache"
