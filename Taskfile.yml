@@ -37,13 +37,13 @@ tasks:
   local-dev-native-run:
     desc: Local dev Windows run
     cmds:
-      - powershell -ExecutionPolicy Bypass -File tasks/run_windows_dev_application.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/run_native_dev_application.ps1
 
   local-dev-native-api-tests:
     desc: Local dev Windows API tests
     cmds:
-      - powershell -ExecutionPolicy Bypass -File tasks/wait_for_windows_api.ps1
-      - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/wait_for_native_api.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/test_native_api.ps1
 
   full-dev-native:
     desc: Fast native Windows development flow
@@ -90,17 +90,17 @@ tasks:
   run-native-release:
     desc: Run Windows built executable
     cmds:
-      - powershell -ExecutionPolicy Bypass -File tasks/run_windows_application.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/run_native_application.ps1
 
   wait-native-api:
     desc: Wait for Windows API
     cmds:
-      - powershell -ExecutionPolicy Bypass -File tasks/wait_for_windows_api.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/wait_for_native_api.ps1
 
   test-native-api:
     desc: Test Windows API
     cmds:
-      - powershell -ExecutionPolicy Bypass -File tasks/test_windows_api.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/test_native_api.ps1
 
   full-release-setup:
     desc: Full setup from scratch (Windows + Linux + releases)
