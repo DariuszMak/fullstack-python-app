@@ -18,6 +18,8 @@ def test_config_defaults() -> None:
     assert config.react_port == 8002
     assert config.react_base_url == "http://127.0.0.1:8002"
 
+    assert config.log_file == "app.log"
+
 
 def test_config_custom_values() -> None:
     config = Config(
