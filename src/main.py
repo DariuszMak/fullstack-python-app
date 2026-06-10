@@ -1,6 +1,7 @@
 import os
 import sys
 import threading
+
 import structlog
 
 from src import node_setup, pyside_setup
