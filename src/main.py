@@ -15,6 +15,8 @@ TRUE_ENV_VARIABLES_VALUES = "true", "1", "t"
 
 logging_setup()
 
+logger = structlog.get_logger(__name__)
+
 if __name__ == "__main__":
     logger.info("Starting application...")
 
