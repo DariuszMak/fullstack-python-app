@@ -43,5 +43,5 @@ do {
 
 } until ($indices.Count -gt 0)
 
-Start-Process "http://127.0.0.1:9200" ; 
 Start-Process "http://127.0.0.1:5601/app/discover#" ; 
+Start-Process "http://127.0.0.1:9200" ; 
