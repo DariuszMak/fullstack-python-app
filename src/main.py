@@ -1,7 +1,7 @@
 import os
 import sys
 import threading
-from venv import logger
+import structlog
 
 from src import node_setup, pyside_setup
 from src.backend.api.app import run_api
@@ -14,6 +14,9 @@ from src.ui.react_ui.app import start_react_ui_in_background
 TRUE_ENV_VARIABLES_VALUES = "true", "1", "t"
 
 logging_setup()
+
+logger = structlog.get_logger(__name__)
+
 
 if __name__ == "__main__":
     logger.info("Starting application...")
