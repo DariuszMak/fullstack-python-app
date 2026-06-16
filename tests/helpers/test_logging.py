@@ -8,8 +8,10 @@ import structlog
 
 from src.helpers.logging_setup import logging_setup
 
+pytestmark = pytest.mark.usefixtures("reset_logging")
 
-@pytest.fixture(autouse=True)
+
+@pytest.fixture
 def reset_logging() -> Generator[None]:
     logger = logging.getLogger()
     logger.handlers.clear()
