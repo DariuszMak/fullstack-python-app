@@ -44,6 +44,8 @@ def gather_data(parameters: dict[str, Any] | None = None) -> tuple[pd.DataFrame,
         "weather_data_gathered",
         hourly_rows=len(hourly_df),
         daily_rows=len(daily_df),
+        hourly_preview=hourly_df.head(1).to_dict(orient="records"),
+        daily_preview=daily_df.head(1).to_dict(orient="records"),
     )
 
     return hourly_df, daily_df
