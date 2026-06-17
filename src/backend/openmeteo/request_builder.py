@@ -45,10 +45,10 @@ def build_request_parameters(
         "timezone": timezone,
         "forecast_days": forecast_days,
     }
-    
+
     if include_daily:
         params["daily"] = DAILY_VARIABLES
     if include_hourly:
         params["hourly"] = HOURLY_VARIABLES
-        
+
     return params

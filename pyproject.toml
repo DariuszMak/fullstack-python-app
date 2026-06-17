@@ -14,6 +14,7 @@ dependencies = [
     "pytest-asyncio>=1.3.0",
     "pytest-qt>=4.5.0",
     "qasync>=0.28.0",
+    "redis>=8.0.0",
     "requests-cache>=1.3.1",
     "respx>=0.22.0",
     "retry-requests>=2.0.0",
