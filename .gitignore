@@ -140,19 +140,22 @@ ruff-report.json
 frontend/node_modules
 static
 
-# Django:
+# Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Flask:
+# Flask
 instance
 .webassets-cache
 
-# Scrapy:
+# Scrapy
 .scrapy
 
-# PySide:
+# PySide
 moc_*.py
 files_rc.py
+
+# SQLite
+*.sqlite
