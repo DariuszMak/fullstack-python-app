@@ -130,6 +130,14 @@ def _make_daily_df(n: int = N_DAYS) -> pd.DataFrame:
     })
 
 
+def _make_hourly_df2_empty() -> pd.DataFrame:
+    return pd.DataFrame()
+
+
+def _make_daily_df_empty() -> pd.DataFrame:
+    return pd.DataFrame()
+
+
 def _assert_datetime_response(data: dict[str, str]) -> datetime:
     assert "datetime" in data
     dt = datetime.fromisoformat(data["datetime"])
@@ -352,12 +360,12 @@ def test_weather_info_passes_params_to_build_request_parameters(mock_build: Magi
     )
 
     mock_build.return_value = {}
-    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+    mock_gather.return_value = (_make_hourly_df2_empty(), _make_daily_df_empty())
 
     with TestClient(app) as client:
         client.post("/api/v1/forecast/info", json=params.model_dump())
 
-    mock_build.assert_called_once_with(**params.model_dump())
+    mock_build.assert_called_once_with(**params.model_dump(), include_hourly=True, include_daily=True)
 
 
 @patch("src.backend.api.routes.gather_data")

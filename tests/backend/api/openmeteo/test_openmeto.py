@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import numpy as np
 import pandas as pd
@@ -191,7 +191,7 @@ def test_returns_client(mock_session: MagicMock, mock_retry: MagicMock, mock_cli
 @patch("src.backend.openmeteo.client_builder.requests_cache.CachedSession")
 def test_cache_parameters_forwarded(mock_session: MagicMock, mock_retry: MagicMock, mock_client_cls: MagicMock) -> None:
     build_openmeteo_client(cache_name="custom", expire_after=999)
-    mock_session.assert_called_once_with("custom", expire_after=999)
+    mock_session.assert_called_once_with("custom", backend=ANY, expire_after=999)
 
 
 @patch("src.backend.openmeteo.client_builder.openmeteo_requests.Client")
