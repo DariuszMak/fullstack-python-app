@@ -36,12 +36,19 @@ def build_request_parameters(
     longitude: float = LONGITUDE,
     timezone: str = TIMEZONE,
     forecast_days: int = MAX_FORECAST_DAYS,
+    include_hourly: bool = True,
+    include_daily: bool = True,
 ) -> dict[str, object]:
-    return {
+    params: dict[str, object] = {
         "latitude": latitude,
         "longitude": longitude,
-        "daily": DAILY_VARIABLES,
-        "hourly": HOURLY_VARIABLES,
         "timezone": timezone,
         "forecast_days": forecast_days,
     }
+    
+    if include_daily:
+        params["daily"] = DAILY_VARIABLES
+    if include_hourly:
+        params["hourly"] = HOURLY_VARIABLES
+        
+    return params

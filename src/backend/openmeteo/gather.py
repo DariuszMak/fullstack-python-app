@@ -34,15 +34,22 @@ def gather_data(parameters: dict[str, Any] | None = None) -> tuple[pd.DataFrame,
 
     logger.info("parsing_weather_response", utc_offset=utc_offset)
 
-    hourly_df = parse_hourly_dataframe(response.Hourly(), utc_offset)
-    daily_df = parse_daily_dataframe(response.Daily(), utc_offset)
+    hourly = response.Hourly()
+    if hourly is not None:
+        hourly_df = parse_hourly_dataframe(hourly, utc_offset)
+    else:
+        hourly_df = pd.DataFrame()
+
+    daily = response.Daily()
+    if daily is not None:
+        daily_df = parse_daily_dataframe(daily, utc_offset)
+    else:
+        daily_df = pd.DataFrame()
 
     logger.info(
         "weather_data_gathered",
         hourly_rows=len(hourly_df),
         daily_rows=len(daily_df),
-        hourly_preview=hourly_df.head(1).to_dict(orient="records"),
-        daily_preview=daily_df.head(1).to_dict(orient="records"),
     )
 
     return hourly_df, daily_df

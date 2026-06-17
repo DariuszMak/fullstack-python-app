@@ -53,6 +53,8 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
         longitude=place.longitude,
         timezone=place.timezone,
         forecast_days=params.forecast_days,
+        include_hourly=False,
+        include_daily=True,
     )
 
     _, daily_df = gather_data(parameters)
