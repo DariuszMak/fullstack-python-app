@@ -366,6 +366,7 @@
 							"",
 							"    pm.expect(jsonData).to.have.property(\"results\");",
 							"    pm.expect(jsonData).to.have.property(\"min_threshold\");",
+							"    pm.expect(jsonData).to.have.property(\"max_threshold\");",
 							"    pm.expect(jsonData).to.have.property(\"penalize_rain\");",
 							"    pm.expect(jsonData).to.have.property(\"start_day\");",
 							"});",
@@ -377,6 +378,9 @@
 							"",
 							"pm.test(\"Default min_threshold is 20\", function () {",
 							"    pm.expect(pm.response.json().min_threshold).to.eql(20);",
+							"});",
+							"pm.test(\"Default max_threshold is 25\", function () {",
+							"    pm.expect(pm.response.json().max_threshold).to.eql(25);",
 							"});",
 							"",
 							"pm.test(\"Default penalize_rain is true\", function () {",
@@ -458,6 +462,11 @@
 							"    pm.expect(jsonData.min_threshold).to.eql(18);",
 							"    pm.expect(jsonData.penalize_rain).to.eql(false);",
 							"});",
+							"pm.test(\"max_threshold and penalize_rain are reflected\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.max_threshold).to.eql(23);",
+							"    pm.expect(jsonData.penalize_rain).to.eql(false);",
+							"});",
 							"",
 							"pm.test(\"Results are sorted by score descending\", function () {",
 							"    const scores = pm.response.json().results.map(r => r.score);",
@@ -480,7 +489,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"apparent_temperature_min_threshold\": 18,\n  \"penalize_rain\": false,\n  \"forecast_days\": 16,\n  \"start_day\": 3\n}"
+					"raw": "{\n  \"apparent_temperature_min_threshold\": 18,\n  \"apparent_temperature_max_threshold\": 23,\n  \"penalize_rain\": false,\n  \"forecast_days\": 16,\n  \"start_day\": 3\n}"
 				},
 				"url": {
 					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/weather-score",
