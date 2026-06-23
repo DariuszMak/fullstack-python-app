@@ -78,7 +78,10 @@ def test_score_place_exact_max_threshold_counted() -> None:
 
 
 def test_params_reject_equal_temperature_thresholds() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match="apparent_temperature_min_threshold must be less than apparent_temperature_max_threshold",
+    ):
         BestScoreQueryParams(
             apparent_temperature_min_threshold=20.0,
             apparent_temperature_max_threshold=20.0,
@@ -86,7 +89,10 @@ def test_params_reject_equal_temperature_thresholds() -> None:
 
 
 def test_params_reject_min_greater_than_max() -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match="apparent_temperature_min_threshold must be less than apparent_temperature_max_threshold",
+    ):
         BestScoreQueryParams(
             apparent_temperature_min_threshold=25.0,
             apparent_temperature_max_threshold=20.0,
