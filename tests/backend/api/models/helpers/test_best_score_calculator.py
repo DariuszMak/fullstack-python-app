@@ -53,15 +53,15 @@ def test_day_weight_middle_day() -> None:
     assert _day_weight(5, 10) == pytest.approx(0.5)
 
 
-def test_score_place_zero_when_all_below_threshold() -> None:
+def test_score_place_zero_when_all_below_min_threshold() -> None:
     df = _make_daily_df(apparent_max=15.0)
-    score = _score_place(df, threshold=20.0, penalize_rain=False)
+    score = _score_place(df, min_threshold=20.0, penalize_rain=False)
     assert score == pytest.approx(0.0)
 
 
-def test_score_place_positive_when_above_threshold() -> None:
+def test_score_place_positive_when_above_min_threshold() -> None:
     df = _make_daily_df(apparent_max=25.0)
-    score = _score_place(df, threshold=20.0, penalize_rain=False)
+    score = _score_place(df, min_threshold=20.0, penalize_rain=False)
     assert score > 0.0
 
 
@@ -83,11 +83,11 @@ def test_score_place_first_day_weighted_higher() -> None:
         "temperature_2m_min": np.full(n, 11.0),
     })
 
-    score_first_big = _score_place(df, threshold=20.0, penalize_rain=False)
+    score_first_big = _score_place(df, min_threshold=20.0, penalize_rain=False)
 
     df2 = df.copy()
     df2["apparent_temperature_max"] = list(reversed(apparent_values))
-    score_last_big = _score_place(df2, threshold=20.0, penalize_rain=False)
+    score_last_big = _score_place(df2, min_threshold=20.0, penalize_rain=False)
 
     assert score_first_big > score_last_big
 
@@ -109,27 +109,27 @@ def test_score_place_rain_penalize_zeroes_rainy_days() -> None:
         "temperature_2m_min": np.full(n, 11.0),
     })
 
-    score_no_penalize = _score_place(df, threshold=20.0, penalize_rain=False)
-    score_penalize = _score_place(df, threshold=20.0, penalize_rain=True)
+    score_no_penalize = _score_place(df, min_threshold=20.0, penalize_rain=False)
+    score_penalize = _score_place(df, min_threshold=20.0, penalize_rain=True)
 
     assert score_penalize < score_no_penalize
 
 
 def test_score_place_rain_penalize_false_keeps_rainy_days() -> None:
     df = _make_daily_df(apparent_max=25.0, rain_sum=10.0)
-    score = _score_place(df, threshold=20.0, penalize_rain=False)
+    score = _score_place(df, min_threshold=20.0, penalize_rain=False)
     assert score > 0.0
 
 
 def test_score_place_all_rainy_penalized_is_zero() -> None:
     df = _make_daily_df(apparent_max=25.0, rain_sum=5.0)
-    score = _score_place(df, threshold=20.0, penalize_rain=True)
+    score = _score_place(df, min_threshold=20.0, penalize_rain=True)
     assert score == pytest.approx(0.0)
 
 
-def test_score_place_exact_threshold_not_counted() -> None:
+def test_score_place_exact_min_threshold_not_counted() -> None:
     df = _make_daily_df(apparent_max=20.0)
-    score = _score_place(df, threshold=20.0, penalize_rain=False)
+    score = _score_place(df, min_threshold=20.0, penalize_rain=False)
     assert score == pytest.approx(0.0)
 
 
@@ -173,7 +173,7 @@ async def test_calculate_best_scores_sorted_descending(
 
     mock_gather.side_effect = side_effect
 
-    params = BestScoreQueryParams(apparent_temperature_threshold=15.0)
+    params = BestScoreQueryParams(apparent_temperature_min_threshold=15.0)
     results = await calculate_best_scores(params)
 
     scores = [r.score for r in results]
@@ -250,7 +250,7 @@ async def test_calculate_best_scores_only_scores_day_range(
 
     params_full = BestScoreQueryParams(
         forecast_days=10,
-        apparent_temperature_threshold=20.0,
+        apparent_temperature_min_threshold=20.0,
         penalize_rain=False,
     )
     results_full = await calculate_best_scores(params_full)
@@ -259,7 +259,7 @@ async def test_calculate_best_scores_only_scores_day_range(
     params_range = BestScoreQueryParams(
         forecast_days=10,
         start_day=3,
-        apparent_temperature_threshold=20.0,
+        apparent_temperature_min_threshold=20.0,
         penalize_rain=False,
     )
     results_range = await calculate_best_scores(params_range)

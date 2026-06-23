@@ -23,7 +23,7 @@ def _day_weight(day_index: int, total_days: int) -> float:
 
 def _score_place(
     daily_df: pd.DataFrame,
-    threshold: float,
+    min_threshold: float,
     penalize_rain: bool,
 ) -> float:
     total_days = len(daily_df)
@@ -33,10 +33,10 @@ def _score_place(
         apparent_max = float(row["apparent_temperature_max"])
         rain = float(row["rain_sum"])
 
-        if apparent_max <= threshold:
+        if apparent_max <= min_threshold:
             continue
 
-        day_score = (apparent_max - threshold) * _day_weight(idx, total_days)
+        day_score = (apparent_max - min_threshold) * _day_weight(idx, total_days)
 
         if penalize_rain and rain > 0.0:
             day_score = 0.0
@@ -64,7 +64,7 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
 
     score = _score_place(
         daily_df,
-        params.apparent_temperature_threshold,
+        params.apparent_temperature_min_threshold,
         params.penalize_rain,
     )
 

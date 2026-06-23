@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class BestScoreQueryParams(BaseModel):
-    apparent_temperature_threshold: float = Field(
+    apparent_temperature_min_threshold: float = Field(
         default=20.0, description="Minimum apparent temperature (°C) to earn score points"
     )
     penalize_rain: bool = Field(
