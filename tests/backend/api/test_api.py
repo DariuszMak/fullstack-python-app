@@ -485,6 +485,7 @@ def test_best_score_endpoint_response_has_required_keys(mock_calc: AsyncMock) ->
 
     assert "results" in data
     assert "min_threshold" in data
+    assert "max_threshold" in data
     assert "penalize_rain" in data
     assert "start_day" in data
 
@@ -500,6 +501,20 @@ def test_best_score_endpoint_reflects_min_threshold(mock_calc: AsyncMock) -> Non
         ).json()
 
     assert data["min_threshold"] == pytest.approx(18.5)
+
+
+@patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
+def test_best_score_endpoint_reflects_max_threshold(mock_calc: AsyncMock) -> None:
+    mock_calc.return_value = []
+
+    with TestClient(app) as client:
+        data = client.post(
+            "/api/v1/forecast/weather-score",
+            json={"apparent_temperature_max_threshold": 22.5},
+        ).json()
+
+    assert data["max_threshold"] == pytest.approx(22.5)
+
 
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)

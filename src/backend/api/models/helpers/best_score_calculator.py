@@ -24,6 +24,7 @@ def _day_weight(day_index: int, total_days: int) -> float:
 def _score_place(
     daily_df: pd.DataFrame,
     min_threshold: float,
+    max_threshold: float,
     penalize_rain: bool,
 ) -> float:
     total_days = len(daily_df)

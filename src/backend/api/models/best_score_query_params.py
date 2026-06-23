@@ -7,6 +7,9 @@ class BestScoreQueryParams(BaseModel):
     apparent_temperature_min_threshold: float = Field(
         default=20.0, description="Minimum apparent temperature (°C) to earn score points"
     )
+    apparent_temperature_max_threshold: float = Field(
+        default=25.0, description="Maximum apparent temperature (°C) to earn score points"
+    )
     penalize_rain: bool = Field(
         default=True, description="When True, any rain in the forecast multiplies the place score by 0"
     )

@@ -15,5 +15,6 @@ class PlaceBestScoreRecord(BaseModel):
 class BestScoreResponse(BaseModel):
     results: list[PlaceBestScoreRecord]
     min_threshold: float
+    max_threshold: float
     penalize_rain: bool
     start_day: int
