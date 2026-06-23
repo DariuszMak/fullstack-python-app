@@ -34,7 +34,7 @@ def _score_place(
         apparent_max = float(row["apparent_temperature_max"])
         rain = float(row["rain_sum"])
 
-        if apparent_max <= min_threshold:
+        if apparent_max <= min_threshold or apparent_max > max_threshold:
             continue
 
         day_score = (apparent_max - min_threshold) * _day_weight(idx, total_days)
@@ -66,6 +66,7 @@ def _fetch_place_score(key: str, params: BestScoreQueryParams) -> PlaceBestScore
     score = _score_place(
         daily_df,
         params.apparent_temperature_min_threshold,
+        params.apparent_temperature_max_threshold,
         params.penalize_rain,
     )
 
