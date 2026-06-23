@@ -77,6 +77,32 @@ def test_score_place_exact_max_threshold_counted() -> None:
     assert score > 0.0
 
 
+def test_params_reject_equal_temperature_thresholds() -> None:
+    with pytest.raises(ValueError):
+        BestScoreQueryParams(
+            apparent_temperature_min_threshold=20.0,
+            apparent_temperature_max_threshold=20.0,
+        )
+
+
+def test_params_reject_min_greater_than_max() -> None:
+    with pytest.raises(ValueError):
+        BestScoreQueryParams(
+            apparent_temperature_min_threshold=25.0,
+            apparent_temperature_max_threshold=20.0,
+        )
+
+
+def test_params_accept_min_less_than_max() -> None:
+    params = BestScoreQueryParams(
+        apparent_temperature_min_threshold=20.0,
+        apparent_temperature_max_threshold=25.0,
+    )
+
+    assert params.apparent_temperature_min_threshold == pytest.approx(20.0)
+    assert params.apparent_temperature_max_threshold == pytest.approx(25.0)
+
+
 def test_score_place_first_day_weighted_higher() -> None:
     n = 4
     dates = pd.date_range(start=pd.Timestamp("2026-05-22", tz="UTC"), periods=n, freq="D")

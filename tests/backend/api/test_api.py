@@ -515,6 +515,32 @@ def test_best_score_endpoint_reflects_max_threshold(mock_calc: AsyncMock) -> Non
 
     assert data["max_threshold"] == pytest.approx(22.5)
 
+@patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
+def test_best_score_endpoint_rejects_overlapping_temperature_thresholds(
+    mock_calc: AsyncMock,
+) -> None:
+    with TestClient(app) as client:
+        assert (
+            client.post(
+                "/api/v1/forecast/weather-score",
+                json={
+                    "apparent_temperature_min_threshold": 25.0,
+                    "apparent_temperature_max_threshold": 25.0,
+                },
+            ).status_code
+            == 422
+        )
+
+        assert (
+            client.post(
+                "/api/v1/forecast/weather-score",
+                json={
+                    "apparent_temperature_min_threshold": 26.0,
+                    "apparent_temperature_max_threshold": 25.0,
+                },
+            ).status_code
+            == 422
+        )
 
 @patch("src.backend.api.routes.calculate_best_scores", new_callable=AsyncMock)
 def test_best_score_endpoint_reflects_penalize_rain(mock_calc: AsyncMock) -> None:

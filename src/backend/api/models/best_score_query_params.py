@@ -25,4 +25,9 @@ class BestScoreQueryParams(BaseModel):
         if self.start_day >= self.forecast_days:
             raise ValueError(f"start_day ({self.start_day}) must be less than forecast_days ({self.forecast_days})")
 
+        if self.apparent_temperature_min_threshold >= self.apparent_temperature_max_threshold:
+            raise ValueError(
+                "apparent_temperature_min_threshold must be less than apparent_temperature_max_threshold"
+            )
+
         return self
