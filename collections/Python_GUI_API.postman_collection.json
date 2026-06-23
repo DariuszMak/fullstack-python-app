@@ -510,6 +510,52 @@
 				}
 			}
 		},
+				{
+			"name": "weather score - invalid temperature threhold range (422)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"apparent_temperature_min_threshold\": 5,\n  \"apparent_temperature_max_threshold\": 2,\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/api/v1/forecast/weather-score",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"v1",
+						"forecast",
+						"weather-score"
+					]
+				}
+			}
+		},
 		{
 			"name": "weather score - invalid day range (422)",
 			"event": [
