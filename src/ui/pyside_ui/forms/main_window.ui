@@ -404,6 +404,20 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
+              <layout class="QHBoxLayout" name="frame_weather_score">
+               <item>
+                <widget class="QTextBrowser" name="weatherScoreTextBrowser"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="checkWeatherScoreButton">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_clock_widget">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
