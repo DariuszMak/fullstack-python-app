@@ -436,7 +436,7 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_17">
                 <item>
-                 <widget class="QPushButton" name="pushButton">
+                 <widget class="QPushButton" name="openWindowButton">
                   <property name="text">
                    <string/>
                   </property>

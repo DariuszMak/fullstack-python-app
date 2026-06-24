@@ -52,8 +52,8 @@ class MainWindow(DraggableMainWindow):
         self.setMinimumSize(MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE, MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE)
         self.resize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT)
 
-        self._ui.pushButton.setText("Click to open dialog window")
-        self._ui.pushButton.clicked.connect(self.show_warning_dialog)
+        self._ui.openWindowButton.setText("Click to open dialog window")
+        self._ui.openWindowButton.clicked.connect(self.show_warning_dialog)
 
         self._ui.btn_minimize.clicked.connect(self.showMinimized)
         self._ui.btn_maximize_restore.clicked.connect(self.toggle_maximize_restore)
