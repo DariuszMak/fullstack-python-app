@@ -148,6 +148,17 @@ class MainWindow(DraggableMainWindow):
 
         sorted_results = sorted(result.results, key=lambda place: place.score, reverse=True)
 
+        max_score = max(place.score for place in sorted_results)
+        min_score = min(place.score for place in sorted_results)
+
+        score_range = max_score - min_score
+
+        for place in sorted_results:
+            if score_range == 0:
+                place.relational_score = 1.0
+            else:
+                place.relational_score = (place.relational_score - min_score) / score_range
+
         for rank, place in enumerate(sorted_results, start=1):
             layout.addWidget(WeatherScoreCard(place, rank=rank))
 

@@ -10,6 +10,7 @@ class PlaceBestScoreRecord(BaseModel):
     longitude: float
     timezone: str
     score: float
+    relational_score: float = 0.0
 
 
 class BestScoreResponse(BaseModel):
