@@ -7,6 +7,7 @@ from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
 from PySide6.QtWidgets import QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
+from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.clock_widget.view.clock_widget import ClockWidget
@@ -32,6 +33,7 @@ class MainWindow(DraggableMainWindow):
         self._supports_opacity = QGuiApplication.platformName().lower() not in ["wayland", "xcb"]
         self._is_closing = False
         self._server_time_task: asyncio.Task[None] | None = None
+        self._weather_score_task: asyncio.Task[None] | None = None
 
         config = Config()
         self._time_client = HttpxClient(config.api_base_url)
@@ -58,6 +60,8 @@ class MainWindow(DraggableMainWindow):
         self._ui.btn_minimize.clicked.connect(self.showMinimized)
         self._ui.btn_maximize_restore.clicked.connect(self.toggle_maximize_restore)
         self._ui.btn_close.clicked.connect(self.close)
+
+        self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
 
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
@@ -100,6 +104,41 @@ class MainWindow(DraggableMainWindow):
     def _apply_server_time(self, server_time: ServerTimeResponse) -> None:
         logger.info("server_time_applied", timestamp=server_time.datetime.isoformat())
         self._clock_widget.set_current_datetime(server_time.datetime)
+
+    def check_weather_score(self) -> None:
+        if self._weather_score_task and not self._weather_score_task.done():
+            logger.debug("weather_score_task_already_running")
+            return
+
+        self._weather_score_task = asyncio.create_task(self._fetch_weather_score())
+
+    async def _fetch_weather_score(self) -> None:
+        log = logger.bind(client=type(self._time_client).__name__)
+        try:
+            log.debug("fetching_weather_score")
+            result = await self._time_client.fetch_weather_score()
+            self._apply_weather_score(result)
+        except Exception as exc:
+            log.exception("weather_score_fetch_failed", error=str(exc))
+            self._ui.weatherScoreTextBrowser.setPlainText(f"Failed to fetch weather score: {exc}")
+
+    def _apply_weather_score(self, result: BestScoreResponse) -> None:
+        logger.info("weather_score_applied", result_count=len(result.results))
+        self._ui.weatherScoreTextBrowser.setPlainText(self._format_weather_score(result))
+
+    @staticmethod
+    def _format_weather_score(result: BestScoreResponse) -> str:
+        lines = [
+            f"Apparent temperature range: {result.min_threshold:.1f}\u00b0C - {result.max_threshold:.1f}\u00b0C",
+            f"Penalize rain: {result.penalize_rain}",
+            f"Start day offset: {result.start_day}",
+            "",
+        ]
+
+        for place in result.results:
+            lines.append(f"{place.name}: {place.score:.2f}")
+
+        return "\n".join(lines)
 
     def fade_in_animation(self) -> None:
         if not self._supports_opacity:

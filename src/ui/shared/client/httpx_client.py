@@ -6,6 +6,7 @@ import httpx
 import structlog
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
+from src.backend.api.models.weather_score_response import BestScoreResponse
 
 logger = structlog.get_logger(__name__)
 
@@ -32,3 +33,21 @@ class HttpxClient:
         log.debug("server_time_fetched", server_time=server_time.isoformat())
 
         return ServerTimeResponse(datetime=server_time)
+
+    async def fetch_weather_score(self) -> BestScoreResponse:
+        url = f"{self._base_url}/api/v1/forecast/weather-score"
+        log = logger.bind(url=url)
+
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(url, json={})
+                response.raise_for_status()
+            except httpx.HTTPError as e:
+                log.exception("weather_score_fetch_failed", error=str(e))
+                raise
+
+        payload = response.json()
+
+        log.debug("weather_score_fetched", result_count=len(payload.get("results", [])))
+
+        return BestScoreResponse.model_validate(payload)
