@@ -135,8 +135,7 @@ class MainWindow(DraggableMainWindow):
             "",
         ]
 
-        for place in result.results:
-            lines.append(f"{place.name}: {place.score:.2f}")
+        lines.extend(f"{place.name}: {place.score:.2f}" for place in result.results)
 
         return "\n".join(lines)
 
