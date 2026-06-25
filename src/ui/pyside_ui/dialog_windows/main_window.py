@@ -4,7 +4,7 @@ import platform
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
-from PySide6.QtWidgets import QSystemTrayIcon
+from PySide6.QtWidgets import QLabel, QLayout, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_score_response import BestScoreResponse
@@ -13,6 +13,7 @@ from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.clock_widget.view.clock_widget import ClockWidget
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.ui.pyside_ui.dialog_windows.warning_dialog import WarningDialog
+from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
 from src.ui.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.ui.pyside_ui.settings import (
     ANIMATION_DURATION,
@@ -121,24 +122,57 @@ class MainWindow(DraggableMainWindow):
             self._apply_weather_score(result)
         except Exception as exc:
             log.exception("weather_score_fetch_failed", error=str(exc))
-            self._ui.weatherScoreTextBrowser.setPlainText(f"Failed to fetch weather score: {exc}")
+            self._show_weather_score_error(str(exc))
 
     def _apply_weather_score(self, result: BestScoreResponse) -> None:
         logger.info("weather_score_applied", result_count=len(result.results))
-        self._ui.weatherScoreTextBrowser.setPlainText(self._format_weather_score(result))
+        self._render_weather_score(result)
+
+    def _render_weather_score(self, result: BestScoreResponse) -> None:
+        layout = self._ui.weatherScoreContainerLayout
+        self._clear_layout(layout)
+
+        summary = QLabel(
+            f"Apparent temperature range: {result.min_threshold:.1f}\u00b0C - {result.max_threshold:.1f}\u00b0C"
+            f"   Penalize rain: {result.penalize_rain}   Start day offset: {result.start_day}"
+        )
+        summary.setWordWrap(True)
+        layout.addWidget(summary)
+
+        if not result.results:
+            empty_label = QLabel("No matching places found.")
+            empty_label.setWordWrap(True)
+            layout.addWidget(empty_label)
+            layout.addStretch(1)
+            return
+
+        sorted_results = sorted(result.results, key=lambda place: place.score, reverse=True)
+
+        for rank, place in enumerate(sorted_results, start=1):
+            layout.addWidget(WeatherScoreCard(place, rank=rank))
+
+        layout.addStretch(1)
+
+    def _show_weather_score_error(self, message: str) -> None:
+        layout = self._ui.weatherScoreContainerLayout
+        self._clear_layout(layout)
+
+        error_label = QLabel(f"Failed to fetch weather score: {message}")
+        error_label.setWordWrap(True)
+        error_label.setStyleSheet("color: rgb(231, 76, 60);")
+        layout.addWidget(error_label)
+        layout.addStretch(1)
 
     @staticmethod
-    def _format_weather_score(result: BestScoreResponse) -> str:
-        lines = [
-            f"Apparent temperature range: {result.min_threshold:.1f}\u00b0C - {result.max_threshold:.1f}\u00b0C",
-            f"Penalize rain: {result.penalize_rain}",
-            f"Start day offset: {result.start_day}",
-            "",
-        ]
-
-        lines.extend(f"{place.name}: {place.score:.2f}" for place in result.results)
-
-        return "\n".join(lines)
+    def _clear_layout(layout: QLayout) -> None:
+        while layout.count():
+            item = layout.takeAt(0)
+            if item is None:
+                continue
+            widget = item.widget()
+            if widget is not None:
+                widget.setParent(None)
+                widget.deleteLater()
 
     def fade_in_animation(self) -> None:
         if not self._supports_opacity:
