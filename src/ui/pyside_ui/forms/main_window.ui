@@ -402,21 +402,7 @@
             <property name="frameShadow">
              <enum>QFrame::Shadow::Raised</enum>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <item>
-              <layout class="QHBoxLayout" name="frame_weather_score">
-               <item>
-                <widget class="QTextBrowser" name="weatherScoreTextBrowser"/>
-               </item>
-               <item>
-                <widget class="QPushButton" name="checkWeatherScoreButton">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
               <widget class="QFrame" name="frame_clock_widget">
                <property name="sizePolicy">
@@ -433,6 +419,20 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_9"/>
               </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="frame_weather_score">
+               <item>
+                <widget class="QTextBrowser" name="weatherScoreTextBrowser"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="checkWeatherScoreButton">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QFrame" name="frame_content">
