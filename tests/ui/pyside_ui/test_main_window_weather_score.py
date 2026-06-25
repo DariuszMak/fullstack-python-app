@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, MagicMock, patch
-
-from pytestqt.qtbot import QtBot
 
 from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
 from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
 from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
+
+if TYPE_CHECKING:
+    from pytestqt.qtbot import QtBot
 
 
 def make_response() -> BestScoreResponse:

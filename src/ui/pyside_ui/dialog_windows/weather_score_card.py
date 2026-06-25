@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
 
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
+if TYPE_CHECKING:
+    from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 
 class WeatherScoreCard(QFrame):
@@ -46,7 +49,7 @@ class WeatherScoreCard(QFrame):
 
     def set_score(self, score: float) -> None:
         clamped = max(0.0, min(1.0, score))
-        percentage = int(round(clamped * 100))
+        percentage = round(clamped * 100)
 
         self._score_bar.setValue(percentage)
         self._score_label.setText(f"{score:.2f}")

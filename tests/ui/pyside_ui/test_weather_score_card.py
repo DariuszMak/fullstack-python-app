@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from pytestqt.qtbot import QtBot
+from typing import TYPE_CHECKING
 
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
+
+if TYPE_CHECKING:
+    from pytestqt.qtbot import QtBot
 
 
 def make_place(score: float = 0.5, name: str = "Wroclaw") -> PlaceBestScoreRecord:
