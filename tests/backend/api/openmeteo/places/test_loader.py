@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic import ValidationError
@@ -9,7 +10,7 @@ from src.backend.openmeteo.places.place import Place
 from src.backend.openmeteo.places.places import PLACES
 
 
-def _write_places(tmp_path: Path, data: dict) -> Path:
+def _write_places(tmp_path: Path, data: dict[str, Any]) -> Path:
     file_path = tmp_path / "places.json"
     file_path.write_text(json.dumps(data), encoding="utf-8")
     return file_path

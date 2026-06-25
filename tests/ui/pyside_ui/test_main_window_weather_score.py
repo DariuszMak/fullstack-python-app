@@ -4,6 +4,8 @@ import asyncio
 from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from PySide6.QtWidgets import QLabel
+
 from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
 from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
 from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
@@ -41,9 +43,12 @@ def make_response() -> BestScoreResponse:
 
 def cards_in_layout(window: MainWindow) -> list[WeatherScoreCard]:
     layout = window._ui.weatherScoreContainerLayout
-    cards = []
+    cards: list[WeatherScoreCard] = []
     for i in range(layout.count()):
-        widget = layout.itemAt(i).widget()
+        item = layout.itemAt(i)
+        if item is None:
+            continue
+        widget = item.widget()
         if isinstance(widget, WeatherScoreCard):
             cards.append(widget)
     return cards
@@ -51,10 +56,13 @@ def cards_in_layout(window: MainWindow) -> list[WeatherScoreCard]:
 
 def labels_text(window: MainWindow) -> list[str]:
     layout = window._ui.weatherScoreContainerLayout
-    texts = []
+    texts: list[str] = []
     for i in range(layout.count()):
-        widget = layout.itemAt(i).widget()
-        if widget is not None and not isinstance(widget, WeatherScoreCard):
+        item = layout.itemAt(i)
+        if item is None:
+            continue
+        widget = item.widget()
+        if isinstance(widget, QLabel):
             texts.append(widget.text())
     return texts
 
