@@ -40,18 +40,24 @@ class WeatherScoreCard(QFrame):
         self._score_label.setFixedWidth(50)
         self._score_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
 
+        self._calculated_score_label = QLabel(self)
+        self._calculated_score_label.setFixedWidth(50)
+        self._calculated_score_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+
         layout.addWidget(self._rank_label)
         layout.addWidget(self._name_label)
         layout.addWidget(self._score_bar)
+        layout.addWidget(self._calculated_score_label)
         layout.addWidget(self._score_label)
 
-        self.set_score(place.score)
+        self.set_score(place.score, place.percentage_score)
 
-    def set_score(self, score: float) -> None:
-        clamped = max(0.0, min(1.0, score))
+    def set_score(self, score: float, calculated_score: float) -> None:
+        clamped = max(0.0, min(1.0, calculated_score))
         percentage = round(clamped * 100)
 
         self._score_bar.setValue(percentage)
+        self._calculated_score_label.setText(f"{calculated_score:.2f}")
         self._score_label.setText(f"{score:.2f}")
 
         color = self._color_for_score(clamped)

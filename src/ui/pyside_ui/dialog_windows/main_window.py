@@ -155,9 +155,9 @@ class MainWindow(DraggableMainWindow):
 
         for place in sorted_results:
             if score_range == 0:
-                place.relational_score = 1.0
+                place.percentage_score = 1.0
             else:
-                place.relational_score = (place.relational_score - min_score) / score_range
+                place.percentage_score = (place.score - min_score) / score_range
 
         for rank, place in enumerate(sorted_results, start=1):
             layout.addWidget(WeatherScoreCard(place, rank=rank))
