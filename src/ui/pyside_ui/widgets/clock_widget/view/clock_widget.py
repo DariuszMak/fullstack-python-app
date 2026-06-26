@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QWidget
 
-from src.ui.pyside_ui.clock_widget.view.painter import Painter
-from src.ui.pyside_ui.clock_widget.view.tick_events import TickEventSubject
+from src.ui.pyside_ui.widgets.clock_widget.view.painter import Painter
+from src.ui.pyside_ui.widgets.clock_widget.view.tick_events import TickEventSubject
 from src.ui.shared.controller.clock_controller import ClockController
 from src.ui.shared.helpers import convert_clock_pid_to_cartesian
 

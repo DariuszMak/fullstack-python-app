@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.ui.pyside_ui.clock_widget.view.tick_events import TickEventSubject, TickObserver
+from src.ui.pyside_ui.widgets.clock_widget.view.tick_events import TickEventSubject, TickObserver
 
 
 class DummyObserver(TickObserver):

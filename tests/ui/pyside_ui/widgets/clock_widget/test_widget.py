@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 from PySide6.QtWidgets import QApplication
 
-from src.ui.pyside_ui.clock_widget.view.clock_widget import ClockWidget
+from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 
 
 def test_clock_widget_runs() -> None:
