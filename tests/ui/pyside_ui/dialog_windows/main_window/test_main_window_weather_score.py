@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from PySide6.QtWidgets import QLabel
-from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
 
 from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
 from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
+from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 
 if TYPE_CHECKING:
     from pytestqt.qtbot import QtBot
@@ -150,7 +150,7 @@ def test_check_weather_score_creates_task(qtbot: QtBot) -> None:
         return mock_task
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.main_window.asyncio.create_task",
+        "src.ui.pyside_ui.widgets.main_window.asyncio.create_task",
         side_effect=fake_create_task,
     ) as mock_create_task:
         window.check_weather_score()
@@ -167,7 +167,7 @@ def test_check_weather_score_skips_when_task_already_running(qtbot: QtBot) -> No
     existing_task.done.return_value = False
     window._weather_score_task = existing_task
 
-    with patch("src.ui.pyside_ui.dialog_windows.main_window.asyncio.create_task") as mock_create_task:
+    with patch("src.ui.pyside_ui.widgets.main_window.asyncio.create_task") as mock_create_task:
         window.check_weather_score()
 
         mock_create_task.assert_not_called()

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
-from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
+from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 
 if TYPE_CHECKING:
     from pytestqt.qtbot import QtBot

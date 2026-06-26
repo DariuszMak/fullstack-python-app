@@ -12,7 +12,6 @@ from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.ui.pyside_ui.dialog_windows.warning_dialog import WarningDialog
-from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
 from src.ui.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.ui.pyside_ui.settings import (
     ANIMATION_DURATION,
@@ -22,6 +21,7 @@ from src.ui.pyside_ui.settings import (
 )
 from src.ui.pyside_ui.tray_manager import TrayManager
 from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
+from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 from src.ui.shared.client.httpx_client import HttpxClient
 
 logger = structlog.get_logger(__name__)
