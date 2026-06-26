@@ -692,7 +692,7 @@
 <!-- src_ui_pyside_ui_dialog_windows_main_window -->
 <g id="node35" class="node">
 <title>src_ui_pyside_ui_dialog_windows_main_window</title><style>.edge>path:hover{stroke-width:8}</style>
-<ellipse fill="#536cb6" stroke="#ffffff" cx="1428.07" cy="-1411.92" rx="62.23" ry="48.08"/>
+<ellipse fill="#4766c2" stroke="#ffffff" cx="1428.07" cy="-1411.92" rx="62.23" ry="48.08"/>
 <text xml:space="preserve" text-anchor="middle" x="1428.07" y="-1432.42" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">src.</text>
 <text xml:space="preserve" text-anchor="middle" x="1428.07" y="-1420.42" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">ui.</text>
 <text xml:space="preserve" text-anchor="middle" x="1428.07" y="-1408.42" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">pyside_ui.</text>
@@ -703,7 +703,7 @@
 <g id="edge72" class="edge">
 <title>src_ui_pyside_ui_dialog_windows_main_window&#45;&gt;src_ui_pyside_ui_bootstrap</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M1467.34,-1374.55C1475.11,-1366.58 1483.1,-1358.1 1490.3,-1349.92 1506.4,-1331.64 1523.2,-1310.49 1537.04,-1292.45"/>
-<polygon fill="#536cb6" stroke="#ffffff" points="1539.8,-1294.61 1543.07,-1284.53 1534.23,-1290.37 1539.8,-1294.61"/>
+<polygon fill="#4766c2" stroke="#ffffff" points="1539.8,-1294.61 1543.07,-1284.53 1534.23,-1290.37 1539.8,-1294.61"/>
 </g>
 <!-- src_ui_pyside_ui_dialog_windows_main_window_main_window&#45;&gt;src_ui_pyside_ui_bootstrap -->
 <g id="edge73" class="edge">
