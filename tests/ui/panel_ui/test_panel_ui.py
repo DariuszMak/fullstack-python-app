@@ -161,7 +161,7 @@ def test_on_click_success() -> None:
 
 def test_on_click_error() -> None:
     async def fake_fetch_time() -> str:
-        return await _async_raise(RuntimeError("boom"))
+        return await _async_raise(RuntimeError("test_message"))
 
     col, _hooks, _ = _make_layout(fake_fetch_time, trigger_onload=False)
 
@@ -171,7 +171,7 @@ def test_on_click_error() -> None:
     button.clicks += 1
 
     assert "Error:" in time_display.object
-    assert "boom" in time_display.object
+    assert "test_message" in time_display.object
 
 
 def test_on_click_sets_clock_datetime() -> None:

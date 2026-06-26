@@ -133,10 +133,10 @@ def test_show_weather_score_error_clears_cards_and_shows_message(qtbot: QtBot) -
     window._render_weather_score(make_response())
     assert len(cards_in_layout(window)) == 2
 
-    window._show_weather_score_error("boom")
+    window._show_weather_score_error("test_message")
 
     assert len(cards_in_layout(window)) == 0
-    assert any("Failed to fetch weather score: boom" in text for text in labels_text(window))
+    assert any("Failed to fetch weather score: test_message" in text for text in labels_text(window))
 
 
 def test_check_weather_score_creates_task(qtbot: QtBot) -> None:
@@ -189,11 +189,11 @@ def test_fetch_weather_score_shows_error_on_failure(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._time_client.fetch_weather_score = AsyncMock(side_effect=RuntimeError("boom"))  # type: ignore[method-assign]
+    window._time_client.fetch_weather_score = AsyncMock(side_effect=RuntimeError("test_message"))  # type: ignore[method-assign]
 
     asyncio.run(window._fetch_weather_score())
 
-    assert any("Failed to fetch weather score: boom" in text for text in labels_text(window))
+    assert any("Failed to fetch weather score: test_message" in text for text in labels_text(window))
 
 
 def test_clear_layout_removes_all_items(qtbot: QtBot) -> None:

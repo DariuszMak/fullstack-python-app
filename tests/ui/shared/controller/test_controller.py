@@ -132,7 +132,7 @@ def test_reset_logs_warning_when_strategy_reset_raises(caplog: pytest.LogCapture
     controller = ClockController(start_time=make_dt())
 
     failing_strategy = MagicMock()
-    failing_strategy.reset.side_effect = RuntimeError("boom")
+    failing_strategy.reset.side_effect = RuntimeError("test_message")
     controller._strategies = cast(
         "tuple[PIDMovement, PIDMovement, PIDMovement]",
         (failing_strategy, failing_strategy, failing_strategy),
@@ -141,7 +141,7 @@ def test_reset_logs_warning_when_strategy_reset_raises(caplog: pytest.LogCapture
     with caplog.at_level(logging.WARNING, logger="src.ui.shared.controller.clock_controller"):
         controller.reset(make_dt(11, 0, 0))
 
-    assert any("boom" in record.message for record in caplog.records)
+    assert any("test_message" in record.message for record in caplog.records)
 
 
 def test_after_reset_update_uses_new_start_time() -> None:
