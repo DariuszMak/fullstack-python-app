@@ -94,6 +94,13 @@ class MainWindow(DraggableMainWindow):
 
         self._server_time_task = asyncio.create_task(self._fetch_server_time())
 
+    def check_weather_score(self) -> None:
+        if self._weather_score_task and not self._weather_score_task.done():
+            logger.debug("weather_score_task_already_running")
+            return
+
+        self._weather_score_task = asyncio.create_task(self._fetch_weather_score())
+
     async def _fetch_server_time(self) -> None:
         log = logger.bind(client=type(self._time_client).__name__)
         try:
@@ -106,13 +113,6 @@ class MainWindow(DraggableMainWindow):
     def _apply_server_time(self, server_time: ServerTimeResponse) -> None:
         logger.info("server_time_applied", timestamp=server_time.datetime.isoformat())
         self._clock_widget.set_current_datetime(server_time.datetime)
-
-    def check_weather_score(self) -> None:
-        if self._weather_score_task and not self._weather_score_task.done():
-            logger.debug("weather_score_task_already_running")
-            return
-
-        self._weather_score_task = asyncio.create_task(self._fetch_weather_score())
 
     async def _fetch_weather_score(self) -> None:
         log = logger.bind(client=type(self._time_client).__name__)
