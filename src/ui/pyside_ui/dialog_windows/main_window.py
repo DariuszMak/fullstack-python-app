@@ -10,7 +10,6 @@ from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
-from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.ui.pyside_ui.dialog_windows.warning_dialog import WarningDialog
 from src.ui.pyside_ui.dialog_windows.weather_score_card import WeatherScoreCard
@@ -22,6 +21,7 @@ from src.ui.pyside_ui.settings import (
     MAINWINDOW_WIDTH,
 )
 from src.ui.pyside_ui.tray_manager import TrayManager
+from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 from src.ui.shared.client.httpx_client import HttpxClient
 
 logger = structlog.get_logger(__name__)
