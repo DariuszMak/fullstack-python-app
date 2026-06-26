@@ -11,7 +11,7 @@ from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
-from src.ui.pyside_ui.dialog_windows.main_window.helpers import _clear_layout, _render_weather_score
+from src.ui.pyside_ui.dialog_windows.main_window.helpers import clear_layout, render_weather_score
 from src.ui.pyside_ui.dialog_windows.warning_dialog import WarningDialog
 from src.ui.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.ui.pyside_ui.settings import (
@@ -126,11 +126,11 @@ class MainWindow(DraggableMainWindow):
 
     def _apply_weather_score(self, result: BestScoreResponse) -> None:
         logger.info("weather_score_applied", result_count=len(result.results))
-        _render_weather_score(self._ui.weatherScoreContainerLayout, result)
+        render_weather_score(self._ui.weatherScoreContainerLayout, result)
 
     def _show_weather_score_error(self, message: str) -> None:
         layout = self._ui.weatherScoreContainerLayout
-        _clear_layout(layout)
+        clear_layout(layout)
 
         error_label = QLabel(f"Failed to fetch weather score: {message}")
         error_label.setWordWrap(True)

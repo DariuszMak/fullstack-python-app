@@ -7,7 +7,7 @@ from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 logger = structlog.get_logger(__name__)
 
 
-def _clear_layout(layout: QLayout) -> None:
+def clear_layout(layout: QLayout) -> None:
     while layout.count():
         item = layout.takeAt(0)
         if item is None:
@@ -18,8 +18,8 @@ def _clear_layout(layout: QLayout) -> None:
             widget.deleteLater()
 
 
-def _render_weather_score(layout: QVBoxLayout, result: BestScoreResponse) -> None:
-    _clear_layout(layout)
+def render_weather_score(layout: QVBoxLayout, result: BestScoreResponse) -> None:
+    clear_layout(layout)
 
     summary = QLabel(
         f"Apparent temperature range: {result.min_threshold:.1f}\u00b0C - {result.max_threshold:.1f}\u00b0C"
