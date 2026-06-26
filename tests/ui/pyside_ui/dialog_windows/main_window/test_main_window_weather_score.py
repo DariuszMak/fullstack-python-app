@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from PySide6.QtWidgets import QLabel
 
 from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
+from src.ui.pyside_ui.dialog_windows.main_window.helpers import _clear_layout, _render_weather_score
 from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
 from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 
@@ -71,7 +72,7 @@ def test_render_weather_score_creates_one_card_per_place(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._render_weather_score(make_response())
+    _render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
 
     assert len(cards_in_layout(window)) == 2
 
@@ -80,7 +81,7 @@ def test_render_weather_score_sorts_by_score_descending(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._render_weather_score(make_response())
+    _render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
 
     cards = cards_in_layout(window)
     assert cards[0].name == "Krakow"
@@ -91,7 +92,7 @@ def test_render_weather_score_assigns_rank_labels(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._render_weather_score(make_response())
+    _render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
 
     cards = cards_in_layout(window)
     assert cards[0]._rank_label.text() == "#1"
@@ -102,13 +103,13 @@ def test_render_weather_score_clears_previous_cards(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._render_weather_score(make_response())
+    _render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
     assert len(cards_in_layout(window)) == 2
 
     smaller_response = make_response()
     smaller_response.results = smaller_response.results[:1]
 
-    window._render_weather_score(smaller_response)
+    _render_weather_score(window._ui.weatherScoreContainerLayout, smaller_response)
 
     assert len(cards_in_layout(window)) == 1
 
@@ -120,7 +121,7 @@ def test_render_weather_score_with_no_results_shows_empty_message(qtbot: QtBot) 
     empty_response = make_response()
     empty_response.results = []
 
-    window._render_weather_score(empty_response)
+    _render_weather_score(window._ui.weatherScoreContainerLayout, empty_response)
 
     assert len(cards_in_layout(window)) == 0
     assert any("No matching places" in text for text in labels_text(window))
@@ -130,7 +131,7 @@ def test_show_weather_score_error_clears_cards_and_shows_message(qtbot: QtBot) -
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._render_weather_score(make_response())
+    _render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
     assert len(cards_in_layout(window)) == 2
 
     window._show_weather_score_error("test_message")
@@ -200,10 +201,10 @@ def test_clear_layout_removes_all_items(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._render_weather_score(make_response())
+    _render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
     layout = window._ui.weatherScoreContainerLayout
     assert layout.count() > 0
 
-    MainWindow._clear_layout(layout)
+    _clear_layout(layout)
 
     assert layout.count() == 0

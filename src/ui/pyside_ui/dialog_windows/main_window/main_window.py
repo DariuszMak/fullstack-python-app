@@ -4,13 +4,14 @@ import platform
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
-from PySide6.QtWidgets import QLabel, QLayout, QSystemTrayIcon
+from PySide6.QtWidgets import QLabel, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
+from src.ui.pyside_ui.dialog_windows.main_window.helpers import _clear_layout, _render_weather_score
 from src.ui.pyside_ui.dialog_windows.warning_dialog import WarningDialog
 from src.ui.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.ui.pyside_ui.settings import (
@@ -21,7 +22,6 @@ from src.ui.pyside_ui.settings import (
 )
 from src.ui.pyside_ui.tray_manager import TrayManager
 from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
-from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 from src.ui.shared.client.httpx_client import HttpxClient
 
 logger = structlog.get_logger(__name__)
@@ -126,64 +126,17 @@ class MainWindow(DraggableMainWindow):
 
     def _apply_weather_score(self, result: BestScoreResponse) -> None:
         logger.info("weather_score_applied", result_count=len(result.results))
-        self._render_weather_score(result)
-
-    def _render_weather_score(self, result: BestScoreResponse) -> None:
-        layout = self._ui.weatherScoreContainerLayout
-        self._clear_layout(layout)
-
-        summary = QLabel(
-            f"Apparent temperature range: {result.min_threshold:.1f}\u00b0C - {result.max_threshold:.1f}\u00b0C"
-            f"   Penalize rain: {result.penalize_rain}   Start day offset: {result.start_day}"
-        )
-        summary.setWordWrap(True)
-        layout.addWidget(summary)
-
-        if not result.results:
-            empty_label = QLabel("No matching places found.")
-            empty_label.setWordWrap(True)
-            layout.addWidget(empty_label)
-            layout.addStretch(1)
-            return
-
-        sorted_results = sorted(result.results, key=lambda place: place.score, reverse=True)
-
-        max_score = max(place.score for place in sorted_results)
-        min_score = min(place.score for place in sorted_results)
-
-        score_range = max_score - min_score
-
-        for place in sorted_results:
-            if score_range == 0:
-                place.percentage_score = 1.0
-            else:
-                place.percentage_score = (place.score - min_score) / score_range
-
-        for rank, place in enumerate(sorted_results, start=1):
-            layout.addWidget(WeatherScoreCard(place, rank=rank))
-
-        layout.addStretch(1)
+        _render_weather_score(self._ui.weatherScoreContainerLayout, result)
 
     def _show_weather_score_error(self, message: str) -> None:
         layout = self._ui.weatherScoreContainerLayout
-        self._clear_layout(layout)
+        _clear_layout(layout)
 
         error_label = QLabel(f"Failed to fetch weather score: {message}")
         error_label.setWordWrap(True)
         error_label.setStyleSheet("color: rgb(231, 76, 60);")
         layout.addWidget(error_label)
         layout.addStretch(1)
-
-    @staticmethod
-    def _clear_layout(layout: QLayout) -> None:
-        while layout.count():
-            item = layout.takeAt(0)
-            if item is None:
-                continue
-            widget = item.widget()
-            if widget is not None:
-                widget.setParent(None)
-                widget.deleteLater()
 
     def fade_in_animation(self) -> None:
         if not self._supports_opacity:
