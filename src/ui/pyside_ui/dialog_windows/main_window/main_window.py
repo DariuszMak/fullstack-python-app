@@ -37,7 +37,7 @@ class MainWindow(DraggableMainWindow):
         self._weather_score_task: asyncio.Task[None] | None = None
 
         config = Config()
-        self._time_client = HttpxClient(config.api_base_url)
+        self._httpx_client = HttpxClient(config.api_base_url)
 
         self._tray: TrayManager | None
         if QSystemTrayIcon.isSystemTrayAvailable() and platform.system() != "Linux":
@@ -102,10 +102,10 @@ class MainWindow(DraggableMainWindow):
         self._weather_score_task = asyncio.create_task(self._fetch_weather_score())
 
     async def _fetch_server_time(self) -> None:
-        log = logger.bind(client=type(self._time_client).__name__)
+        log = logger.bind(client=type(self._httpx_client).__name__)
         try:
             log.debug("fetching_server_time")
-            result = await self._time_client.fetch_time()
+            result = await self._httpx_client.fetch_time()
             self._apply_server_time(result)
         except Exception as exc:
             log.exception("server_time_fetch_failed", error=str(exc))
@@ -115,10 +115,10 @@ class MainWindow(DraggableMainWindow):
         self._clock_widget.set_current_datetime(server_time.datetime)
 
     async def _fetch_weather_score(self) -> None:
-        log = logger.bind(client=type(self._time_client).__name__)
+        log = logger.bind(client=type(self._httpx_client).__name__)
         try:
             log.debug("fetching_weather_score")
-            result = await self._time_client.fetch_weather_score()
+            result = await self._httpx_client.fetch_weather_score()
             self._apply_weather_score(result)
         except Exception as exc:
             log.exception("weather_score_fetch_failed", error=str(exc))
