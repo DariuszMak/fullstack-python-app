@@ -5,7 +5,7 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QApplication, QWidget
 from pytestqt.qtbot import QtBot
 
-from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
+from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
 from src.ui.pyside_ui.tray_manager import TrayManager
 
 

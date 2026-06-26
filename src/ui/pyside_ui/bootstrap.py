@@ -6,7 +6,7 @@ from qasync import QEventLoop  # type: ignore
 
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.application import create_application
-from src.ui.pyside_ui.dialog_windows.main_window import MainWindow
+from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
 
 logger = structlog.get_logger(__name__)
 
