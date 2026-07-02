@@ -2,6 +2,7 @@ import time
 from datetime import UTC, datetime, timedelta
 
 from PySide6.QtWidgets import QApplication
+from pytestqt.qtbot import QtBot
 
 from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 
@@ -36,9 +37,10 @@ def test_clock_widget_runs() -> None:
     app.processEvents()
 
 
-def test_clock_widget_no_drift_accumulation() -> None:
+def test_clock_widget_no_drift_accumulation(qtbot: QtBot) -> None:
     QApplication.instance() or QApplication([])
     widget = ClockWidget()
+    qtbot.addWidget(widget)
 
     server_time = datetime(2025, 1, 1, 12, 0, 0, tzinfo=UTC)
     widget.set_current_datetime(server_time)
@@ -52,9 +54,10 @@ def test_clock_widget_no_drift_accumulation() -> None:
     assert abs((actual - expected).total_seconds()) < 0.05
 
 
-def test_clock_widget_current_datetime_reflects_anchors() -> None:
+def test_clock_widget_current_datetime_reflects_anchors(qtbot: QtBot) -> None:
     QApplication.instance() or QApplication([])
     widget = ClockWidget()
+    qtbot.addWidget(widget)
 
     t1 = datetime(2025, 6, 15, 9, 30, 0, tzinfo=UTC)
     widget.set_current_datetime(t1)
