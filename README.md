@@ -65,6 +65,12 @@ task full-static-analyzis ;
 task full-release-setup ; 
 ```
 
+### Local development
+
+```commandline
+clear ; task local-static-tests ; task local-dev-native-run ; 
+```
+
 ### Edit `ui` forms with QT Designer
 
 ```commandline
