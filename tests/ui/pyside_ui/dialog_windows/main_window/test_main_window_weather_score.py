@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 import httpx
 import pytest
 import respx
@@ -51,8 +53,6 @@ async def test_fetch_weather_score_sends_temperature_thresholds() -> None:
     request = route.calls.last.request
     httpx.Request("POST", route.calls.last.request.url).content
 
-    import json
-
     parsed = json.loads(request.content)
     assert parsed == {
         "apparent_temperature_min_threshold": 10.0,
@@ -78,8 +78,6 @@ async def test_fetch_weather_score_sends_all_optional_parameters() -> None:
 
     assert route.called
 
-    import json
-
     parsed = json.loads(route.calls.last.request.content)
     assert parsed == {
         "apparent_temperature_min_threshold": 5.0,
@@ -100,8 +98,8 @@ async def test_fetch_weather_score_returns_parsed_response() -> None:
     client = HttpxClient(BASE_URL)
     result = await client.fetch_weather_score()
 
-    assert result.min_threshold == 20.0
-    assert result.max_threshold == 25.0
+    assert result.min_threshold == pytest.approx(20.0)
+    assert result.max_threshold == pytest.approx(25.0)
     assert result.penalize_rain is True
     assert result.start_day == 0
     assert result.results == []
