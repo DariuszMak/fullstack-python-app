@@ -4,7 +4,7 @@ import platform
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
-from PySide6.QtWidgets import QLabel, QSystemTrayIcon
+from PySide6.QtWidgets import QLabel, QSlider, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_score_response import BestScoreResponse
@@ -25,6 +25,11 @@ from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 from src.ui.shared.client.httpx_client import HttpxClient
 
 logger = structlog.get_logger(__name__)
+
+MIN_TEMP_SLIDER_RANGE = (-20, 40)
+MAX_TEMP_SLIDER_RANGE = (-20, 40)
+DEFAULT_MIN_TEMP = 20
+DEFAULT_MAX_TEMP = 25
 
 
 class MainWindow(DraggableMainWindow):
@@ -65,6 +70,8 @@ class MainWindow(DraggableMainWindow):
         self._ui.checkWeatherScoreButton.setText("Get weather score")
         self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
 
+        self._build_temperature_sliders()
+
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
         if layout is not None:
@@ -86,6 +93,40 @@ class MainWindow(DraggableMainWindow):
                 logger.debug("new_event_loop_created")
 
             loop.call_soon(self.fetch_server_time)
+
+    def _build_temperature_sliders(self) -> None:
+        self._min_temp_label = QLabel(f"Min apparent temperature: {DEFAULT_MIN_TEMP:.1f}\u00b0C")
+        self._min_temp_slider = QSlider(Qt.Orientation.Horizontal)
+        self._min_temp_slider.setRange(*MIN_TEMP_SLIDER_RANGE)
+        self._min_temp_slider.setValue(DEFAULT_MIN_TEMP)
+        self._min_temp_slider.valueChanged.connect(self._on_min_temp_changed)
+
+        self._max_temp_label = QLabel(f"Max apparent temperature: {DEFAULT_MAX_TEMP:.1f}\u00b0C")
+        self._max_temp_slider = QSlider(Qt.Orientation.Horizontal)
+        self._max_temp_slider.setRange(*MAX_TEMP_SLIDER_RANGE)
+        self._max_temp_slider.setValue(DEFAULT_MAX_TEMP)
+        self._max_temp_slider.valueChanged.connect(self._on_max_temp_changed)
+
+        self._ui.frame_query_parameters.addWidget(self._min_temp_label)
+        self._ui.frame_query_parameters.addWidget(self._min_temp_slider)
+        self._ui.frame_query_parameters.addWidget(self._max_temp_label)
+        self._ui.frame_query_parameters.addWidget(self._max_temp_slider)
+
+    def _on_min_temp_changed(self, value: int) -> None:
+        if value >= self._max_temp_slider.value():
+            clamped = self._max_temp_slider.value() - 1
+            if clamped != value:
+                self._min_temp_slider.setValue(clamped)
+                return
+        self._min_temp_label.setText(f"Min apparent temperature: {float(value):.1f}\u00b0C")
+
+    def _on_max_temp_changed(self, value: int) -> None:
+        if value <= self._min_temp_slider.value():
+            clamped = self._min_temp_slider.value() + 1
+            if clamped != value:
+                self._max_temp_slider.setValue(clamped)
+                return
+        self._max_temp_label.setText(f"Max apparent temperature: {float(value):.1f}\u00b0C")
 
     def fade_in_animation(self) -> None:
         if not self._supports_opacity:
@@ -143,7 +184,10 @@ class MainWindow(DraggableMainWindow):
         log = logger.bind(client=type(self._httpx_client).__name__)
         try:
             log.debug("fetching_weather_score")
-            result = await self._httpx_client.fetch_weather_score()
+            result = await self._httpx_client.fetch_weather_score(
+                apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
+                apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
+            )
             self._apply_weather_score(result)
         except Exception as exc:
             log.exception("weather_score_fetch_failed", error=str(exc))

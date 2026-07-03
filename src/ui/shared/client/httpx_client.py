@@ -34,13 +34,33 @@ class HttpxClient:
 
         return ServerTimeResponse(datetime=server_time)
 
-    async def fetch_weather_score(self) -> BestScoreResponse:
+    async def fetch_weather_score(
+        self,
+        apparent_temperature_min_threshold: float | None = None,
+        apparent_temperature_max_threshold: float | None = None,
+        penalize_rain: bool | None = None,
+        forecast_days: int | None = None,
+        start_day: int | None = None,
+    ) -> BestScoreResponse:
         url = f"{self._base_url}/api/v1/forecast/weather-score"
         log = logger.bind(url=url)
 
+        body: dict[str, float | bool | int] = {}
+
+        if apparent_temperature_min_threshold is not None:
+            body["apparent_temperature_min_threshold"] = apparent_temperature_min_threshold
+        if apparent_temperature_max_threshold is not None:
+            body["apparent_temperature_max_threshold"] = apparent_temperature_max_threshold
+        if penalize_rain is not None:
+            body["penalize_rain"] = penalize_rain
+        if forecast_days is not None:
+            body["forecast_days"] = forecast_days
+        if start_day is not None:
+            body["start_day"] = start_day
+
         async with httpx.AsyncClient() as client:
             try:
-                response = await client.post(url, json={})
+                response = await client.post(url, json=body)
                 response.raise_for_status()
             except httpx.HTTPError as e:
                 log.exception("weather_score_fetch_failed", error=str(e))
