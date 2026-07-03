@@ -87,6 +87,31 @@ class MainWindow(DraggableMainWindow):
 
             loop.call_soon(self.fetch_server_time)
 
+    def fade_in_animation(self) -> None:
+        if not self._supports_opacity:
+            return
+        logger.debug("starting_fade_in")
+        self.setWindowOpacity(0.0)
+        self.anim = QPropertyAnimation(self, b"windowOpacity")
+        self.anim.setDuration(600)
+        self.anim.setStartValue(0.0)
+        self.anim.setEndValue(0.9)
+        self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        self.anim.start()
+
+    def fade_out_animation(self) -> None:
+        if not self._supports_opacity:
+            self._final_close()
+            return
+        logger.debug("starting_fade_out")
+        self.anim = QPropertyAnimation(self, b"windowOpacity")
+        self.anim.setDuration(ANIMATION_DURATION)
+        self.anim.setStartValue(0.9)
+        self.anim.setEndValue(0.0)
+        self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        self.anim.finished.connect(self._final_close)
+        self.anim.start()
+
     def fetch_server_time(self) -> None:
         if self._server_time_task and not self._server_time_task.done():
             logger.debug("fetch_task_already_running")
@@ -137,31 +162,6 @@ class MainWindow(DraggableMainWindow):
         error_label.setStyleSheet("color: rgb(231, 76, 60);")
         layout.addWidget(error_label)
         layout.addStretch(1)
-
-    def fade_in_animation(self) -> None:
-        if not self._supports_opacity:
-            return
-        logger.debug("starting_fade_in")
-        self.setWindowOpacity(0.0)
-        self.anim = QPropertyAnimation(self, b"windowOpacity")
-        self.anim.setDuration(600)
-        self.anim.setStartValue(0.0)
-        self.anim.setEndValue(0.9)
-        self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
-        self.anim.start()
-
-    def fade_out_animation(self) -> None:
-        if not self._supports_opacity:
-            self._final_close()
-            return
-        logger.debug("starting_fade_out")
-        self.anim = QPropertyAnimation(self, b"windowOpacity")
-        self.anim.setDuration(ANIMATION_DURATION)
-        self.anim.setStartValue(0.9)
-        self.anim.setEndValue(0.0)
-        self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
-        self.anim.finished.connect(self._final_close)
-        self.anim.start()
 
     def show_warning_dialog(self) -> None:
         dlg = WarningDialog(self)
