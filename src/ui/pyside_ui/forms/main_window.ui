@@ -421,37 +421,7 @@
                             </widget>
                           </item>
                           <item>
-                            <layout class="QVBoxLayout" name="frame_weather">
-                              <item>
-                                <layout class="QVBoxLayout" name="frame_query_parameters">
-                                  <item>
-                                    <widget class="QPushButton" name="openWindowButton">
-                                      <property name="sizePolicy">
-                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                                          <horstretch>0</horstretch>
-                                          <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                      </property>
-                                      <property name="text">
-                                        <string/>
-                                      </property>
-                                    </widget>
-                                  </item>
-                                  <item>
-                                    <widget class="QPushButton" name="checkWeatherScoreButton">
-                                      <property name="sizePolicy">
-                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                                          <horstretch>0</horstretch>
-                                          <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                      </property>
-                                      <property name="text">
-                                        <string/>
-                                      </property>
-                                    </widget>
-                                  </item>
-                                </layout>
-                              </item>
+                            <layout class="QHBoxLayout" name="horizontalLayout_6">
                               <item>
                                 <widget class="QScrollArea" name="weatherScoreScrollArea">
                                   <property name="sizePolicy">
@@ -474,13 +444,43 @@
                                       <rect>
                                         <x>0</x>
                                         <y>0</y>
-                                        <width>598</width>
-                                        <height>46</height>
+                                        <width>546</width>
+                                        <height>56</height>
                                       </rect>
                                     </property>
                                     <layout class="QVBoxLayout" name="weatherScoreContainerLayout"/>
                                   </widget>
                                 </widget>
+                              </item>
+                              <item>
+                                <layout class="QVBoxLayout" name="frame_query_parameters">
+                                  <item>
+                                    <widget class="QPushButton" name="openWindowButton">
+                                      <property name="sizePolicy">
+                                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                      </property>
+                                      <property name="text">
+                                        <string/>
+                                      </property>
+                                    </widget>
+                                  </item>
+                                  <item>
+                                    <widget class="QPushButton" name="checkWeatherScoreButton">
+                                      <property name="sizePolicy">
+                                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                      </property>
+                                      <property name="text">
+                                        <string/>
+                                      </property>
+                                    </widget>
+                                  </item>
+                                </layout>
                               </item>
                             </layout>
                           </item>
