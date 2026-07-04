@@ -163,9 +163,19 @@ class MainWindow(DraggableMainWindow):
         self._ui.frame_query_parameters.addWidget(self._start_day_slider)
 
     def _on_forecast_days_changed(self, value: int) -> None:
+        if value <= self._start_day_slider.value():
+            clamped = self._start_day_slider.value() + 1
+            if clamped != value:
+                self._forecast_days_slider.setValue(clamped)
+                return
         self._forecast_days_label.setText(f"Forecast days: {value}")
 
     def _on_start_day_changed(self, value: int) -> None:
+        if value >= self._forecast_days_slider.value():
+            clamped = self._forecast_days_slider.value() - 1
+            if clamped != value:
+                self._start_day_slider.setValue(clamped)
+                return
         self._start_day_label.setText(f"Start day: {value}")
 
     def fade_in_animation(self) -> None:

@@ -102,3 +102,43 @@ def test_fetch_weather_score_uses_current_forecast_days_and_start_day(qtbot: QtB
         forecast_days=10,
         start_day=2,
     )
+
+
+def test_start_day_slider_cannot_reach_or_exceed_forecast_days_slider(qtbot: QtBot) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    window._forecast_days_slider.setValue(5)
+    window._start_day_slider.setValue(10)
+
+    assert window._start_day_slider.value() < window._forecast_days_slider.value()
+
+
+def test_forecast_days_slider_cannot_reach_or_go_below_start_day_slider(qtbot: QtBot) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    window._start_day_slider.setValue(8)
+    window._forecast_days_slider.setValue(3)
+
+    assert window._forecast_days_slider.value() > window._start_day_slider.value()
+
+
+def test_start_day_slider_clamps_to_just_below_forecast_days(qtbot: QtBot) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    window._forecast_days_slider.setValue(7)
+    window._start_day_slider.setValue(7)
+
+    assert window._start_day_slider.value() == 6
+
+
+def test_forecast_days_slider_clamps_to_just_above_start_day(qtbot: QtBot) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    window._start_day_slider.setValue(5)
+    window._forecast_days_slider.setValue(5)
+
+    assert window._forecast_days_slider.value() == 6
