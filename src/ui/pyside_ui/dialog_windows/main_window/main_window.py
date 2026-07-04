@@ -4,7 +4,7 @@ import platform
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
-from PySide6.QtWidgets import QLabel, QSlider, QSystemTrayIcon
+from PySide6.QtWidgets import QCheckBox, QLabel, QSlider, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_score_response import BestScoreResponse
@@ -30,6 +30,7 @@ MIN_TEMP_SLIDER_RANGE = (-20, 40)
 MAX_TEMP_SLIDER_RANGE = (-20, 40)
 DEFAULT_MIN_TEMP = 20
 DEFAULT_MAX_TEMP = 25
+DEFAULT_PENALIZE_RAIN = True
 
 
 class MainWindow(DraggableMainWindow):
@@ -71,6 +72,7 @@ class MainWindow(DraggableMainWindow):
         self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
 
         self._build_temperature_sliders()
+        self._build_rain_penalty_checkbox()
 
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
@@ -111,6 +113,12 @@ class MainWindow(DraggableMainWindow):
         self._ui.frame_query_parameters.addWidget(self._min_temp_slider)
         self._ui.frame_query_parameters.addWidget(self._max_temp_label)
         self._ui.frame_query_parameters.addWidget(self._max_temp_slider)
+
+    def _build_rain_penalty_checkbox(self) -> None:
+        self._penalize_rain_checkbox = QCheckBox("Penalize rain")
+        self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
+
+        self._ui.frame_query_parameters.addWidget(self._penalize_rain_checkbox)
 
     def _on_min_temp_changed(self, value: int) -> None:
         if value >= self._max_temp_slider.value():
@@ -187,6 +195,7 @@ class MainWindow(DraggableMainWindow):
             result = await self._httpx_client.fetch_weather_score(
                 apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
                 apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
+                penalize_rain=self._penalize_rain_checkbox.isChecked(),
             )
             self._apply_weather_score(result)
         except Exception as exc:

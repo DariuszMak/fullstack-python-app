@@ -95,4 +95,5 @@ def test_fetch_weather_score_uses_current_slider_values(qtbot: QtBot) -> None:
     window._httpx_client.fetch_weather_score.assert_called_once_with(
         apparent_temperature_min_threshold=10.0,
         apparent_temperature_max_threshold=18.0,
+        penalize_rain=True,
     )
