@@ -4,6 +4,8 @@ import asyncio
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock
 
+from PySide6.QtWidgets import QWidget
+
 from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
 
@@ -19,6 +21,19 @@ def make_response() -> BestScoreResponse:
         penalize_rain=True,
         start_day=0,
     )
+
+
+def widgets_in_layout(window: MainWindow) -> list[QWidget]:
+    layout = window._ui.frame_query_parameters
+    widgets: list[QWidget] = []
+    for i in range(layout.count()):
+        item = layout.itemAt(i)
+        if item is None:
+            continue
+        widget = item.widget()
+        if widget is not None:
+            widgets.append(widget)
+    return widgets
 
 
 def test_rain_penalty_checkbox_defaults_to_checked(qtbot: QtBot) -> None:
@@ -39,8 +54,7 @@ def test_rain_penalty_checkbox_is_added_to_query_parameters_layout(qtbot: QtBot)
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    layout = window._ui.frame_query_parameters
-    widgets = [layout.itemAt(i).widget() for i in range(layout.count()) if layout.itemAt(i) is not None]
+    widgets = widgets_in_layout(window)
 
     assert window._penalize_rain_checkbox in widgets
 

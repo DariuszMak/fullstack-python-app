@@ -51,7 +51,6 @@ async def test_fetch_weather_score_sends_temperature_thresholds() -> None:
 
     assert route.called
     request = route.calls.last.request
-    httpx.Request("POST", route.calls.last.request.url).content
 
     parsed = json.loads(request.content)
     assert parsed == {
