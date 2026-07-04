@@ -4,12 +4,11 @@ import asyncio
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock
 
-from PySide6.QtWidgets import QWidget
-
 from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
 
 if TYPE_CHECKING:
+    from PySide6.QtWidgets import QWidget
     from pytestqt.qtbot import QtBot
 
 
