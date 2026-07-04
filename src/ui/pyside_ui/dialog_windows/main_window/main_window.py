@@ -36,6 +36,7 @@ START_DAY_SLIDER_RANGE = (0, 15)
 DEFAULT_FORECAST_DAYS = 7
 DEFAULT_START_DAY = 0
 
+
 class MainWindow(DraggableMainWindow):
     def __init__(self, fetch_server_time: bool = True) -> None:
         super().__init__()
@@ -166,6 +167,7 @@ class MainWindow(DraggableMainWindow):
 
     def _on_start_day_changed(self, value: int) -> None:
         self._start_day_label.setText(f"Start day: {value}")
+
     def fade_in_animation(self) -> None:
         if not self._supports_opacity:
             return
