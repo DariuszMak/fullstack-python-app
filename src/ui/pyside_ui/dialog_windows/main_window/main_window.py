@@ -31,7 +31,10 @@ MAX_TEMP_SLIDER_RANGE = (-20, 40)
 DEFAULT_MIN_TEMP = 18
 DEFAULT_MAX_TEMP = 25
 DEFAULT_PENALIZE_RAIN = True
-
+FORECAST_DAYS_SLIDER_RANGE = (1, 16)
+START_DAY_SLIDER_RANGE = (0, 15)
+DEFAULT_FORECAST_DAYS = 7
+DEFAULT_START_DAY = 0
 
 class MainWindow(DraggableMainWindow):
     def __init__(self, fetch_server_time: bool = True) -> None:
@@ -73,6 +76,8 @@ class MainWindow(DraggableMainWindow):
 
         self._build_temperature_sliders()
         self._build_rain_penalty_checkbox()
+        self._build_forecast_days_slider()
+        self._build_start_day_slider()
 
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
@@ -136,6 +141,31 @@ class MainWindow(DraggableMainWindow):
                 return
         self._max_temp_label.setText(f"Max apparent temperature: {float(value):.1f}\u00b0C")
 
+    def _build_forecast_days_slider(self) -> None:
+        self._forecast_days_label = QLabel(f"Forecast days: {DEFAULT_FORECAST_DAYS}")
+        self._forecast_days_slider = QSlider(Qt.Orientation.Horizontal)
+        self._forecast_days_slider.setRange(*FORECAST_DAYS_SLIDER_RANGE)
+        self._forecast_days_slider.setValue(DEFAULT_FORECAST_DAYS)
+        self._forecast_days_slider.valueChanged.connect(self._on_forecast_days_changed)
+
+        self._ui.frame_query_parameters.addWidget(self._forecast_days_label)
+        self._ui.frame_query_parameters.addWidget(self._forecast_days_slider)
+
+    def _build_start_day_slider(self) -> None:
+        self._start_day_label = QLabel(f"Start day: {DEFAULT_START_DAY}")
+        self._start_day_slider = QSlider(Qt.Orientation.Horizontal)
+        self._start_day_slider.setRange(*START_DAY_SLIDER_RANGE)
+        self._start_day_slider.setValue(DEFAULT_START_DAY)
+        self._start_day_slider.valueChanged.connect(self._on_start_day_changed)
+
+        self._ui.frame_query_parameters.addWidget(self._start_day_label)
+        self._ui.frame_query_parameters.addWidget(self._start_day_slider)
+
+    def _on_forecast_days_changed(self, value: int) -> None:
+        self._forecast_days_label.setText(f"Forecast days: {value}")
+
+    def _on_start_day_changed(self, value: int) -> None:
+        self._start_day_label.setText(f"Start day: {value}")
     def fade_in_animation(self) -> None:
         if not self._supports_opacity:
             return
@@ -196,6 +226,8 @@ class MainWindow(DraggableMainWindow):
                 apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
                 apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
                 penalize_rain=self._penalize_rain_checkbox.isChecked(),
+                forecast_days=self._forecast_days_slider.value(),
+                start_day=self._start_day_slider.value(),
             )
             self._apply_weather_score(result)
         except Exception as exc:
