@@ -66,7 +66,7 @@ def test_fetch_weather_score_sends_penalize_rain_true_when_checked(qtbot: QtBot)
     asyncio.run(window._fetch_weather_score())
 
     window._httpx_client.fetch_weather_score.assert_called_once_with(
-        apparent_temperature_min_threshold=20.0,
+        apparent_temperature_min_threshold=18.0,
         apparent_temperature_max_threshold=25.0,
         penalize_rain=True,
     )
@@ -84,7 +84,7 @@ def test_fetch_weather_score_sends_penalize_rain_false_when_unchecked(qtbot: QtB
     asyncio.run(window._fetch_weather_score())
 
     window._httpx_client.fetch_weather_score.assert_called_once_with(
-        apparent_temperature_min_threshold=20.0,
+        apparent_temperature_min_threshold=18.0,
         apparent_temperature_max_threshold=25.0,
         penalize_rain=False,
     )

@@ -25,7 +25,7 @@ def test_sliders_have_default_values(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    assert window._min_temp_slider.value() == 20
+    assert window._min_temp_slider.value() == 18
     assert window._max_temp_slider.value() == 25
 
 
