@@ -19,12 +19,10 @@ QPushButton {
     background-position: center;
     background-repeat: no-repeat;
     background-color: rgb(27, 29, 35);
-    border: none; /* Fix dla systemowych stylów */
 }
 QPushButton[Active=true] {
     background-position: center;
     background-repeat: no-repeat;
-    border: none;
     background-color: rgb(27, 29, 35);
 }
 QPushButton[Active=true]:hover {
@@ -461,12 +459,10 @@ QPushButton#btn_toggle_menu {
 
 QPushButton#btn_toggle_menu:hover {
 	background-color: rgb(33, 37, 43);
-    border: none;
 }
 
 QPushButton#btn_toggle_menu:pressed {
 	background-color: rgb(85, 170, 255);
-    border: none;
 }
 
 
