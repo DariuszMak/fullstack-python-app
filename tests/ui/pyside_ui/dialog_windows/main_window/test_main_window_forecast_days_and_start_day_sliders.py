@@ -35,11 +35,11 @@ def widgets_in_layout(window: MainWindow) -> list[QWidget]:
     return widgets
 
 
-def test_sliders_have_default_values(qtbot: QtBot) -> None:
+def test_forecast_days_sliders_have_default_values(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    assert window._forecast_days_slider.value() == 7
+    assert window._forecast_days_slider.value() == 3
     assert window._start_day_slider.value() == 0
 
 
@@ -68,9 +68,9 @@ def test_start_day_label_updates_on_slider_change(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._start_day_slider.setValue(5)
+    window._start_day_slider.setValue(1)
 
-    assert window._start_day_label.text() == "Start day: 5"
+    assert window._start_day_label.text() == "Start day: 1"
 
 
 def test_sliders_respect_configured_ranges(qtbot: QtBot) -> None:

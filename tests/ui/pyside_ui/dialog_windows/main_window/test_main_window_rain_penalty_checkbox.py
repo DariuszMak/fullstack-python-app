@@ -82,7 +82,7 @@ def test_fetch_weather_score_sends_penalize_rain_true_when_checked(qtbot: QtBot)
         apparent_temperature_min_threshold=18.0,
         apparent_temperature_max_threshold=25.0,
         penalize_rain=True,
-        forecast_days=7,
+        forecast_days=3,
         start_day=0,
     )
 
@@ -102,6 +102,6 @@ def test_fetch_weather_score_sends_penalize_rain_false_when_unchecked(qtbot: QtB
         apparent_temperature_min_threshold=18.0,
         apparent_temperature_max_threshold=25.0,
         penalize_rain=False,
-        forecast_days=7,
+        forecast_days=3,
         start_day=0,
     )

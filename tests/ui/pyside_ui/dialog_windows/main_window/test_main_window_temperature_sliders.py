@@ -35,7 +35,7 @@ def widgets_in_layout(window: MainWindow) -> list[QWidget]:
     return widgets
 
 
-def test_sliders_have_default_values(qtbot: QtBot) -> None:
+def test_temperature_sliders_have_default_values(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
@@ -109,6 +109,6 @@ def test_fetch_weather_score_uses_current_slider_values(qtbot: QtBot) -> None:
         apparent_temperature_min_threshold=10.0,
         apparent_temperature_max_threshold=18.0,
         penalize_rain=True,
-        forecast_days=7,
+        forecast_days=3,
         start_day=0,
     )
