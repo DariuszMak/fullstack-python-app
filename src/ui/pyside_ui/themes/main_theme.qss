@@ -1,4 +1,3 @@
-/* QTOOLTIP */
 QToolTip {
     color: #ffffff;
     background-color: rgba(27, 29, 35, 160);
@@ -6,9 +5,7 @@ QToolTip {
     border-radius: 2px;
 }
 
-/* QMENU */
 QMenu {
-    /* background-color: #ABABAB; */
     border: 1px solid black;
 }
 QMenu::item {
@@ -18,11 +15,12 @@ QMenu::item:selected {
     background-color: #654321;
 }
 
-/* PUSH BUTTON */
 QPushButton {
     background-position: center;
     background-repeat: no-repeat;
     background-color: rgb(27, 29, 35);
+    border: 1px solid rgb(52, 59, 72);
+    border-radius: 5px;
 }
 QPushButton[Active=true] {
     background-position: center;
@@ -32,20 +30,24 @@ QPushButton[Active=true] {
 }
 QPushButton:hover {
     background-color: rgb(37, 43, 52);
+    border: 1px solid rgb(85, 170, 255);
 }
 QPushButton:pressed {
     background-color: rgb(85, 170, 255);
+    border: 1px solid rgb(255, 255, 255);
 }
 QPushButton:disabled {
     background-color: rgb(91, 101, 124);
+    border: 1px solid rgb(65, 71, 80);
 }
 
 
-/* TOOL BUTTON */
 QToolButton {
     background-position: center;
     background-repeat: no-repeat;
     background-color: rgb(27, 29, 35);
+    border: 1px solid rgb(52, 59, 72);
+    border-radius: 5px;
 }
 QToolButton[Active=true] {
     background-position: center;
@@ -55,16 +57,18 @@ QToolButton[Active=true] {
 }
 QToolButton:hover {
     background-color: rgb(37, 43, 52);
+    border: 1px solid rgb(85, 170, 255);
 }
 QToolButton:pressed {
     background-color: rgb(85, 170, 255);
+    border: 1px solid rgb(255, 255, 255);
 }
 QToolButton:disabled {
     background-color: rgb(91, 101, 124);
+    border: 1px solid rgb(65, 71, 80);
 }
 
 
-/* LINE EDIT */
 QLineEdit {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -83,13 +87,11 @@ QLineEdit:disabled {
 }
 
 
-/* TEXT EDIT */
 QTextEdit {
 
 }
 
 
-/* SPIN BOX */
 QSpinBox {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -105,7 +107,6 @@ QSpinBox:focus {
 }
 
 
-/* DOUBLE SPIN BOX */
 .QDoubleSpinBox {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -121,7 +122,6 @@ QSpinBox:focus {
 }
 
 
-/* SCROLL BARS */
 QScrollBar:horizontal {
     border: none;
     background: rgb(52, 59, 72);
@@ -198,7 +198,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
 
-/* CHECKBOX */
 QCheckBox::indicator {
     border: 3px solid rgb(52, 59, 72);
     width: 15px;
@@ -216,16 +215,12 @@ QCheckBox::indicator:checked {
 }
 
 
-/* QDockWidget */
-
 QDockWidget {
     background-color: rgb(40, 44, 52);
     border: 0;
-    /* titlebar-close-icon: url(close.png);
-    titlebar-normal-icon: url(undock.png); */
 }
 QDockWidget::title {
-    text-align: left; /* align the text to the left */
+    text-align: left;
     background: lightgray;
     padding-left: 5px;
 }
@@ -241,7 +236,6 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     padding: 1px -1px -1px 1px;
 }
 
-/* RADIO BUTTON */
 QRadioButton::indicator {
     border: 3px solid rgb(52, 59, 72);
     width: 15px;
@@ -260,7 +254,6 @@ QRadioButton:disabled {
     background-color: rgb(0, 45, 98);
 }
 
-/* COMBOBOX */
 QComboBox{
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -292,7 +285,6 @@ QComboBox QAbstractItemView {
 }
 
 
-/* DATE TIME EDIT */
 QDateTimeEdit
 {
     background-color: rgb(27, 29, 35);
@@ -309,7 +301,6 @@ QDateTimeEdit:focus {
 }
 
 
-/* SIZE GRIP */
 QSizeGrip {
     width: 20px;
     height: 20px;
@@ -321,7 +312,6 @@ QSizeGrip {
 }
 
 
-/* SLIDERS */
 QSlider::groove:horizontal {
     border-radius: 9px;
     height: 18px;
@@ -370,7 +360,6 @@ QSlider::handle:vertical:pressed {
 }
 
 
-/* TABLE VIEW / WIDGET */
 QHeaderView::section {
     color: #fffff8;
     background-color: #646464;
@@ -400,24 +389,19 @@ QCalendarWidget:disabled {
 }
 
 
-/* QTREEVIEW */
-
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
     border-image: none;
-    /* color: blue; */
     image: url(:/16x16/icons/16x16/cil-chevron-bottom.png);
 }
 
 QTreeView::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings {
     border-image: none;
-    /* color: blue; */
     image: url(:/16x16/icons/16x16/cil-chevron-right.png);
 }
 
 
-/* QTABWIDGET */
 QTabWidget{
 
 }
@@ -426,7 +410,6 @@ QTabWidget::pane{
     border: 0;
 }
 QTabWidget::tab-bar {
-    /* background-color: blue; */
 }
 QTabBar::tab {
     background: rgb(37, 43, 52);
@@ -438,15 +421,15 @@ QTabBar::tab:selected {
 }
 
 
-/* SPECIFIED WIDGETS */
 QPushButton#btn_close {
 	border: none;
 }
 QPushButton#btn_close:hover {
-	background-color: rgb(52, 59, 72);
+	background-color: rgb(232, 17, 35);
+	border: 1px solid rgb(255, 255, 255);
 }
 QPushButton#btn_close:pressed {
-	background-color: rgb(85, 170, 255);
+	background-color: rgb(139, 10, 20);
 }
 
 QPushButton#btn_minimize {
@@ -454,6 +437,7 @@ QPushButton#btn_minimize {
 }
 QPushButton#btn_minimize:hover {
 	background-color: rgb(52, 59, 72);
+	border: 1px solid rgb(85, 170, 255);
 }
 QPushButton#btn_minimize:pressed {
 	background-color: rgb(85, 170, 255);
@@ -464,6 +448,7 @@ QPushButton#btn_maximize_restore {
 }
 QPushButton#btn_maximize_restore:hover {
 	background-color: rgb(52, 59, 72);
+	border: 1px solid rgb(85, 170, 255);
 }
 QPushButton#btn_maximize_restore:pressed {
 	background-color: rgb(85, 170, 255);
@@ -480,6 +465,7 @@ QPushButton#btn_toggle_menu {
 
 QPushButton#btn_toggle_menu:hover {
 	background-color: rgb(33, 37, 43);
+	border: 1px solid rgb(85, 170, 255);
 }
 
 QPushButton#btn_toggle_menu:pressed {
@@ -492,7 +478,6 @@ QMainWindow#central_widget {
 }
 
 #frame_main {
-    /* color: rgb(210, 210, 210); */
 }
 
 #frame_toggle {
@@ -542,3 +527,25 @@ QMainWindow#frame_center {
 
 
 QRadioButton::indicator:checked#btn_enable_recording { background: 3px solid red; }
+
+
+QFrame[frameShape="4"] {
+    background-color: rgb(85, 170, 255);
+    max-height: 2px;
+    min-height: 2px;
+    border: none;
+}
+
+QFrame[frameShape="5"] {
+    background-color: rgb(85, 170, 255);
+    max-width: 2px;
+    min-width: 2px;
+    border: none;
+}
+
+QFrame[frameShape="1"],
+QFrame[frameShape="2"],
+QFrame[frameShape="3"],
+QFrame[frameShape="6"] {
+    border: 1px solid rgb(85, 170, 255);
+}
