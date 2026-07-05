@@ -82,7 +82,23 @@ QLineEdit:disabled {
 
 
 QTextEdit {
-
+    background-color: rgb(27, 29, 35);
+    color: rgb(220, 220, 220);
+    border-radius: 5px;
+    border: 2px solid rgb(27, 29, 35);
+    padding: 8px;
+    selection-background-color: rgb(85, 170, 255);
+    selection-color: rgb(255, 255, 255);
+}
+QTextEdit:hover {
+    border: 2px solid rgb(64, 71, 88);
+}
+QTextEdit:focus {
+    border: 2px solid rgb(91, 101, 124);
+}
+QTextEdit:disabled {
+    background-color: rgb(0, 45, 98);
+    color: rgb(150, 150, 150);
 }
 
 
@@ -187,11 +203,9 @@ QScrollBar::sub-line:vertical {
 QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
     background: none;
 }
-
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
-
 QCheckBox::indicator {
     border: 3px solid rgb(52, 59, 72);
     width: 15px;
