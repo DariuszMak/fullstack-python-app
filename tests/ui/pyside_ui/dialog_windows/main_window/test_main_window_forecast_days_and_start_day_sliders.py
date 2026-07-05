@@ -138,7 +138,7 @@ def test_forecast_days_slider_clamps_to_just_above_start_day(qtbot: QtBot) -> No
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
-    window._start_day_slider.setValue(5)
-    window._forecast_days_slider.setValue(5)
+    window._start_day_slider.setValue(1)
+    window._forecast_days_slider.setValue(1)
 
-    assert window._forecast_days_slider.value() == 6
+    assert window._forecast_days_slider.value() == 2
