@@ -442,7 +442,7 @@
                                     </widget>
                                   </item>
                                   <item>
-                                    <widget class="QPushButton" name="openWindowButton">
+                                    <widget class="QPushButton" name="checkWeatherScoreButton">
                                       <property name="sizePolicy">
                                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                                           <horstretch>0</horstretch>
@@ -455,7 +455,7 @@
                                     </widget>
                                   </item>
                                   <item>
-                                    <widget class="QPushButton" name="checkWeatherScoreButton">
+                                    <widget class="QPushButton" name="openWindowButton">
                                       <property name="sizePolicy">
                                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                                           <horstretch>0</horstretch>
