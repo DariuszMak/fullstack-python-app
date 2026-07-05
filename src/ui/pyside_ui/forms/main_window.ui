@@ -404,13 +404,6 @@
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_3">
                           <item>
-                            <widget class="Line" name="line_2">
-                              <property name="orientation">
-                                <enum>Qt::Orientation::Horizontal</enum>
-                              </property>
-                            </widget>
-                          </item>
-                          <item>
                             <layout class="QHBoxLayout" name="horizontalLayout_6">
                               <item>
                                 <widget class="Line" name="line">
@@ -506,7 +499,7 @@
                                         <x>0</x>
                                         <y>0</y>
                                         <width>254</width>
-                                        <height>607</height>
+                                        <height>616</height>
                                       </rect>
                                     </property>
                                     <layout class="QVBoxLayout" name="weatherScoreContainerLayout"/>
