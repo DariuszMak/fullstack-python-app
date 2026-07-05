@@ -5,6 +5,7 @@ QToolTip {
     border-radius: 2px;
 }
 
+
 QMenu {
     border: 1px solid black;
 }
@@ -14,6 +15,7 @@ QMenu::item {
 QMenu::item:selected {
     background-color: #654321;
 }
+
 
 QPushButton {
     background-position: center;
