@@ -14,12 +14,14 @@ logger = structlog.get_logger(__name__)
 class HttpxClient:
     def __init__(self, base_url: str) -> None:
         self._base_url = base_url.rstrip("/")
+        self.timeout = httpx.Timeout(10.0, connect=5.0)
+
 
     async def fetch_time(self) -> ServerTimeResponse:
         url = f"{self._base_url}/api/v1/time"
         log = logger.bind(url=url)
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
             try:
                 response = await client.get(url)
                 response.raise_for_status()
@@ -58,7 +60,7 @@ class HttpxClient:
         if start_day is not None:
             body["start_day"] = start_day
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
             try:
                 response = await client.post(url, json=body)
                 response.raise_for_status()

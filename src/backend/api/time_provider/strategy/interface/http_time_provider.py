@@ -12,12 +12,13 @@ class HttpTimeProvider(TimeProvider):
     def __init__(self, url: str, datetime_key: str) -> None:
         self._url = url
         self._datetime_key = datetime_key
+        self.timeout = httpx.Timeout(10.0, connect=5.0)
 
     async def fetch_time(self) -> datetime | None:
         log = logger.bind(url=self._url)
         try:
             log.info("fetching_external_time")
-            async with httpx.AsyncClient(timeout=2.0) as client:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
                 resp = await client.get(self._url)
                 resp.raise_for_status()
 
