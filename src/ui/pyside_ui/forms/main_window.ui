@@ -6,8 +6,8 @@
       <rect>
         <x>0</x>
         <y>0</y>
-        <width>701</width>
-        <height>646</height>
+        <width>713</width>
+        <height>752</height>
       </rect>
     </property>
     <property name="minimumSize">
@@ -404,23 +404,6 @@
                         </property>
                         <layout class="QVBoxLayout" name="verticalLayout_3">
                           <item>
-                            <widget class="QFrame" name="frame_clock_widget">
-                              <property name="sizePolicy">
-                                <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                </sizepolicy>
-                              </property>
-                              <property name="minimumSize">
-                                <size>
-                                  <width>400</width>
-                                  <height>400</height>
-                                </size>
-                              </property>
-                              <layout class="QHBoxLayout" name="horizontalLayout_9"/>
-                            </widget>
-                          </item>
-                          <item>
                             <widget class="Line" name="line_2">
                               <property name="orientation">
                                 <enum>Qt::Orientation::Horizontal</enum>
@@ -451,8 +434,8 @@
                                       <rect>
                                         <x>0</x>
                                         <y>0</y>
-                                        <width>320</width>
-                                        <height>95</height>
+                                        <width>254</width>
+                                        <height>607</height>
                                       </rect>
                                     </property>
                                     <layout class="QVBoxLayout" name="weatherScoreContainerLayout"/>
@@ -471,6 +454,43 @@
                                   <property name="sizeConstraint">
                                     <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
                                   </property>
+                                  <item>
+                                    <widget class="QFrame" name="frame_clock_widget">
+                                      <property name="sizePolicy">
+                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                      </property>
+                                      <property name="minimumSize">
+                                        <size>
+                                          <width>400</width>
+                                          <height>400</height>
+                                        </size>
+                                      </property>
+                                      <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+                                    </widget>
+                                  </item>
+                                  <item>
+                                    <widget class="Line" name="line_4">
+                                      <property name="orientation">
+                                        <enum>Qt::Orientation::Horizontal</enum>
+                                      </property>
+                                    </widget>
+                                  </item>
+                                  <item>
+                                    <spacer name="verticalSpacer">
+                                      <property name="orientation">
+                                        <enum>Qt::Orientation::Vertical</enum>
+                                      </property>
+                                      <property name="sizeHint" stdset="0">
+                                        <size>
+                                          <width>20</width>
+                                          <height>40</height>
+                                        </size>
+                                      </property>
+                                    </spacer>
+                                  </item>
                                   <item>
                                     <widget class="QPushButton" name="openWindowButton">
                                       <property name="sizePolicy">
@@ -524,7 +544,7 @@
         <rect>
           <x>0</x>
           <y>0</y>
-          <width>701</width>
+          <width>713</width>
           <height>33</height>
         </rect>
       </property>
