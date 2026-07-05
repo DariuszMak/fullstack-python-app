@@ -103,6 +103,7 @@ EXPECTED_PLACE_KEYS = {
     "swinoujscie",
     "mielno",
     "leba",
+    "miedzygorze",
     "debki",
     "hel",
     "gdansk",
