@@ -1,4 +1,3 @@
-/* QTOOLTIP */
 QToolTip {
     color: #ffffff;
     background-color: rgba(27, 29, 35, 160);
@@ -6,9 +5,7 @@ QToolTip {
     border-radius: 2px;
 }
 
-/* QMENU */
 QMenu {
-    /* background-color: #ABABAB; */
     border: 1px solid black;
 }
 QMenu::item {
@@ -18,7 +15,6 @@ QMenu::item:selected {
     background-color: #654321;
 }
 
-/* PUSH BUTTON */
 QPushButton {
     background-position: center;
     background-repeat: no-repeat;
@@ -41,7 +37,6 @@ QPushButton:disabled {
 }
 
 
-/* TOOL BUTTON */
 QToolButton {
     background-position: center;
     background-repeat: no-repeat;
@@ -64,7 +59,6 @@ QToolButton:disabled {
 }
 
 
-/* LINE EDIT */
 QLineEdit {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -83,13 +77,11 @@ QLineEdit:disabled {
 }
 
 
-/* TEXT EDIT */
 QTextEdit {
 
 }
 
 
-/* SPIN BOX */
 QSpinBox {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -105,7 +97,6 @@ QSpinBox:focus {
 }
 
 
-/* DOUBLE SPIN BOX */
 .QDoubleSpinBox {
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -121,7 +112,6 @@ QSpinBox:focus {
 }
 
 
-/* SCROLL BARS */
 QScrollBar:horizontal {
     border: none;
     background: rgb(52, 59, 72);
@@ -198,7 +188,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
 
-/* CHECKBOX */
 QCheckBox::indicator {
     border: 3px solid rgb(52, 59, 72);
     width: 15px;
@@ -216,7 +205,6 @@ QCheckBox::indicator:checked {
 }
 
 
-/* QDockWidget */
 
 QDockWidget {
     background-color: rgb(40, 44, 52);
@@ -225,8 +213,7 @@ QDockWidget {
     titlebar-normal-icon: url(undock.png); */
 }
 QDockWidget::title {
-    text-align: left; /* align the text to the left */
-    background: lightgray;
+    text-align: left;     background: lightgray;
     padding-left: 5px;
 }
 QDockWidget::close-button, QDockWidget::float-button {
@@ -241,7 +228,6 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     padding: 1px -1px -1px 1px;
 }
 
-/* RADIO BUTTON */
 QRadioButton::indicator {
     border: 3px solid rgb(52, 59, 72);
     width: 15px;
@@ -260,7 +246,6 @@ QRadioButton:disabled {
     background-color: rgb(0, 45, 98);
 }
 
-/* COMBOBOX */
 QComboBox{
     background-color: rgb(27, 29, 35);
     border-radius: 5px;
@@ -292,7 +277,6 @@ QComboBox QAbstractItemView {
 }
 
 
-/* DATE TIME EDIT */
 QDateTimeEdit
 {
     background-color: rgb(27, 29, 35);
@@ -309,7 +293,6 @@ QDateTimeEdit:focus {
 }
 
 
-/* SIZE GRIP */
 QSizeGrip {
     width: 20px;
     height: 20px;
@@ -321,7 +304,6 @@ QSizeGrip {
 }
 
 
-/* SLIDERS */
 QSlider::groove:horizontal {
     border-radius: 9px;
     height: 18px;
@@ -370,7 +352,6 @@ QSlider::handle:vertical:pressed {
 }
 
 
-/* TABLE VIEW / WIDGET */
 QHeaderView::section {
     color: #fffff8;
     background-color: #646464;
@@ -400,24 +381,20 @@ QCalendarWidget:disabled {
 }
 
 
-/* QTREEVIEW */
 
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
     border-image: none;
-    /* color: blue; */
     image: url(:/16x16/icons/16x16/cil-chevron-bottom.png);
 }
 
 QTreeView::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings {
     border-image: none;
-    /* color: blue; */
     image: url(:/16x16/icons/16x16/cil-chevron-right.png);
 }
 
 
-/* QTABWIDGET */
 QTabWidget{
 
 }
@@ -426,7 +403,6 @@ QTabWidget::pane{
     border: 0;
 }
 QTabWidget::tab-bar {
-    /* background-color: blue; */
 }
 QTabBar::tab {
     background: rgb(37, 43, 52);
@@ -438,7 +414,6 @@ QTabBar::tab:selected {
 }
 
 
-/* SPECIFIED WIDGETS */
 QPushButton#btn_close {
 	border: none;
 }
@@ -492,7 +467,6 @@ QMainWindow#central_widget {
 }
 
 #frame_main {
-    /* color: rgb(210, 210, 210); */
 }
 
 #frame_toggle {
