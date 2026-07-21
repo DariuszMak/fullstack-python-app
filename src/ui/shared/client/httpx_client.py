@@ -14,7 +14,7 @@ logger = structlog.get_logger(__name__)
 class HttpxClient:
     def __init__(self, base_url: str) -> None:
         self._base_url = base_url.rstrip("/")
-        self.timeout = httpx.Timeout(10.0, connect=5.0)
+        self.timeout = httpx.Timeout(5.0, connect=3.0, read=10.0)
 
     async def fetch_time(self) -> ServerTimeResponse:
         url = f"{self._base_url}/api/v1/time"
