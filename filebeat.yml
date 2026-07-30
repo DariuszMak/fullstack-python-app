@@ -1,5 +1,4 @@
 filebeat.inputs:
-
   - type: container
     paths:
       - /var/lib/docker/containers/*/*.log
@@ -7,13 +6,31 @@ filebeat.inputs:
       - add_docker_metadata: ~
       - decode_json_fields:
           fields: ["log"]
+          target: ""
           overwrite_keys: true
+          add_error_key: true
 
   - type: filestream
     id: app-log-stream
     paths:
       - /usr/share/filebeat/app_logs/app.log
     take_over: true
+    parsers:
+      - ndjson:
+          target: ""
+          overwrite_keys: true
+          add_error_key: true
+          message_key: event
+
+processors:
+  - timestamp:
+      field: timestamp
+      layouts:
+        - "2006-01-02T15:04:05.999999999Z"
+      test:
+        - "2026-07-30T09:17:25.457035Z"
+  - drop_fields:
+      fields: ["timestamp"]
 
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
