@@ -6,7 +6,6 @@ filebeat.inputs:
       - add_docker_metadata: ~
       - decode_json_fields:
           fields: ["log"]
-          target: ""
           overwrite_keys: true
           add_error_key: true
 
@@ -17,7 +16,6 @@ filebeat.inputs:
     take_over: true
     parsers:
       - ndjson:
-          target: ""
           overwrite_keys: true
           add_error_key: true
           message_key: event
