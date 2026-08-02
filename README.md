@@ -2,10 +2,10 @@
 
 ### Executable files do download for Windows and Linux
 
-<table>
+<table align="center">
   <tr>
     <th style="text-align: center;">Windows (click on image):</th>
-    <th style="width: 100px;"></th>
+    <th style="width: 50px;"></th>
     <th style="text-align: center;">Linux (click on image):</th>
   </tr>
   <tr>
