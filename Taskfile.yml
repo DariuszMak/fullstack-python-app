@@ -66,10 +66,15 @@ tasks:
       - task: sonarqube
       - task: generate-diagrams
 
-  build-release:
-    desc: Build both Linux + Windows releases
+  build-linux-release:
+    desc: Build Linux release
     cmds:
-      - powershell -ExecutionPolicy Bypass -File tasks/build_release.ps1
+      - powershell -ExecutionPolicy Bypass -File tasks/build_linux_release.ps1
+
+  build-windows-release:
+    desc: Build Windows release
+    cmds:
+      - powershell -ExecutionPolicy Bypass -File tasks/build_windows_release.ps1
 
   run-linux-release:
     desc: Run Linux GUI in WSL
@@ -107,9 +112,10 @@ tasks:
     deps:
       - cleanup
     cmds:
+      - task: build-linux-release
       - task: dev-env
       - task: local-static-tests
-      - task: build-release
+      - task: build-windows-release
 
       - task: run-linux-release
       - task: wait-linux-api
