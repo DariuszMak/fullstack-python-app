@@ -8,5 +8,4 @@ uv run pyinstaller --clean .\scripts\standalone_build_windows.spec ;
 Copy-Item -r -fo .\dist\* .\releases\windows\ ; 
 Remove-Item -r -fo .\dist, .\build ; 
 
-
 uv sync --dev --locked --no-cache ; 
