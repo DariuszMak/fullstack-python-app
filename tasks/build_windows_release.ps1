@@ -1,12 +1,3 @@
-Set-Location src\ui\react_ui\frontend ; 
-if (Test-Path node_modules) {
-    Remove-Item -Recurse -Force node_modules
-}
-Remove-Item package-lock.json ; 
-npm cache clean --force ; 
-npm install ; 
-Set-Location (git rev-parse --show-toplevel)
-
 uv sync --dev --no-cache --locked ; 
 
 .\scripts\format_and_lint.ps1 ; 
