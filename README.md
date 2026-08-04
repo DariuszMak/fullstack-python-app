@@ -49,31 +49,31 @@ You can also use VSCode `settings.json` and `launch.json` files to run the proje
 
 ### Fast Windows dev
 
-```commandline
+```console
 task full-dev-native ; 
 ```
 
 ### Full analysis
 
-```commandline
+```console
 task full-static-analyzis ; 
 ```
 
 ### Full release setup (Windows + Linux)
 
-```commandline
+```console
 task full-release-setup ; 
 ```
 
 ### Local development
 
-```commandline
+```console
 clear ; task local-static-tests ; task local-dev-native-run ; 
 ```
 
 ### Edit `ui` forms with QT Designer
 
-```commandline
+```console
 uv run pyside6-designer src\ui\pyside_ui\forms\main_window.ui ; 
 uv run pyside6-designer src\ui\pyside_ui\forms\warning_dialog.ui ; 
 ```
