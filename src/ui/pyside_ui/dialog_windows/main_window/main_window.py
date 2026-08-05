@@ -69,8 +69,8 @@ class MainWindow(DraggableMainWindow):
         self.setMinimumSize(MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE, MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE)
         self.resize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT)
 
-        self._ui.openWindowButton.setText("Click to open dialog window")
-        self._ui.openWindowButton.clicked.connect(self.show_warning_dialog)
+        self._ui.btn_settings.setText("Click to open dialog window")
+        self._ui.btn_settings.clicked.connect(self.show_warning_dialog)
 
         self._ui.checkWeatherScoreButton.setText("Get weather score")
         self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
