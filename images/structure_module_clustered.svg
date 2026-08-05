@@ -1481,19 +1481,19 @@
 <path fill="none" stroke="#ffffff" d="M1615.58,-1328.8C1638.23,-1307.68 2141.79,-1307.92 2172.61,-1304.8 2292.12,-1292.7 2608.8,-1172.73 2709.11,-1238.8 2781.35,-1286.38 2810.86,-1386.81 2822.79,-1454.31"/>
 <polygon fill="#db1505" stroke="#ffffff" points="2819.27,-1454.49 2824.38,-1463.77 2826.18,-1453.33 2819.27,-1454.49"/>
 </g>
-<!-- src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="node126" class="node">
-<title>src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <ellipse fill="#612673" stroke="#ffffff" cx="2831.74" cy="-1927.8" rx="62.23" ry="48.08"/>
 <text xml:space="preserve" text-anchor="middle" x="2831.74" y="-1948.3" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">src.</text>
 <text xml:space="preserve" text-anchor="middle" x="2831.74" y="-1936.3" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">ui.</text>
 <text xml:space="preserve" text-anchor="middle" x="2831.74" y="-1924.3" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">pyside_ui.</text>
 <text xml:space="preserve" text-anchor="middle" x="2831.74" y="-1912.3" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">dialog_windows.</text>
-<text xml:space="preserve" text-anchor="middle" x="2831.74" y="-1900.3" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">warning_dialog</text>
+<text xml:space="preserve" text-anchor="middle" x="2831.74" y="-1900.3" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#e0e0e0">settings_dialog</text>
 </g>
-<!-- PySide6&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- PySide6&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="edge134" class="edge">
-<title>PySide6&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>PySide6&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M1615.58,-2053.8C1796.6,-2256.4 2548.29,-2030.12 2548.66,-2029.8 2589.85,-1994.91 2541.2,-1945.82 2584.66,-1913.8 2636.15,-1875.87 2711.39,-1887 2765.1,-1902.84"/>
 <polygon fill="#db1505" stroke="#ffffff" points="2763.84,-1906.11 2774.43,-1905.71 2765.91,-1899.42 2763.84,-1906.11"/>
 </g>
@@ -2404,9 +2404,9 @@
 <path fill="none" stroke="#ffffff" d="M2284.21,-2602.95C2301.82,-2583.99 2332.56,-2553.17 2363.76,-2532.8 2438.89,-2483.76 2488.74,-2518.58 2548.66,-2451.8 2628.02,-2363.38 2685.17,-2058.18 2709.11,-1941.8 2725.1,-1864.14 2706.32,-1655.96 2745.11,-1586.8 2751.13,-1576.09 2759.71,-1566.58 2769.15,-1558.38"/>
 <polygon fill="#c410f9" stroke="#ffffff" points="2771.25,-1561.17 2776.82,-1552.16 2766.85,-1555.73 2771.25,-1561.17"/>
 </g>
-<!-- src_helpers&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- src_helpers&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="edge238" class="edge">
-<title>src_helpers&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>src_helpers&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M2305.21,-2614.26C2392.47,-2598.71 2614.89,-2545.82 2709.11,-2399.8 2809.5,-2244.24 2650.73,-2144.07 2745.11,-1984.8 2751.05,-1974.79 2759.51,-1966.18 2768.83,-1958.91"/>
 <polygon fill="#c410f9" stroke="#ffffff" points="2770.66,-1961.91 2776.74,-1953.23 2766.57,-1956.22 2770.66,-1961.91"/>
 </g>
@@ -2547,9 +2547,9 @@
 <polygon fill="#861da5" stroke="#ffffff" points="2771.67,-1561.41 2777.26,-1552.41 2767.28,-1555.96 2771.67,-1561.41"/>
 <path fill="none" stroke="#ffffff" d="M2316.79,-2185.65C2376.87,-2179.4 2480.56,-2160.85 2548.66,-2105.8 2618.77,-2049.14 2580.85,-1990.22 2645.89,-1927.8"/>
 </g>
-<!-- src_helpers_style_loader&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- src_helpers_style_loader&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="edge255" class="edge">
-<title>src_helpers_style_loader&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>src_helpers_style_loader&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M2647.89,-1927.8C2663.53,-1912.79 2714.55,-1913.8 2758.73,-1918.01"/>
 <polygon fill="#861da5" stroke="#ffffff" points="2758.27,-1921.48 2768.58,-1919.02 2758.99,-1914.51 2758.27,-1921.48"/>
 </g>
@@ -2679,15 +2679,15 @@
 <path fill="none" stroke="#ffffff" d="M2772.16,-1752C2754.45,-1741.79 2737.12,-1727.95 2727.11,-1709.8 2702.65,-1665.44 2703.83,-1640.8 2727.11,-1595.8 2735.96,-1578.71 2750.78,-1564.72 2766.52,-1553.68"/>
 <polygon fill="#ba22e7" stroke="#ffffff" points="2768.17,-1556.79 2774.59,-1548.36 2764.32,-1550.94 2768.17,-1556.79"/>
 </g>
-<!-- src_ui_pyside_ui_dialog_windows_draggable_window&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- src_ui_pyside_ui_dialog_windows_draggable_window&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="edge268" class="edge">
-<title>src_ui_pyside_ui_dialog_windows_draggable_window&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>src_ui_pyside_ui_dialog_windows_draggable_window&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M2831.74,-1824.19C2831.74,-1838.81 2831.74,-1853.44 2831.74,-1868.06"/>
 <polygon fill="#ba22e7" stroke="#ffffff" points="2828.24,-1867.72 2831.74,-1877.72 2835.24,-1867.72 2828.24,-1867.72"/>
 </g>
-<!-- src_ui_pyside_ui_dialog_windows_draggable_window_draggable_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- src_ui_pyside_ui_dialog_windows_draggable_window_draggable_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="edge269" class="edge">
-<title>src_ui_pyside_ui_dialog_windows_draggable_window_draggable_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>src_ui_pyside_ui_dialog_windows_draggable_window_draggable_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M2831.74,-1993.79C2831.74,-1991.79 2831.74,-1989.79 2831.74,-1987.79"/>
 <polygon fill="#6e2b82" stroke="#ffffff" points="2835.24,-1987.84 2831.74,-1977.84 2828.24,-1987.84 2835.24,-1987.84"/>
 </g>
@@ -2737,9 +2737,9 @@
 <path fill="none" stroke="#ffffff" d="M2885.15,-1550.8C2898.11,-1560.53 2910.51,-1572.59 2918.36,-1586.8 2964.31,-1670.06 2995.4,-2340 3003.44,-2532.34"/>
 <polygon fill="#612673" stroke="#ffffff" points="2999.94,-2532.43 3003.85,-2542.27 3006.94,-2532.14 2999.94,-2532.43"/>
 </g>
-<!-- src_ui_pyside_ui_dialog_windows_warning_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_main_window_main_window -->
+<!-- src_ui_pyside_ui_dialog_windows_settings_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_main_window_main_window -->
 <g id="edge276" class="edge">
-<title>src_ui_pyside_ui_dialog_windows_warning_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_main_window_main_window</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>src_ui_pyside_ui_dialog_windows_settings_dialog&#45;&gt;src_ui_pyside_ui_dialog_windows_main_window_main_window</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M2777.02,-1904.26C2757.63,-1892.92 2737.96,-1877.27 2727.11,-1856.8 2713.54,-1831.18 2713.79,-1621.56 2727.11,-1595.8 2735.96,-1578.71 2750.78,-1564.72 2766.52,-1553.68"/>
 <polygon fill="#612673" stroke="#ffffff" points="2768.17,-1556.79 2774.59,-1548.36 2764.32,-1550.94 2768.17,-1556.79"/>
 </g>
@@ -3305,9 +3305,9 @@
 <title>structlog&#45;&gt;src_ui_pyside_ui_dialog_windows_main_window_main_window</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M1615.58,-2779.8C1726.35,-2752.84 1625.25,-2630.01 1684.83,-2532.8 1733.33,-2453.67 1934.17,-2322.4 1992,-2249.8 2012.1,-2224.58 2003.44,-2207.7 2028,-2186.8 2075.05,-2146.77 2503.4,-2033.84 2548.66,-1991.8 2576.64,-1965.82 2566.66,-1947.48 2584.66,-1913.8 2609.23,-1867.84 2605.79,-1847.09 2645.89,-1813.8"/>
 </g>
-<!-- structlog&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog -->
+<!-- structlog&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog -->
 <g id="edge339" class="edge">
-<title>structlog&#45;&gt;src_ui_pyside_ui_dialog_windows_warning_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
+<title>structlog&#45;&gt;src_ui_pyside_ui_dialog_windows_settings_dialog</title><style>.edge>path:hover{stroke-width:8}</style>
 <path fill="none" stroke="#ffffff" d="M1733.21,-2779.8C1753.79,-2771.29 1764.9,-2777.56 1779.58,-2760.8 1821.07,-2713.45 1783.75,-2678.12 1815.58,-2623.8 1881.92,-2510.6 1920.99,-2494.71 2028,-2418.8 2239.3,-2268.94 2333.79,-2301.5 2548.66,-2156.8 2644.92,-2091.98 2652.96,-2055.33 2745.11,-1984.8 2754.05,-1977.97 2763.77,-1971.04 2773.35,-1964.49"/>
 <polygon fill="#5a5a5a" stroke="#ffffff" points="2775.27,-1967.42 2781.6,-1958.92 2771.35,-1961.62 2775.27,-1967.42"/>
 <path fill="none" stroke="#ffffff" d="M1615.58,-2779.8C1665.51,-2767.65 1682,-2794.63 1731.21,-2779.8"/>
