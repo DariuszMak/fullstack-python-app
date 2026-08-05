@@ -69,7 +69,7 @@ class MainWindow(DraggableMainWindow):
         self.setMinimumSize(MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE, MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE)
         self.resize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT)
 
-        self._ui.btn_settings.clicked.connect(self.show_warning_dialog)
+        self._ui.btn_settings.clicked.connect(self.show_settings_dialog)
 
         self._ui.checkWeatherScoreButton.setText("Get weather score")
         self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
@@ -259,7 +259,7 @@ class MainWindow(DraggableMainWindow):
         layout.addWidget(error_label)
         layout.addStretch(1)
 
-    def show_warning_dialog(self) -> None:
+    def show_settings_dialog(self) -> None:
         dlg = SettingsDialog(self)
         dlg._ui.label_title_bar_top.setText("Warning title")
         dlg._ui.label_info.setText("Warning message")
