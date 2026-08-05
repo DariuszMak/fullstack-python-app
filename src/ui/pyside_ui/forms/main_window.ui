@@ -490,19 +490,6 @@
                                     </widget>
                                   </item>
                                   <item>
-                                    <widget class="QPushButton" name="openWindowButton">
-                                      <property name="sizePolicy">
-                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                                          <horstretch>0</horstretch>
-                                          <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                      </property>
-                                      <property name="text">
-                                        <string/>
-                                      </property>
-                                    </widget>
-                                  </item>
-                                  <item>
                                     <widget class="Line" name="line_3">
                                       <property name="orientation">
                                         <enum>Qt::Orientation::Horizontal</enum>
