@@ -8,7 +8,7 @@ from src.helpers.config.config import Config
 async def fetch_time() -> str:
     config = Config()
 
-    timeout = httpx.Timeout(30.0, connect=3.0, read=10.0)
+    timeout = httpx.Timeout(connect=3.0, read=30.0)
 
     async with httpx.AsyncClient(timeout=timeout) as client:
         resp = await client.get(f"{config.api_base_url}/api/v1/time")
