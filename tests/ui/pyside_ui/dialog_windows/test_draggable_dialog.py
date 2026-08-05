@@ -3,13 +3,16 @@ from unittest.mock import patch
 import pytest
 from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QMouseEvent
+from pytestqt.qtbot import QtBot
 
-from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
+from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_dialog import (
+    DraggableDialog,
+)
 
 
 def make_mouse_event(
-    button,
-    buttons,
+    button: Qt.MouseButton,
+    buttons: Qt.MouseButton,
     pos: QPointF | None = None,
 ) -> QMouseEvent:
     if pos is None:
@@ -25,17 +28,19 @@ def make_mouse_event(
 
 
 @pytest.fixture
-def dialog(qtbot):
+def dialog(qtbot: QtBot) -> DraggableDialog:
     widget = DraggableDialog()
     qtbot.addWidget(widget)
     return widget
 
 
-def test_init_sets_up_drag_state(dialog) -> None:
+def test_init_sets_up_drag_state(dialog: DraggableDialog) -> None:
     assert dialog._drag_active is False
 
 
-def test_mouse_press_event_calls_handler_and_super(dialog) -> None:
+def test_mouse_press_event_calls_handler_and_super(
+    dialog: DraggableDialog,
+) -> None:
     event = make_mouse_event(Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton)
     with (
         patch.object(DraggableDialog, "_handle_mouse_press") as handler,
@@ -47,7 +52,9 @@ def test_mouse_press_event_calls_handler_and_super(dialog) -> None:
     super_call.assert_called_once_with(event)
 
 
-def test_mouse_move_event_calls_handler_and_super(dialog) -> None:
+def test_mouse_move_event_calls_handler_and_super(
+    dialog: DraggableDialog,
+) -> None:
     event = make_mouse_event(Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton)
     with (
         patch.object(DraggableDialog, "_handle_mouse_move") as handler,
@@ -59,7 +66,9 @@ def test_mouse_move_event_calls_handler_and_super(dialog) -> None:
     super_call.assert_called_once_with(event)
 
 
-def test_mouse_release_event_calls_handler_and_super(dialog) -> None:
+def test_mouse_release_event_calls_handler_and_super(
+    dialog: DraggableDialog,
+) -> None:
     event = make_mouse_event(Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton)
     with (
         patch.object(DraggableDialog, "_handle_mouse_release") as handler,

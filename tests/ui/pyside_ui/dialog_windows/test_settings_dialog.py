@@ -16,17 +16,18 @@ def dialog(qtbot: QtBot) -> SettingsDialog:
         patch("src.ui.pyside_ui.dialog_windows.settings_dialog.StyleLoader.center_window"),
     ):
         widget = SettingsDialog()
+
     qtbot.addWidget(widget)
     return widget
 
 
-def test_init_without_parent(dialog) -> None:
+def test_init_without_parent(dialog: SettingsDialog) -> None:
     assert dialog._ui is not None
     assert dialog.windowFlags() & Qt.WindowType.FramelessWindowHint
     assert dialog.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
 
-def test_init_with_parent_calls_style_loader(qtbot) -> None:
+def test_init_with_parent_calls_style_loader(qtbot: QtBot) -> None:
     parent = QWidget()
     qtbot.addWidget(parent)
 
@@ -41,29 +42,44 @@ def test_init_with_parent_calls_style_loader(qtbot) -> None:
     center_window.assert_called_once_with(widget, parent)
 
 
-def test_btn_close_click_closes_dialog(dialog, qtbot) -> None:
+def test_btn_close_click_closes_dialog(
+    dialog: SettingsDialog,
+    qtbot: QtBot,
+) -> None:
     dialog.show()
     assert dialog.isVisible() is True
+
     dialog._ui.btn_close.click()
+
     assert dialog.isVisible() is False
 
 
-def test_change_event_language_change_retranslates(dialog) -> None:
+def test_change_event_language_change_retranslates(
+    dialog: SettingsDialog,
+) -> None:
     event = QEvent(QEvent.Type.LanguageChange)
+
     with patch.object(dialog._ui, "retranslateUi") as retranslate:
         dialog.changeEvent(event)
+
     retranslate.assert_called_once_with(dialog)
 
 
-def test_change_event_other_type_does_not_retranslate(dialog) -> None:
+def test_change_event_other_type_does_not_retranslate(
+    dialog: SettingsDialog,
+) -> None:
     event = QEvent(QEvent.Type.Resize)
+
     with patch.object(dialog._ui, "retranslateUi") as retranslate:
         dialog.changeEvent(event)
+
     retranslate.assert_not_called()
 
 
-def test_close_event_calls_super(dialog) -> None:
+def test_close_event_calls_super(dialog: SettingsDialog) -> None:
     event = QCloseEvent()
+
     with patch("src.ui.pyside_ui.dialog_windows.settings_dialog.DraggableDialog.closeEvent") as super_close:
         dialog.closeEvent(event)
+
     super_close.assert_called_once_with(event)
