@@ -11,16 +11,23 @@ from src.backend.openmeteo.request_builder import API_URL, build_request_paramet
 logger = structlog.get_logger(__name__)
 
 
-def _fetch_weather_response(client: openmeteo_requests.Client, parameters: dict[str, Any]) -> Any:
+def _fetch_weather_response(
+    client: openmeteo_requests.Client,
+    parameters: dict[str, Any],
+) -> Any:
     log = logger.bind(api_url=API_URL, parameters=parameters)
     log.info("requesting_weather_data")
 
     try:
         responses = client.weather_api(API_URL, params=parameters)
-        return responses[0]
-    except Exception as e:
-        log.exception("weather_api_request_failed", error=str(e))
+    except Exception:
+        log.exception("weather_api_request_failed")
         raise
+
+    if not responses:
+        raise RuntimeError("Open-Meteo returned no responses.")
+
+    return responses[0]
 
 
 def gather_data(parameters: dict[str, Any] | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:

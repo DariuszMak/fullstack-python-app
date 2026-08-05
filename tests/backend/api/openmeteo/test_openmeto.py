@@ -1,3 +1,4 @@
+import re
 from unittest.mock import ANY, MagicMock, patch
 
 import numpy as np
@@ -299,6 +300,17 @@ def _make_response_mock() -> MagicMock:
     response.Hourly.return_value = _make_hourly_mock()
     response.Daily.return_value = _make_daily_mock()
     return response
+
+
+def test_raises_when_api_returns_no_responses() -> None:
+    mock_client = MagicMock()
+    mock_client.weather_api.return_value = []
+
+    with pytest.raises(
+        RuntimeError,
+        match=re.escape("Open-Meteo returned no responses."),
+    ):
+        _fetch_weather_response(mock_client, {})
 
 
 @patch("src.backend.openmeteo.gather.build_openmeteo_client")
