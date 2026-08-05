@@ -12,7 +12,7 @@ from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.ui.pyside_ui.dialog_windows.main_window.helpers import clear_layout, render_weather_score
-from src.ui.pyside_ui.dialog_windows.warning_dialog import WarningDialog
+from src.ui.pyside_ui.dialog_windows.settings_dialog import WarningDialog
 from src.ui.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.ui.pyside_ui.settings import (
     ANIMATION_DURATION,
