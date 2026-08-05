@@ -10,7 +10,7 @@ from src.ui.pyside_ui.forms.moc_warning_dialog import Ui_Dialog
 logger = structlog.get_logger(__name__)
 
 
-class WarningDialog(DraggableDialog):
+class SettingsDialog(DraggableDialog):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__()
         self._ui = Ui_Dialog()

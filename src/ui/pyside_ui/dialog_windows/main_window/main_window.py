@@ -12,7 +12,7 @@ from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.ui.pyside_ui.dialog_windows.main_window.helpers import clear_layout, render_weather_score
-from src.ui.pyside_ui.dialog_windows.settings_dialog import WarningDialog
+from src.ui.pyside_ui.dialog_windows.settings_dialog import SettingsDialog
 from src.ui.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.ui.pyside_ui.settings import (
     ANIMATION_DURATION,
@@ -260,7 +260,7 @@ class MainWindow(DraggableMainWindow):
         layout.addStretch(1)
 
     def show_warning_dialog(self) -> None:
-        dlg = WarningDialog(self)
+        dlg = SettingsDialog(self)
         dlg._ui.label_title_bar_top.setText("Warning title")
         dlg._ui.label_info.setText("Warning message")
 
