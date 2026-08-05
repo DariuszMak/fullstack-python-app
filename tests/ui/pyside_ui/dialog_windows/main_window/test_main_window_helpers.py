@@ -174,3 +174,16 @@ def test_fetch_weather_score_shows_error_on_failure(qtbot: QtBot) -> None:
     asyncio.run(window._fetch_weather_score())
 
     assert any("Failed to fetch weather score: test_message" in text for text in labels_text(window))
+
+
+def test_fetch_weather_score_shows_exception_type_when_error_message_is_empty(
+    qtbot: QtBot,
+) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    window._httpx_client.fetch_weather_score = AsyncMock(side_effect=TimeoutError())  # type: ignore[method-assign]
+
+    asyncio.run(window._fetch_weather_score())
+
+    assert any("Failed to fetch weather score: TimeoutError" in text for text in labels_text(window))

@@ -242,8 +242,14 @@ class MainWindow(DraggableMainWindow):
             )
             self._apply_weather_score(result)
         except Exception as exc:
-            log.exception("weather_score_fetch_failed", error=str(exc))
-            self._show_weather_score_error(str(exc))
+            error_message = str(exc) or type(exc).__name__
+
+            log.exception(
+                "weather_score_fetch_failed",
+                error=str(exc),
+                error_type=type(exc).__name__,
+            )
+            self._show_weather_score_error(error_message)
 
     def _apply_weather_score(self, result: BestScoreResponse) -> None:
         logger.info("weather_score_applied", result_count=len(result.results))
