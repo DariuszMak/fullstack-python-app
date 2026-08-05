@@ -7,10 +7,16 @@ from PySide6.QtGui import QMouseEvent
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 
 
-def make_mouse_event(button, buttons, pos=QPointF(10, 10)):
+def make_mouse_event(
+    button,
+    buttons,
+    pos: QPointF | None = None,
+):
+    if pos is None:
+        pos = QPointF(10, 10)
+
     return QMouseEvent(
         QMouseEvent.Type.MouseButtonPress,
-        pos,
         pos,
         button,
         buttons,
