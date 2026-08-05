@@ -12,7 +12,7 @@ class HttpTimeProvider(TimeProvider):
     def __init__(self, url: str, datetime_key: str) -> None:
         self._url = url
         self._datetime_key = datetime_key
-        self.timeout = httpx.Timeout(30.0, connect=3.0, read=10.0)
+        self.timeout = httpx.Timeout(5.0, connect=3.0, read=30.0)
 
     async def fetch_time(self) -> datetime | None:
         log = logger.bind(url=self._url)
