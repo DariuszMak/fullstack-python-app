@@ -23,7 +23,7 @@ class SettingsDialog(DraggableDialog):
         self._ui.btn_close.clicked.connect(self.close)
         StyleLoader.center_window(self, parent)
 
-        pixmap = QPixmap(":/logos/icons/images/warning.png")
+        pixmap = QPixmap(":/24x24/icons/24x24/cil-equalizer.png")
         self._ui.label_warning.setPixmap(pixmap.scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio))
 
         logger.debug("settings_dialog_initialized", parent=type(parent).__name__ if parent else None)
