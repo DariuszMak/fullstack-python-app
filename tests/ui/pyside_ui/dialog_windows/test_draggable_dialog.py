@@ -25,11 +25,11 @@ def dialog(qtbot):
     return widget
 
 
-def test_init_sets_up_drag_state(dialog):
+def test_init_sets_up_drag_state(dialog) -> None:
     assert dialog._drag_active is False
 
 
-def test_mouse_press_event_calls_handler_and_super(dialog):
+def test_mouse_press_event_calls_handler_and_super(dialog) -> None:
     event = make_mouse_event(Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton)
     with (
         patch.object(DraggableDialog, "_handle_mouse_press") as handler,
@@ -41,7 +41,7 @@ def test_mouse_press_event_calls_handler_and_super(dialog):
     super_call.assert_called_once_with(event)
 
 
-def test_mouse_move_event_calls_handler_and_super(dialog):
+def test_mouse_move_event_calls_handler_and_super(dialog) -> None:
     event = make_mouse_event(Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton)
     with (
         patch.object(DraggableDialog, "_handle_mouse_move") as handler,
@@ -53,7 +53,7 @@ def test_mouse_move_event_calls_handler_and_super(dialog):
     super_call.assert_called_once_with(event)
 
 
-def test_mouse_release_event_calls_handler_and_super(dialog):
+def test_mouse_release_event_calls_handler_and_super(dialog) -> None:
     event = make_mouse_event(Qt.MouseButton.LeftButton, Qt.MouseButton.LeftButton)
     with (
         patch.object(DraggableDialog, "_handle_mouse_release") as handler,
