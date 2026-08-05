@@ -236,7 +236,7 @@
                                         <number>0</number>
                                       </property>
                                       <item>
-                                        <widget class="QPushButton" name="btn_help">
+                                        <widget class="QPushButton" name="btn_settings">
                                           <property name="sizePolicy">
                                             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                                               <horstretch>0</horstretch>
