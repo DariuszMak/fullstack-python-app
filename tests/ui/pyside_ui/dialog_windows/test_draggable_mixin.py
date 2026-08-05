@@ -7,7 +7,7 @@ from PySide6.QtGui import QMouseEvent
 from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin import DraggableMixin
 
 
-def make_mouse_event(button, buttons, pos: QPointF | None = None):
+def make_mouse_event(button, buttons, pos: QPointF | None = None) -> QMouseEvent:
     if pos is None:
         pos = QPointF(10, 10)
 
@@ -21,7 +21,7 @@ def make_mouse_event(button, buttons, pos: QPointF | None = None):
 
 
 @pytest.fixture
-def mixin():
+def mixin() -> DraggableMixin:
     instance = DraggableMixin()
     return instance
 

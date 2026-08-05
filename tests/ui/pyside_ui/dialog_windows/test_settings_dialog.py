@@ -4,12 +4,13 @@ import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QWidget
+from pytestqt.qtbot import QtBot
 
 from src.ui.pyside_ui.dialog_windows.settings_dialog import SettingsDialog
 
 
 @pytest.fixture
-def dialog(qtbot):
+def dialog(qtbot: QtBot) -> SettingsDialog:
     with (
         patch("src.ui.pyside_ui.dialog_windows.settings_dialog.StyleLoader.style_window"),
         patch("src.ui.pyside_ui.dialog_windows.settings_dialog.StyleLoader.center_window"),

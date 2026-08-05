@@ -11,7 +11,7 @@ def make_mouse_event(
     button,
     buttons,
     pos: QPointF | None = None,
-):
+) -> QMouseEvent:
     if pos is None:
         pos = QPointF(10, 10)
 
