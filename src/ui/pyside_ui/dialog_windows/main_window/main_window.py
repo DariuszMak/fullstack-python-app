@@ -261,8 +261,8 @@ class MainWindow(DraggableMainWindow):
 
     def show_settings_dialog(self) -> None:
         dlg = SettingsDialog(self)
-        dlg._ui.label_title_bar_top.setText("Warning title")
-        dlg._ui.label_info.setText("Warning message")
+        dlg._ui.label_title_bar_top.setText("Settings")
+        dlg._ui.label_info.setText("Settings")
 
         if dlg.exec_():
             logger.info("dialog_accepted")
