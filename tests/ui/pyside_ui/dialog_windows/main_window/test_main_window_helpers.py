@@ -152,6 +152,39 @@ def test_show_weather_score_error_clears_cards_and_shows_message(qtbot: QtBot) -
     assert any("Failed to fetch weather score: test_message" in text for text in labels_text(window))
 
 
+def test_show_weather_score_info_clears_cards_and_shows_message(qtbot: QtBot) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
+    assert len(cards_in_layout(window)) == 2
+
+    window._show_weather_score_info("test_info_message")
+
+    assert len(cards_in_layout(window)) == 0
+    assert any("test_info_message" in text for text in labels_text(window))
+
+
+def test_fetch_weather_score_shows_info_message_while_fetching(qtbot: QtBot) -> None:
+    window = MainWindow(fetch_server_time=False)
+    qtbot.addWidget(window)
+
+    render_weather_score(window._ui.weatherScoreContainerLayout, make_response())
+    assert len(cards_in_layout(window)) == 2
+
+    async def fetch_side_effect(*args: object, **kwargs: object) -> BestScoreResponse:
+        await asyncio.sleep(0)
+        assert len(cards_in_layout(window)) == 0
+        assert any("Fetching weather score..." in text for text in labels_text(window))
+        return make_response()
+
+    window._httpx_client.fetch_weather_score = AsyncMock(side_effect=fetch_side_effect)  # type: ignore[method-assign]
+
+    asyncio.run(window._fetch_weather_score())
+
+    assert len(cards_in_layout(window)) == 2
+
+
 def test_clear_layout_removes_all_items(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
