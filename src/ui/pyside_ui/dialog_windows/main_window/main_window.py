@@ -32,9 +32,9 @@ DEFAULT_MIN_TEMP = 18
 DEFAULT_MAX_TEMP = 25
 DEFAULT_PENALIZE_RAIN = True
 FORECAST_DAYS_SLIDER_RANGE = (1, 16)
-START_DAY_SLIDER_RANGE = (0, 15)
+START_DAY_SLIDER_RANGE = (1, 16)
 DEFAULT_FORECAST_DAYS = 3
-DEFAULT_START_DAY = 0
+DEFAULT_START_DAY = 1
 
 
 class MainWindow(DraggableMainWindow):
@@ -163,7 +163,7 @@ class MainWindow(DraggableMainWindow):
 
     def _on_forecast_days_changed(self, value: int) -> None:
         if value <= self._start_day_slider.value():
-            clamped = self._start_day_slider.value() + 1
+            clamped = self._start_day_slider.value()
             if clamped != value:
                 self._forecast_days_slider.setValue(clamped)
                 return
@@ -171,7 +171,7 @@ class MainWindow(DraggableMainWindow):
 
     def _on_start_day_changed(self, value: int) -> None:
         if value >= self._forecast_days_slider.value():
-            clamped = self._forecast_days_slider.value() - 1
+            clamped = self._forecast_days_slider.value()
             if clamped != value:
                 self._start_day_slider.setValue(clamped)
                 return
@@ -242,7 +242,7 @@ class MainWindow(DraggableMainWindow):
                 apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
                 penalize_rain=self._penalize_rain_checkbox.isChecked(),
                 forecast_days=self._forecast_days_slider.value(),
-                start_day=self._start_day_slider.value(),
+                start_day=self._start_day_slider.value() - 1,
             )
             self._apply_weather_score(result)
         except Exception as exc:
