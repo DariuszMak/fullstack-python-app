@@ -454,13 +454,6 @@
                           <item>
                             <layout class="QHBoxLayout" name="horizontalLayout_6">
                               <item>
-                                <widget class="Line" name="line">
-                                  <property name="orientation">
-                                    <enum>Qt::Orientation::Vertical</enum>
-                                  </property>
-                                </widget>
-                              </item>
-                              <item>
                                 <layout class="QVBoxLayout" name="frame_query_parameters">
                                   <property name="sizeConstraint">
                                     <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
@@ -533,7 +526,7 @@
                                       <rect>
                                         <x>0</x>
                                         <y>0</y>
-                                        <width>254</width>
+                                        <width>263</width>
                                         <height>616</height>
                                       </rect>
                                     </property>
