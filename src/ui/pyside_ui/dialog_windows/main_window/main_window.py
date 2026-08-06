@@ -231,6 +231,10 @@ class MainWindow(DraggableMainWindow):
 
     async def _fetch_weather_score(self) -> None:
         log = logger.bind(client=type(self._httpx_client).__name__)
+
+        layout = self._ui.weatherScoreContainerLayout
+        clear_layout(layout)
+
         try:
             log.debug("fetching_weather_score")
             result = await self._httpx_client.fetch_weather_score(
