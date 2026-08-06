@@ -114,16 +114,16 @@ class MainWindow(DraggableMainWindow):
         self._max_temp_slider.setValue(DEFAULT_MAX_TEMP)
         self._max_temp_slider.valueChanged.connect(self._on_max_temp_changed)
 
-        self._ui.frame_query_parameters.addWidget(self._min_temp_label)
-        self._ui.frame_query_parameters.addWidget(self._min_temp_slider)
-        self._ui.frame_query_parameters.addWidget(self._max_temp_label)
-        self._ui.frame_query_parameters.addWidget(self._max_temp_slider)
+        self._ui.frame_generated_query_parameters.addWidget(self._min_temp_label)
+        self._ui.frame_generated_query_parameters.addWidget(self._min_temp_slider)
+        self._ui.frame_generated_query_parameters.addWidget(self._max_temp_label)
+        self._ui.frame_generated_query_parameters.addWidget(self._max_temp_slider)
 
     def _build_rain_penalty_checkbox(self) -> None:
         self._penalize_rain_checkbox = QCheckBox("Penalize rain")
         self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
 
-        self._ui.frame_query_parameters.addWidget(self._penalize_rain_checkbox)
+        self._ui.frame_generated_query_parameters.addWidget(self._penalize_rain_checkbox)
 
     def _on_min_temp_changed(self, value: int) -> None:
         if value >= self._max_temp_slider.value():
@@ -148,8 +148,8 @@ class MainWindow(DraggableMainWindow):
         self._forecast_days_slider.setValue(DEFAULT_FORECAST_DAYS)
         self._forecast_days_slider.valueChanged.connect(self._on_forecast_days_changed)
 
-        self._ui.frame_query_parameters.addWidget(self._forecast_days_label)
-        self._ui.frame_query_parameters.addWidget(self._forecast_days_slider)
+        self._ui.frame_generated_query_parameters.addWidget(self._forecast_days_label)
+        self._ui.frame_generated_query_parameters.addWidget(self._forecast_days_slider)
 
     def _build_start_day_slider(self) -> None:
         self._start_day_label = QLabel(f"Start day: {DEFAULT_START_DAY}")
@@ -158,8 +158,8 @@ class MainWindow(DraggableMainWindow):
         self._start_day_slider.setValue(DEFAULT_START_DAY)
         self._start_day_slider.valueChanged.connect(self._on_start_day_changed)
 
-        self._ui.frame_query_parameters.addWidget(self._start_day_label)
-        self._ui.frame_query_parameters.addWidget(self._start_day_slider)
+        self._ui.frame_generated_query_parameters.addWidget(self._start_day_label)
+        self._ui.frame_generated_query_parameters.addWidget(self._start_day_slider)
 
     def _on_forecast_days_changed(self, value: int) -> None:
         if value <= self._start_day_slider.value():

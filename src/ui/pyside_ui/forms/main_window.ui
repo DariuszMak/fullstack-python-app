@@ -483,6 +483,9 @@
                                     </widget>
                                   </item>
                                   <item>
+                                    <layout class="QVBoxLayout" name="frame_generated_query_parameters"/>
+                                  </item>
+                                  <item>
                                     <widget class="QPushButton" name="checkWeatherScoreButton">
                                       <property name="sizePolicy">
                                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
