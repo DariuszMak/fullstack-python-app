@@ -23,7 +23,7 @@ def make_response() -> BestScoreResponse:
 
 
 def widgets_in_layout(window: MainWindow) -> list[QWidget]:
-    layout = window._ui.frame_query_parameters
+    layout = window._ui.frame_generated_query_parameters
     widgets: list[QWidget] = []
     for i in range(layout.count()):
         item = layout.itemAt(i)
