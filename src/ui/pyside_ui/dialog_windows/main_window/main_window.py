@@ -234,7 +234,7 @@ class MainWindow(DraggableMainWindow):
 
         layout = self._ui.weatherScoreContainerLayout
         clear_layout(layout)
-
+        self._show_weather_score_info("Fetching weather score...")
         try:
             log.debug("fetching_weather_score")
             result = await self._httpx_client.fetch_weather_score(
@@ -258,6 +258,16 @@ class MainWindow(DraggableMainWindow):
     def _apply_weather_score(self, result: BestScoreResponse) -> None:
         logger.info("weather_score_applied", result_count=len(result.results))
         render_weather_score(self._ui.weatherScoreContainerLayout, result)
+
+    def _show_weather_score_info(self, message: str) -> None:
+        layout = self._ui.weatherScoreContainerLayout
+        clear_layout(layout)
+
+        error_label = QLabel(f"{message}")
+        error_label.setWordWrap(True)
+        error_label.setStyleSheet("color: rgb(85, 170, 255);")
+        layout.addWidget(error_label)
+        layout.addStretch(1)
 
     def _show_weather_score_error(self, message: str) -> None:
         layout = self._ui.weatherScoreContainerLayout
