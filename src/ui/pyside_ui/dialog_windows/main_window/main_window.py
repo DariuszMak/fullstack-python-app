@@ -75,7 +75,7 @@ class MainWindow(DraggableMainWindow):
         self._ui.timeRefreshButton.clicked.connect(self.fetch_server_time)
 
         self._ui.resetToDefaultValueButton.setText("Reset to deault values")
-        self._ui.resetToDefaultValueButton.clicked.connect(self.check_weather_score)
+        self._ui.resetToDefaultValueButton.clicked.connect(self._set_default_values)
 
         self._ui.checkWeatherScoreButton.setText("Get weather score")
         self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
@@ -84,6 +84,8 @@ class MainWindow(DraggableMainWindow):
         self._build_rain_penalty_checkbox()
         self._build_forecast_days_slider()
         self._build_start_day_slider()
+
+        self._set_default_values()
 
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
@@ -110,14 +112,12 @@ class MainWindow(DraggableMainWindow):
     def _build_temperature_sliders(self) -> None:
         self._min_temp_label = QLabel(f"Min apparent temperature: {DEFAULT_MIN_TEMP:.1f}\u00b0C")
         self._min_temp_slider = QSlider(Qt.Orientation.Horizontal)
-        self._min_temp_slider.setRange(*MIN_TEMP_SLIDER_RANGE)
-        self._min_temp_slider.setValue(DEFAULT_MIN_TEMP)
+
         self._min_temp_slider.valueChanged.connect(self._on_min_temp_changed)
 
         self._max_temp_label = QLabel(f"Max apparent temperature: {DEFAULT_MAX_TEMP:.1f}\u00b0C")
         self._max_temp_slider = QSlider(Qt.Orientation.Horizontal)
-        self._max_temp_slider.setRange(*MAX_TEMP_SLIDER_RANGE)
-        self._max_temp_slider.setValue(DEFAULT_MAX_TEMP)
+
         self._max_temp_slider.valueChanged.connect(self._on_max_temp_changed)
 
         self._ui.frame_generated_query_parameters.addWidget(self._min_temp_label)
@@ -127,9 +127,15 @@ class MainWindow(DraggableMainWindow):
 
     def _build_rain_penalty_checkbox(self) -> None:
         self._penalize_rain_checkbox = QCheckBox("Penalize rain")
-        self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
 
         self._ui.frame_generated_query_parameters.addWidget(self._penalize_rain_checkbox)
+
+    def _set_default_values(self) -> None:
+        self._min_temp_slider.setRange(*MIN_TEMP_SLIDER_RANGE)
+        self._min_temp_slider.setValue(DEFAULT_MIN_TEMP)
+        self._max_temp_slider.setRange(*MAX_TEMP_SLIDER_RANGE)
+        self._max_temp_slider.setValue(DEFAULT_MAX_TEMP)
+        self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
 
     def _on_min_temp_changed(self, value: int) -> None:
         if value >= self._max_temp_slider.value():
