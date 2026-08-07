@@ -459,19 +459,6 @@
                                     <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
                                   </property>
                                   <item>
-                                    <widget class="QPushButton" name="timeRefreshButton">
-                                      <property name="sizePolicy">
-                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                                          <horstretch>0</horstretch>
-                                          <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                      </property>
-                                      <property name="text">
-                                        <string/>
-                                      </property>
-                                    </widget>
-                                  </item>
-                                  <item>
                                     <widget class="QFrame" name="frame_clock_widget">
                                       <property name="sizePolicy">
                                         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -486,6 +473,19 @@
                                         </size>
                                       </property>
                                       <layout class="QHBoxLayout" name="horizontalLayout_9"/>
+                                    </widget>
+                                  </item>
+                                  <item>
+                                    <widget class="QPushButton" name="timeRefreshButton">
+                                      <property name="sizePolicy">
+                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                      </property>
+                                      <property name="text">
+                                        <string/>
+                                      </property>
                                     </widget>
                                   </item>
                                   <item>
