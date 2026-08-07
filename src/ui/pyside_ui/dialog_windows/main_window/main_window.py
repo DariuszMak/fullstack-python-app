@@ -86,7 +86,6 @@ class MainWindow(DraggableMainWindow):
         self._build_start_day_slider()
 
         self._set_default_values()
-        self._set_default_values()
 
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
@@ -132,10 +131,10 @@ class MainWindow(DraggableMainWindow):
         self._ui.frame_generated_query_parameters.addWidget(self._penalize_rain_checkbox)
 
     def _set_default_values(self) -> None:
-        self._min_temp_slider.setRange(*MIN_TEMP_SLIDER_RANGE)
-        self._min_temp_slider.setValue(DEFAULT_MIN_TEMP)
         self._max_temp_slider.setRange(*MAX_TEMP_SLIDER_RANGE)
         self._max_temp_slider.setValue(DEFAULT_MAX_TEMP)
+        self._min_temp_slider.setRange(*MIN_TEMP_SLIDER_RANGE)
+        self._min_temp_slider.setValue(DEFAULT_MIN_TEMP)
 
         self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
 
