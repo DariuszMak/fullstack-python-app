@@ -135,7 +135,14 @@ class MainWindow(DraggableMainWindow):
         self._min_temp_slider.setValue(DEFAULT_MIN_TEMP)
         self._max_temp_slider.setRange(*MAX_TEMP_SLIDER_RANGE)
         self._max_temp_slider.setValue(DEFAULT_MAX_TEMP)
+
         self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
+
+        self._forecast_days_slider.setRange(*FORECAST_DAYS_SLIDER_RANGE)
+        self._forecast_days_slider.setValue(DEFAULT_FORECAST_DAYS)
+
+        self._start_day_slider.setRange(*START_DAY_SLIDER_RANGE)
+        self._start_day_slider.setValue(DEFAULT_START_DAY)
 
     def _on_min_temp_changed(self, value: int) -> None:
         if value >= self._max_temp_slider.value():
@@ -156,8 +163,6 @@ class MainWindow(DraggableMainWindow):
     def _build_forecast_days_slider(self) -> None:
         self._forecast_days_label = QLabel(f"Forecast days: {DEFAULT_FORECAST_DAYS}")
         self._forecast_days_slider = QSlider(Qt.Orientation.Horizontal)
-        self._forecast_days_slider.setRange(*FORECAST_DAYS_SLIDER_RANGE)
-        self._forecast_days_slider.setValue(DEFAULT_FORECAST_DAYS)
         self._forecast_days_slider.valueChanged.connect(self._on_forecast_days_changed)
 
         self._ui.frame_generated_query_parameters.addWidget(self._forecast_days_label)
@@ -166,8 +171,6 @@ class MainWindow(DraggableMainWindow):
     def _build_start_day_slider(self) -> None:
         self._start_day_label = QLabel(f"Start day: {DEFAULT_START_DAY}")
         self._start_day_slider = QSlider(Qt.Orientation.Horizontal)
-        self._start_day_slider.setRange(*START_DAY_SLIDER_RANGE)
-        self._start_day_slider.setValue(DEFAULT_START_DAY)
         self._start_day_slider.valueChanged.connect(self._on_start_day_changed)
 
         self._ui.frame_generated_query_parameters.addWidget(self._start_day_label)
