@@ -86,6 +86,7 @@ class MainWindow(DraggableMainWindow):
         self._build_start_day_slider()
 
         self._set_default_values()
+        self._set_default_values()
 
         self._clock_widget: ClockWidget = ClockWidget()
         layout = self._ui.frame_clock_widget.layout()
