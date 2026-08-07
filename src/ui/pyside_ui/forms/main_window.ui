@@ -486,6 +486,32 @@
                                     <layout class="QVBoxLayout" name="frame_generated_query_parameters"/>
                                   </item>
                                   <item>
+                                    <widget class="QPushButton" name="timeRefreshButton">
+                                      <property name="sizePolicy">
+                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                      </property>
+                                      <property name="text">
+                                        <string/>
+                                      </property>
+                                    </widget>
+                                  </item>
+                                  <item>
+                                    <widget class="QPushButton" name="resetToDefaultValueButton">
+                                      <property name="sizePolicy">
+                                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                        </sizepolicy>
+                                      </property>
+                                      <property name="text">
+                                        <string/>
+                                      </property>
+                                    </widget>
+                                  </item>
+                                  <item>
                                     <widget class="QPushButton" name="checkWeatherScoreButton">
                                       <property name="sizePolicy">
                                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
