@@ -71,6 +71,12 @@ class MainWindow(DraggableMainWindow):
 
         self._ui.btn_settings.clicked.connect(self.show_settings_dialog)
 
+        self._ui.timeRefreshButton.setText("Refresh time")
+        self._ui.timeRefreshButton.clicked.connect(self.fetch_server_time)
+
+        self._ui.resetToDefaultValueButton.setText("Reset to deault values")
+        self._ui.resetToDefaultValueButton.clicked.connect(self.check_weather_score)
+
         self._ui.checkWeatherScoreButton.setText("Get weather score")
         self._ui.checkWeatherScoreButton.clicked.connect(self.check_weather_score)
 
