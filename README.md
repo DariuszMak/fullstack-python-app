@@ -71,6 +71,15 @@ task full-release-setup ;
 clear ; task local-static-tests ; task local-dev-native-run ; 
 ```
 
+##### Local links
+
+- http://127.0.0.1:8000/openapi.json
+- http://127.0.0.1:8000/redoc
+- http://127.0.0.1:8000/docs
+- http://127.0.0.1:8001 (Panel UI)
+- http://127.0.0.1:8002 (VueJs UI)
+
+
 ### Edit `ui` forms with QT Designer
 
 ```console
