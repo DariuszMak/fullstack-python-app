@@ -95,7 +95,7 @@ class MainWindow(DraggableMainWindow):
             logger.warning("frame_clock_widget_missing_layout")
 
         if self._supports_opacity:
-            self.fade_in_animation()
+            self._fade_in_animation()
 
         self.installEventFilter(self)
 
@@ -192,7 +192,7 @@ class MainWindow(DraggableMainWindow):
                 return
         self._start_day_label.setText(f"Start day: {value}")
 
-    def fade_in_animation(self) -> None:
+    def _fade_in_animation(self) -> None:
         if not self._supports_opacity:
             return
         logger.debug("starting_fade_in")
@@ -204,7 +204,7 @@ class MainWindow(DraggableMainWindow):
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
         self.anim.start()
 
-    def fade_out_animation(self) -> None:
+    def _fade_out_animation(self) -> None:
         if not self._supports_opacity:
             self._final_close()
             return
@@ -345,7 +345,7 @@ class MainWindow(DraggableMainWindow):
             logger.info("window_close_initiated")
             event.ignore()
             self._clock_widget.reset()
-            self.fade_out_animation()
+            self._fade_out_animation()
         else:
             logger.debug("window_final_close_event")
             super().closeEvent(event)
