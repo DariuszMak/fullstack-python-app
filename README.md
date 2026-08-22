@@ -93,7 +93,7 @@ clear ; task local-static-tests ; task local-dev-native-run ;
 - http://127.0.0.1:8000/redoc
 - http://127.0.0.1:8000/docs
 - http://127.0.0.1:8001 (Panel UI)
-- http://127.0.0.1:8002 (VueJs UI)
+- http://127.0.0.1:8002 (React UI)
 
 
 ### Edit `ui` forms with QT Designer
