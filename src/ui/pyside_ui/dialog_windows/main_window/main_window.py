@@ -63,7 +63,7 @@ class MainWindow(DraggableMainWindow):
         self.setFocus()
 
         self._ui.btn_minimize.clicked.connect(self.showMinimized)
-        self._ui.btn_maximize_restore.clicked.connect(self.toggle_maximize_restore)
+        self._ui.btn_maximize_restore.clicked.connect(self._toggle_maximize_restore)
         self._ui.btn_close.clicked.connect(self.close)
 
         self.setMinimumSize(MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE, MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE)
@@ -305,7 +305,7 @@ class MainWindow(DraggableMainWindow):
         else:
             logger.info("dialog_cancelled")
 
-    def toggle_maximize_restore(self) -> None:
+    def _toggle_maximize_restore(self) -> None:
         if self._is_maximized:
             self.showNormal()
         else:
