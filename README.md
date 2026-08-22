@@ -25,16 +25,32 @@
 
 ### Project structure diagrams
 
-##### Modular perspective
+#### Module perspective
+
+##### Pure modular perspective
 
 <p align="center">
   <img src="images/structure_module.svg" alt="Modular perspective" width="600">
 </p>
 
-##### Library dependencies perspective
+##### Library dependencies modular perspective
 
 <p align="center">
   <img src="images/structure_module_clustered.svg" alt="Library dependencies perspective" width="600">
+</p>
+
+#### Runner perspective
+
+##### Pure runner perspective
+
+<p align="center">
+  <img src="images/structure_runner.svg" alt="Modular perspective" width="600">
+</p>
+
+##### Library dependencies runner perspective
+
+<p align="center">
+  <img src="images/structure_runner_clustered.svg" alt="Library dependencies perspective" width="600">
 </p>
 
 ## Requirements
