@@ -13,11 +13,3 @@ export function getApiBaseUrl(): string {
     "http://localhost:8000"
   );
 }
-
-export function getApiBaseUrl(): string {
-  return (
-    globalThis.__APP_CONFIG__?.apiBaseUrl ??
-    (import.meta.env.VITE_BACKEND_URL as string | undefined) ??
-    ""
-  );
-}
