@@ -84,7 +84,7 @@ task full-release-setup ;
 ### Local development
 
 ```console
-clear ; task local-static-tests ; local-dev-native-profile ; # task local-dev-native-run ; 
+clear ; task local-static-tests ; task local-dev-native-profile ; # task local-dev-native-run ; 
 ```
 
 ##### Local links
