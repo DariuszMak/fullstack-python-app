@@ -11,6 +11,7 @@ from src.ui.shared.helpers import format_datetime, polar_to_cartesian
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from types import TracebackType
 
     from src.ui.shared.model.data_types import HandsPosition
 
@@ -25,7 +26,12 @@ class Painter:
         self._painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         if self._painter and self._painter.isActive():
             self._painter.end()
 
