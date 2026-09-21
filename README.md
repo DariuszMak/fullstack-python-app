@@ -81,7 +81,7 @@ task full-static-analyzis ;
 task full-release-setup ; 
 ```
 
-### Local development
+### Local development with profiler
 
 ```console
 clear ; task local-static-tests ; task local-dev-native-profile ; # task local-dev-native-run ; 
