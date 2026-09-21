@@ -49,10 +49,9 @@ class ClockWidget(QWidget):
         self.update()
 
     def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802, ARG002
-        painter = Painter(self)
+        with Painter(self) as painter:
+            center, radius, font_size = painter.paint_clock_face(self.rect, self.palette)
+            hands_position = convert_clock_pid_to_cartesian(self._controller._clock_hands, center, radius)
 
-        center, radius, font_size = painter.paint_clock_face(self.rect, self.palette)
-        hands_position = convert_clock_pid_to_cartesian(self._controller._clock_hands, center, radius)
-
-        painter.paint_hands(center, hands_position)
-        painter.paint_current_time(self._current_datetime, center, radius, font_size)
+            painter.paint_hands(center, hands_position)
+            painter.paint_current_time(self._current_datetime, center, radius, font_size)

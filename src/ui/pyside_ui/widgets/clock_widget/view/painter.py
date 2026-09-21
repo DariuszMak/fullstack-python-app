@@ -17,17 +17,26 @@ if TYPE_CHECKING:
 
 class Painter:
     def __init__(self, obj: QPaintDevice) -> None:
-        self._painter = QPainter(obj)
-        self._painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self._obj = obj
+        self._painter: QPainter | None = None
 
-    def __del__(self) -> None:
-        self._painter.end()
+    def __enter__(self) -> Painter:
+        self._painter = QPainter(self._obj)
+        self._painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        if self._painter and self._painter.isActive():
+            self._painter.end()
 
     def paint_clock_face(
         self,
         rect: typing.Callable[[], QRect | QRectF],
         palette: typing.Callable[[], QPalette],
     ) -> tuple[QPointF, float, int]:
+        if self._painter is None:
+            raise RuntimeError("Painter must be used within a context manager ('with' statement).")
+
         size = min(rect().width(), rect().height())
         center = QPointF(rect().center())
         radius = size * 0.4
@@ -65,6 +74,9 @@ class Painter:
         return center, radius, font_size
 
     def paint_hands(self, center: QPointF, hands_position: HandsPosition) -> None:
+        if self._painter is None:
+            raise RuntimeError("Painter must be used within a context manager ('with' statement).")
+
         self._painter.setPen(QPen(QColor(255, 255, 255), 8.0))
         self._painter.drawLine(center, hands_position.hour)
 
@@ -79,6 +91,9 @@ class Painter:
         self._painter.drawEllipse(center, 5.0, 5.0)
 
     def paint_current_time(self, current_time: datetime, center: QPointF, radius: float, font_size: int) -> None:
+        if self._painter is None:
+            raise RuntimeError("Painter must be used within a context manager ('with' statement).")
+
         formatted = format_datetime(current_time)
         self._painter.setPen(QPen(QColor(150, 255, 190)))
         self._painter.setFont(QFont("Consolas", font_size))
