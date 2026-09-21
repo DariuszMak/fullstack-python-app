@@ -35,9 +35,14 @@ tasks:
       - powershell -ExecutionPolicy Bypass -File tasks/generate_diagrams.ps1
 
   local-dev-native-run:
-    desc: Local dev Windows run
+    desc: Local dev Windows application run
     cmds:
       - powershell -ExecutionPolicy Bypass -File tasks/run_native_dev_application.ps1
+
+  local-dev-native-profile:
+    desc: Local dev Windows profiling run
+    cmds:
+      - powershell -ExecutionPolicy Bypass -File tasks/profile_dev_application.ps1
 
   local-dev-native-api-tests:
     desc: Local dev Windows API tests
