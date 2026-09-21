@@ -25,3 +25,4 @@ uv run coverage report
 uv run coverage xml
 
 uv run scalene run .\src\main.py
+uv run scalene view
