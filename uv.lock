@@ -2005,6 +2005,12 @@ wheels = [
 ]
 
 [[package]]
+name = "pyspy"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ff/2f/1ba3f46f4659d10db5b4182ae36003d348c84f36f7cb8812c49234598be0/pyspy-0.1.1.tar.gz", hash = "sha256:be2e55a1ceb1a4d558cfc4dbb5c51a5360c273e31fd58e0e0d7c5d64dbea0e03", size = 1779, upload-time = "2012-02-20T05:33:31.398Z" }
+
+[[package]]
 name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2129,6 +2135,7 @@ dev = [
     { name = "pip-audit" },
     { name = "pydeps" },
     { name = "pyinstaller" },
+    { name = "pyspy" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-json-logger" },
@@ -2166,6 +2173,7 @@ dev = [
     { name = "pip-audit", specifier = ">=2.9.0" },
     { name = "pydeps", specifier = ">=3.0.6" },
     { name = "pyinstaller", specifier = ">=6.14.1" },
+    { name = "pyspy", specifier = ">=0.1.1" },
     { name = "pytest", specifier = ">=8.4.0" },
     { name = "pytest-cov", specifier = ">=6.2.1" },
     { name = "python-json-logger", specifier = ">=4.1.0" },
