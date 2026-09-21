@@ -23,3 +23,5 @@ uv run semgrep --config=auto --config=p/security-audit --error src tests
 
 uv run coverage report
 uv run coverage xml
+
+uv run scalene run .\src\main.py
