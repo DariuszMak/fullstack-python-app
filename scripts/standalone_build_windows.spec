@@ -54,7 +54,7 @@ exe = EXE(
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
-    icon='..\\src\\ui\\pyside_ui\\forms\\icons\\images\\program_icon.ico',
+    icon='..\\src\\.frontend\\pyside_ui\\forms\\icons\\images\\program_icon.ico',
 )
 
 coll = COLLECT(
