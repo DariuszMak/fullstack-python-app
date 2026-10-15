@@ -245,7 +245,7 @@ name = "Layered architecture"
 type = "layers"
 
 layers = [
-    "src.ui",
+    "src.frontend",
     "src.backend",
     "src.helpers",
 ]
@@ -257,7 +257,7 @@ type = "forbidden"
 source_modules = ["src.helpers"]
 
 forbidden_modules = [
-    "src.ui",
+    "src.frontend",
     "src.backend",
 ]
 
@@ -268,7 +268,7 @@ type = "forbidden"
 source_modules = ["src.backend"]
 
 forbidden_modules = [
-    "src.ui",
+    "src.frontend",
 ]
 
 [[tool.importlinter.contracts]]
@@ -278,7 +278,7 @@ type = "forbidden"
 source_modules = ["src.backend.openmeteo"]
 
 forbidden_modules = [
-    "src.ui",
+    "src.frontend",
 ]
 
 [[tool.importlinter.contracts]]
@@ -286,26 +286,26 @@ name = "UI framework isolation"
 type = "independence"
 
 modules = [
-    "src.ui.pyside_ui",
-    "src.ui.react_ui",
-    "src.ui.panel_ui",
+    "src.frontend.pyside_ui",
+    "src.frontend.react_ui",
+    "src.frontend.panel_ui",
 ]
 
 [[tool.importlinter.contracts]]
 name = "React UI must not depend on PySide UI"
 type = "forbidden"
 
-source_modules = ["src.ui.react_ui"]
+source_modules = ["src.frontend.react_ui"]
 
-forbidden_modules = ["src.ui.pyside_ui"]
+forbidden_modules = ["src.frontend.pyside_ui"]
 
 [[tool.importlinter.contracts]]
 name = "PySide UI must not depend on React UI"
 type = "forbidden"
 
-source_modules = ["src.ui.pyside_ui"]
+source_modules = ["src.frontend.pyside_ui"]
 
-forbidden_modules = ["src.ui.react_ui"]
+forbidden_modules = ["src.frontend.react_ui"]
 
 [[tool.importlinter.contracts]]
 name = "Settings isolation"
@@ -313,6 +313,6 @@ type = "independence"
 
 modules = [
     "src.settings",
-    "src.ui.pyside_ui.settings",
-    "src.ui.panel_ui.settings",
+    "src.frontend.pyside_ui.settings",
+    "src.frontend.panel_ui.settings",
 ]

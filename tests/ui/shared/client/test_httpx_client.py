@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from src.backend.api.models.weather_score_response import BestScoreResponse
-from src.ui.shared.client.httpx_client import HttpxClient
+from src.frontend.shared.client.httpx_client import HttpxClient
 
 
 @pytest.mark.asyncio
@@ -35,7 +35,7 @@ async def test_fetch_weather_score_returns_parsed_response() -> None:
     mock_client = AsyncMock()
     mock_client.post = AsyncMock(return_value=mock_response)
 
-    with patch("src.ui.shared.client.httpx_client.httpx.AsyncClient") as mock_client_cls:
+    with patch("src.frontend.shared.client.httpx_client.httpx.AsyncClient") as mock_client_cls:
         mock_instance = MagicMock()
         mock_instance.__aenter__ = AsyncMock(return_value=mock_client)
         mock_instance.__aexit__ = AsyncMock(return_value=None)
@@ -66,7 +66,7 @@ async def test_fetch_weather_score_raises_on_http_error() -> None:
     mock_client = AsyncMock()
     mock_client.post = AsyncMock(return_value=mock_response)
 
-    with patch("src.ui.shared.client.httpx_client.httpx.AsyncClient") as mock_client_cls:
+    with patch("src.frontend.shared.client.httpx_client.httpx.AsyncClient") as mock_client_cls:
         mock_instance = MagicMock()
         mock_instance.__aenter__ = AsyncMock(return_value=mock_client)
         mock_instance.__aexit__ = AsyncMock(return_value=None)

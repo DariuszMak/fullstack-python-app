@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
-from src.ui.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
+from src.frontend.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 
 
 def test_clock_widget_runs() -> None:

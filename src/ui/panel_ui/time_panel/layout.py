@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Any, Protocol
 import panel as pn
 import structlog
 
-from src.ui.panel_ui.time_panel.api import fetch_time as _default_fetch_time
-from src.ui.panel_ui.time_panel.clock_widget import ClockWidget, PanelStateScheduler, PeriodicScheduler
+from src.frontend.panel_ui.time_panel.api import fetch_time as _default_fetch_time
+from src.frontend.panel_ui.time_panel.clock_widget import ClockWidget, PanelStateScheduler, PeriodicScheduler
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine

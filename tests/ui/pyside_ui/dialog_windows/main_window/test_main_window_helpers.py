@@ -7,9 +7,9 @@ from unittest.mock import AsyncMock
 from PySide6.QtWidgets import QLabel
 
 from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
-from src.ui.pyside_ui.dialog_windows.main_window.helpers import clear_layout, render_weather_score
-from src.ui.pyside_ui.dialog_windows.main_window.main_window import MainWindow
-from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
+from src.frontend.pyside_ui.dialog_windows.main_window.helpers import clear_layout, render_weather_score
+from src.frontend.pyside_ui.dialog_windows.main_window.main_window import MainWindow
+from src.frontend.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 
 if TYPE_CHECKING:
     from pytestqt.qtbot import QtBot

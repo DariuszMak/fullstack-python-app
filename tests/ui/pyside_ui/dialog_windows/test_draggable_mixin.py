@@ -4,7 +4,7 @@ import pytest
 from PySide6.QtCore import QPoint, QPointF, Qt
 from PySide6.QtGui import QMouseEvent
 
-from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin import (
+from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin import (
     DraggableMixin,
 )
 
@@ -46,7 +46,7 @@ def test_handle_mouse_press_wrong_button_returns_false(
     with patch.object(DraggableMixin, "_can_drag", return_value=True):
         widget = MagicMock()
         with patch(
-            "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+            "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
             return_value=widget,
         ):
             event = make_mouse_event(
@@ -65,7 +65,7 @@ def test_handle_mouse_press_cannot_drag_returns_false(
     with patch.object(DraggableMixin, "_can_drag", return_value=False):
         widget = MagicMock()
         with patch(
-            "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+            "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
             return_value=widget,
         ):
             event = make_mouse_event(
@@ -85,7 +85,7 @@ def test_handle_mouse_press_with_system_move_success(
     widget.windowHandle.return_value.startSystemMove.return_value = True
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+        "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
         return_value=widget,
     ):
         event = make_mouse_event(
@@ -106,7 +106,7 @@ def test_handle_mouse_press_no_window_handle_sets_drag_active(
     widget.frameGeometry.return_value.topLeft.return_value = QPoint(0, 0)
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+        "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
         return_value=widget,
     ):
         event = make_mouse_event(
@@ -128,7 +128,7 @@ def test_handle_mouse_press_system_move_fails_sets_drag_active(
     widget.frameGeometry.return_value.topLeft.return_value = QPoint(0, 0)
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+        "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
         return_value=widget,
     ):
         event = make_mouse_event(
@@ -149,7 +149,7 @@ def test_handle_mouse_move_active_and_left_button_moves_widget(
     widget = MagicMock()
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+        "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
         return_value=widget,
     ):
         event = make_mouse_event(
@@ -169,7 +169,7 @@ def test_handle_mouse_move_not_active_returns_false(
     widget = MagicMock()
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+        "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
         return_value=widget,
     ):
         event = make_mouse_event(
@@ -189,7 +189,7 @@ def test_handle_mouse_move_active_but_no_left_button_returns_false(
     widget = MagicMock()
 
     with patch(
-        "src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
+        "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin.cast",
         return_value=widget,
     ):
         event = make_mouse_event(

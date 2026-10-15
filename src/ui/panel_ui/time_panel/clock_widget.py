@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Protocol
 import panel as pn
 import structlog
 
-from src.ui.panel_ui.settings import TICK_MS
-from src.ui.panel_ui.time_panel.clock_figure import build_clock_figure, hand_endpoint
-from src.ui.shared.controller.clock_controller import ClockController
-from src.ui.shared.helpers import clock_hands_in_radians, format_datetime
+from src.frontend.panel_ui.settings import TICK_MS
+from src.frontend.panel_ui.time_panel.clock_figure import build_clock_figure, hand_endpoint
+from src.frontend.shared.controller.clock_controller import ClockController
+from src.frontend.shared.helpers import clock_hands_in_radians, format_datetime
 
 if TYPE_CHECKING:
     from collections.abc import Callable

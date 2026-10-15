@@ -2,7 +2,7 @@ import structlog
 from PySide6.QtWidgets import QLabel, QLayout, QVBoxLayout
 
 from src.backend.api.models.weather_score_response import BestScoreResponse
-from src.ui.pyside_ui.widgets.weather_score_card import WeatherScoreCard
+from src.frontend.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 
 logger = structlog.get_logger(__name__)
 

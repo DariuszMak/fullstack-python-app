@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.ui.shared.controller.update_logic import update_clock_hands
-from src.ui.shared.model.data_types import ClockHands
+from src.frontend.shared.controller.update_logic import update_clock_hands
+from src.frontend.shared.model.data_types import ClockHands
 
 
 def make_passthrough_strategy(multiplier: float = 1.0) -> MagicMock:

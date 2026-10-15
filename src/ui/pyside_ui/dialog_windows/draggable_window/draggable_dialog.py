@@ -1,7 +1,7 @@
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QDialog, QWidget
 
-from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_mixin import DraggableMixin
+from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_mixin import DraggableMixin
 
 
 class DraggableDialog(QDialog, DraggableMixin):

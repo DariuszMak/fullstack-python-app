@@ -1,9 +1,9 @@
 import pytest
 
-from src.ui.shared.model.strategy.easing_movement import EasingMovement
-from src.ui.shared.model.strategy.interface.movement_strategy import MovementStrategy
-from src.ui.shared.model.strategy.pid_movement import PIDMovement
-from src.ui.shared.model.strategy.tick_movement import TickMovement
+from src.frontend.shared.model.strategy.easing_movement import EasingMovement
+from src.frontend.shared.model.strategy.interface.movement_strategy import MovementStrategy
+from src.frontend.shared.model.strategy.pid_movement import PIDMovement
+from src.frontend.shared.model.strategy.tick_movement import TickMovement
 
 
 def test_movement_strategy_is_abstract() -> None:

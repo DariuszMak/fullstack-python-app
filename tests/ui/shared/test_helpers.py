@@ -4,14 +4,14 @@ from datetime import UTC, datetime, timedelta, timezone
 import pytest
 from PySide6.QtCore import QPointF
 
-from src.ui.shared.helpers import (
+from src.frontend.shared.helpers import (
     calculate_clock_hands_angles,
     clock_hands_in_radians,
     convert_clock_pid_to_cartesian,
     format_datetime,
     polar_to_cartesian,
 )
-from src.ui.shared.model.data_types import ClockHands
+from src.frontend.shared.model.data_types import ClockHands
 
 
 def test_polar_to_cartesian_zero_angle() -> None:

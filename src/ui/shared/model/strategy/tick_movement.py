@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.ui.shared.model.strategy.interface.movement_strategy import MovementStrategy
+from src.frontend.shared.model.strategy.interface.movement_strategy import MovementStrategy
 
 
 class TickMovement(MovementStrategy):

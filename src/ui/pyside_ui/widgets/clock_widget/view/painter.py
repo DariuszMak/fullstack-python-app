@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QPointF, QRect, QRectF
 from PySide6.QtGui import QColor, QFont, QPaintDevice, QPainter, QPalette, QPen
 
-from src.ui.shared.helpers import format_datetime, polar_to_cartesian
+from src.frontend.shared.helpers import format_datetime, polar_to_cartesian
 
 if TYPE_CHECKING:
     from datetime import datetime
     from types import TracebackType
 
-    from src.ui.shared.model.data_types import HandsPosition
+    from src.frontend.shared.model.data_types import HandsPosition
 
 
 class Painter:

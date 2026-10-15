@@ -6,7 +6,7 @@ import httpx
 import pytest
 import respx
 
-from src.ui.shared.client.httpx_client import HttpxClient
+from src.frontend.shared.client.httpx_client import HttpxClient
 
 BASE_URL = "http://testserver"
 

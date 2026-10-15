@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from src.ui.react_ui.app import create_application
+from src.frontend.react_ui.app import create_application
 
 
 @pytest.fixture

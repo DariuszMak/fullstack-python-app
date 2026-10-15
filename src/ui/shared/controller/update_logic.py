@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from src.ui.shared.model.data_types import ClockHands
+from src.frontend.shared.model.data_types import ClockHands
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from src.ui.shared.model.strategy.interface.movement_strategy import MovementStrategy
+    from src.frontend.shared.model.strategy.interface.movement_strategy import MovementStrategy
 
 
 def update_clock_hands(

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
-from src.ui.pyside_ui.application import create_application
+from src.frontend.pyside_ui.application import create_application
 
 
 def test_create_app_wires_everything(qtbot: QtBot) -> None:
@@ -13,8 +13,8 @@ def test_create_app_wires_everything(qtbot: QtBot) -> None:
         app = QApplication([])
 
     with (
-        patch("src.ui.pyside_ui.application.QEventLoop") as mock_event_loop_cls,
-        patch("src.ui.pyside_ui.application.asyncio.set_event_loop") as mock_set_event_loop,
+        patch("src.frontend.pyside_ui.application.QEventLoop") as mock_event_loop_cls,
+        patch("src.frontend.pyside_ui.application.asyncio.set_event_loop") as mock_set_event_loop,
     ):
         loop = mock_event_loop_cls.return_value
 

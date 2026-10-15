@@ -7,7 +7,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 
-from src.ui.react_ui.app import create_application, run_react_ui, start_react_ui_in_background
+from src.frontend.react_ui.app import create_application, run_react_ui, start_react_ui_in_background
 
 
 def test_create_app_static_files_configured(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -36,7 +36,7 @@ def test_run_react_ui_calls_uvicorn(monkeypatch: pytest.MonkeyPatch) -> None:
         called["port"] = port
         called["log_level"] = log_level
 
-    monkeypatch.setattr("src.ui.react_ui.app.create_application", fake_create_app)
+    monkeypatch.setattr("src.frontend.react_ui.app.create_application", fake_create_app)
     monkeypatch.setattr(uvicorn, "run", fake_run)
 
     run_react_ui("127.0.0.1", 8080)

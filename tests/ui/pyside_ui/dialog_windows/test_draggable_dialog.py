@@ -5,7 +5,7 @@ from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QMouseEvent
 from pytestqt.qtbot import QtBot
 
-from src.ui.pyside_ui.dialog_windows.draggable_window.draggable_dialog import (
+from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import (
     DraggableDialog,
 )
 

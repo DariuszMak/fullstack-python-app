@@ -11,13 +11,13 @@ import respx
 from httpx import HTTPStatusError, Response
 from panel.io.callbacks import PeriodicCallback
 
-import src.ui.panel_ui.time_panel.layout as module
-from src.ui.panel_ui.time_panel.api import fetch_time
-from src.ui.panel_ui.time_panel.clock_widget import ClockWidget
-from src.ui.panel_ui.time_panel.layout import create_layout
-from src.ui.shared.controller.clock_controller import ClockController
-from src.ui.shared.helpers import format_datetime
-from src.ui.shared.model.data_types import ClockHands
+import src.frontend.panel_ui.time_panel.layout as module
+from src.frontend.panel_ui.time_panel.api import fetch_time
+from src.frontend.panel_ui.time_panel.clock_widget import ClockWidget
+from src.frontend.panel_ui.time_panel.layout import create_layout
+from src.frontend.shared.controller.clock_controller import ClockController
+from src.frontend.shared.helpers import format_datetime
+from src.frontend.shared.model.data_types import ClockHands
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine

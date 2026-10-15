@@ -7,11 +7,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.ui.shared.controller.clock_controller import ClockController
-from src.ui.shared.model.data_types import ClockHands
+from src.frontend.shared.controller.clock_controller import ClockController
+from src.frontend.shared.model.data_types import ClockHands
 
 if TYPE_CHECKING:
-    from src.ui.shared.model.strategy.pid_movement import PIDMovement
+    from src.frontend.shared.model.strategy.pid_movement import PIDMovement
 
 
 def make_dt(hour: int = 12, minute: int = 0, second: int = 0, tz: timezone = UTC) -> datetime:
@@ -74,8 +74,8 @@ def test_update_with_zero_elapsed_time() -> None:
     assert abs(hands.hour) < 1.0
 
 
-@patch("src.ui.shared.controller.clock_controller.update_clock_hands")
-@patch("src.ui.shared.controller.clock_controller.calculate_clock_hands_angles")
+@patch("src.frontend.shared.controller.clock_controller.update_clock_hands")
+@patch("src.frontend.shared.controller.clock_controller.calculate_clock_hands_angles")
 def test_update_delegates_to_helpers(mock_calc: MagicMock, mock_update: MagicMock) -> None:
     target = ClockHands(10.0, 5.0, 1.0)
     new_hands = ClockHands(9.0, 4.5, 0.9)
@@ -138,7 +138,7 @@ def test_reset_logs_settings_when_strategy_reset_raises(caplog: pytest.LogCaptur
         (failing_strategy, failing_strategy, failing_strategy),
     )
 
-    with caplog.at_level(logging.WARNING, logger="src.ui.shared.controller.clock_controller"):
+    with caplog.at_level(logging.WARNING, logger="src.frontend.shared.controller.clock_controller"):
         controller.reset(make_dt(11, 0, 0))
 
     assert any("test_message" in record.message for record in caplog.records)

@@ -2,17 +2,17 @@ from unittest.mock import MagicMock, patch
 
 from pytestqt.qtbot import QtBot
 
-from src.ui.pyside_ui.bootstrap import bootstrap
+from src.frontend.pyside_ui.bootstrap import bootstrap
 
 
 def test_bootstrap_initializes_ui(qtbot: QtBot) -> None:
     with (
-        patch("src.ui.pyside_ui.bootstrap.create_application") as mock_create_app,
-        patch("src.ui.pyside_ui.bootstrap.QPixmap") as mock_pixmap_cls,
-        patch("src.ui.pyside_ui.bootstrap.QSplashScreen") as mock_splash_cls,
-        patch("src.ui.pyside_ui.bootstrap.StyleLoader.center_window") as center_window,
-        patch("src.ui.pyside_ui.bootstrap.MainWindow") as mock_main_window_cls,
-        patch("src.ui.pyside_ui.bootstrap.QTimer.singleShot") as single_shot,
+        patch("src.frontend.pyside_ui.bootstrap.create_application") as mock_create_app,
+        patch("src.frontend.pyside_ui.bootstrap.QPixmap") as mock_pixmap_cls,
+        patch("src.frontend.pyside_ui.bootstrap.QSplashScreen") as mock_splash_cls,
+        patch("src.frontend.pyside_ui.bootstrap.StyleLoader.center_window") as center_window,
+        patch("src.frontend.pyside_ui.bootstrap.MainWindow") as mock_main_window_cls,
+        patch("src.frontend.pyside_ui.bootstrap.QTimer.singleShot") as single_shot,
     ):
         app = MagicMock()
         loop = MagicMock()
