@@ -99,8 +99,8 @@ clear ; task local-static-tests ; task local-dev-native-profile ; # task local-d
 ### Edit `ui` forms with QT Designer
 
 ```console
-uv run pyside6-designer src\.frontend\pyside_ui\forms\main_window.ui ; 
-uv run pyside6-designer src\.frontend\pyside_ui\forms\settings_dialog.ui ; 
+uv run pyside6-designer src\ui\pyside_ui\forms\main_window.ui ; 
+uv run pyside6-designer src\ui\pyside_ui\forms\settings_dialog.ui ; 
 ```
 
 #### GUI files specification

@@ -6,7 +6,7 @@ docker-compose run --rm --remove-orphans app sh -c "uv sync --dev --locked --no-
 Remove-Item -r -fo .\dist, .\build, .\linux ; 
 
 
-Set-Location src\.frontend\react_ui\frontend ; 
+Set-Location src\ui\react_ui\frontend ; 
 if (Test-Path node_modules) {
     Remove-Item -Recurse -Force node_modules
 }
