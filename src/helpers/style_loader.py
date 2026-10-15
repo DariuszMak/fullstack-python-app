@@ -8,7 +8,7 @@ from src.helpers.io_file import IOFile
 
 
 class StyleLoader:
-    MAIN_THEME_PATH = os.path.join("src", "ui", "pyside_ui", "themes", "main_theme.qss")
+    MAIN_THEME_PATH = os.path.join("src", "frontend", "pyside_ui", "themes", "main_theme.qss")
 
     @staticmethod
     def style_window(window: QWidget) -> None:

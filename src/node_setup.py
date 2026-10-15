@@ -10,7 +10,7 @@ from src import STATIC_CATALOGUE_NAME
 
 logger = structlog.get_logger(__name__)
 
-REACT_DIR = Path(__file__).parent / "ui" / "react_ui"
+REACT_DIR = Path(__file__).parent / "frontend" / "react_ui"
 FRONTEND_DIR: Path = REACT_DIR / "frontend"
 STATIC_DIR: Path = REACT_DIR / STATIC_CATALOGUE_NAME
 DIST_DIR: Path = FRONTEND_DIR / "dist"

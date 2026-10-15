@@ -10,7 +10,7 @@ a = Analysis(
     binaries=[],
     datas=[
         (
-            str(Path('..', 'src', 'ui', 'pyside_ui', 'themes', 'main_theme.qss')),
+            str(Path('..', 'src', 'frontend', 'pyside_ui', 'themes', 'main_theme.qss')),
             'src/frontend/pyside_ui/themes',
         ),
         (
@@ -18,7 +18,7 @@ a = Analysis(
             'src/backend/openmeteo/places',
         ),
         (
-            str(Path('..', 'src', 'ui', 'react_ui', 'static')),
+            str(Path('..', 'src', 'frontend', 'react_ui', 'static')),
             'static',
         ),
     ],

@@ -14,7 +14,7 @@ a = Analysis(
     binaries=[],
     datas=[
         (
-            str(base_path / 'src' / 'ui' / 'pyside_ui' / 'themes' / 'main_theme.qss'),
+            str(base_path / 'src' / 'frontend' / 'pyside_ui' / 'themes' / 'main_theme.qss'),
             'src/frontend/pyside_ui/themes',
         ),
         (
@@ -22,7 +22,7 @@ a = Analysis(
             'src/backend/openmeteo/places',
         ),
         (
-            str(base_path / 'src' / 'ui' / 'react_ui' / 'static'),
+            str(base_path / 'src' / 'frontend' / 'react_ui' / 'static'),
             'static',
         ),
     ],
@@ -57,7 +57,7 @@ exe = EXE(
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
-    icon=str(base_path / 'src' / 'ui' / 'pyside_ui' / 'forms' / 'icons' / 'images' / 'program_icon.ico'),
+    icon=str(base_path / 'src' / 'frontend' / 'pyside_ui' / 'forms' / 'icons' / 'images' / 'program_icon.ico'),
 )
 
 coll = COLLECT(
