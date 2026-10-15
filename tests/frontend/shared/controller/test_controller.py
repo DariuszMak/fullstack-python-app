@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 from datetime import UTC, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, patch
-from structlog.testing import capture_logs
+
 import pytest
+from structlog.testing import capture_logs
 
 from src.frontend.shared.controller.clock_controller import ClockController
 from src.frontend.shared.model.data_types import ClockHands
