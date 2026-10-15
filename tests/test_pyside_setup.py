@@ -64,11 +64,11 @@ def main_window(app: QApplication) -> Generator[MainWindow]:
 
 
 def test_create_moc_ui(temp_dir: str, example_moc_content_ui: str) -> None:
-    input_file = os.path.join(temp_dir, "example.ui")
+    input_file = os.path.join(temp_dir, "example.frontend")
     with open(input_file, "w") as f:
         f.write(example_moc_content_ui)
 
-    create_moc(temp_dir, "example.ui", UiExtensions.UI)
+    create_moc(temp_dir, "example.frontend", UiExtensions.UI)
 
     moc_file = os.path.join(temp_dir, "moc_example.py")
     assert os.path.isfile(moc_file)
@@ -86,7 +86,7 @@ def test_create_moc_qrc(temp_dir: str, example_moc_content_qrc: str) -> None:
 
 
 def test_create_moc_check_if_correctly_modified_existing_code(temp_dir: str, example_moc_content_ui: str) -> None:
-    input_file = os.path.join(temp_dir, "example.ui")
+    input_file = os.path.join(temp_dir, "example.frontend")
     with open(input_file, "w") as f:
         f.write("Example UI content")
 
@@ -96,28 +96,28 @@ def test_create_moc_check_if_correctly_modified_existing_code(temp_dir: str, exa
 
     with patch("os.path.getmtime") as mock_getmtime:
         mock_getmtime.side_effect = [1, 2]
-        create_moc(temp_dir, "example.ui", UiExtensions.UI)
+        create_moc(temp_dir, "example.frontend", UiExtensions.UI)
 
     assert os.path.isfile(moc_file)
     assert mock_getmtime.call_count == 2
 
 
 def test_create_moc_error_when_create_qrc_contnent_for_ui(temp_dir: str, example_moc_content_qrc: str) -> None:
-    input_file = os.path.join(temp_dir, "example.ui")
+    input_file = os.path.join(temp_dir, "example.frontend")
     with open(input_file, "w") as f:
         f.write(example_moc_content_qrc)
 
-    with pytest.raises(Exception, match=r"Mocking UI file failed!.*example\.ui"):
-        create_moc(temp_dir, "example.ui", UiExtensions.UI)
+    with pytest.raises(Exception, match=r"Mocking UI file failed!.*example\.frontend"):
+        create_moc(temp_dir, "example.frontend", UiExtensions.UI)
 
 
 def test_create_moc_error_when_create_ui_content_for_qrc(temp_dir: str, example_moc_content_ui: str) -> None:
-    input_file = os.path.join(temp_dir, "example.ui")
+    input_file = os.path.join(temp_dir, "example.frontend")
     with open(input_file, "w") as f:
         f.write(example_moc_content_ui)
 
-    with pytest.raises(Exception, match=r"Mocking UI file failed!.*example\.ui"):
-        create_moc(temp_dir, "example.ui", UiExtensions.QRC)
+    with pytest.raises(Exception, match=r"Mocking UI file failed!.*example\.frontend"):
+        create_moc(temp_dir, "example.frontend", UiExtensions.QRC)
 
 
 def test_startup_size(main_window: MainWindow) -> None:
