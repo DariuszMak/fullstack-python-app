@@ -95,7 +95,6 @@ clear ; task local-static-tests ; task local-dev-native-profile ; # task local-d
 - http://127.0.0.1:8001 (Panel UI)
 - http://127.0.0.1:8002 (React UI)
 
-
 ### Edit `ui` forms with QT Designer
 
 ```console
