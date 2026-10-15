@@ -15,7 +15,7 @@ a = Analysis(
     datas=[
         (
             str(base_path / 'src' / 'ui' / 'pyside_ui' / 'themes' / 'main_theme.qss'),
-            'src/ui/pyside_ui/themes',
+            'src/frontend/pyside_ui/themes',
         ),
         (
             str(base_path / 'src' / 'backend' / 'openmeteo' / 'places' / 'places.json'),

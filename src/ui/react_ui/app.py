@@ -34,7 +34,7 @@ def create_application(config: Config | None = None) -> FastAPI:
 
     @app.get("/favicon.ico", include_in_schema=False)
     async def favicon() -> FileResponse:
-        return FileResponse(Path("src/ui/pyside_ui/forms/icons/images/program_icon.ico"))
+        return FileResponse(Path("src/frontend/pyside_ui/forms/icons/images/program_icon.ico"))
 
     app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 

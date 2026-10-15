@@ -9,7 +9,7 @@ uv run ruff format --check src tests --exclude 'moc_.*\.py|files_rc\.py'
 
 uv run ruff check src tests --output-format json > ruff-report.json
 
-uv run vulture src tests --exclude "src/ui/pyside_ui/forms" --min-confidence 80
+uv run vulture src tests --exclude "src/frontend/pyside_ui/forms" --min-confidence 80
 
 uv run mypy --strict src tests --exclude 'moc_.*\.py|files_rc\.py'
 

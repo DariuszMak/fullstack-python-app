@@ -36,7 +36,7 @@ def set_time_sync_context(context: TimeSyncContext) -> None:
 
 @router.get("/favicon.ico", include_in_schema=False)
 async def favicon() -> FileResponse:
-    return FileResponse(Path("src/ui/pyside_ui/forms/icons/images/program_icon.ico"))
+    return FileResponse(Path("src/frontend/pyside_ui/forms/icons/images/program_icon.ico"))
 
 
 @router.get("/api/v1/ping")

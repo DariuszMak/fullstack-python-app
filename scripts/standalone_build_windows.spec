@@ -11,7 +11,7 @@ a = Analysis(
     datas=[
         (
             str(Path('..', 'src', 'ui', 'pyside_ui', 'themes', 'main_theme.qss')),
-            'src/ui/pyside_ui/themes',
+            'src/frontend/pyside_ui/themes',
         ),
         (
             str(Path('..', 'src', 'backend', 'openmeteo', 'places', 'places.json')),

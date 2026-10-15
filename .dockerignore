@@ -26,4 +26,4 @@
 **/values.dev.yaml
 LICENSE
 README.md
-src/ui/react_ui/frontend/package-lock.json
+src/frontend/react_ui/frontend/package-lock.json
