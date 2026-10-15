@@ -4,7 +4,7 @@ import logging
 from datetime import UTC, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, cast
 from unittest.mock import MagicMock, patch
-
+from structlog.testing import capture_logs
 import pytest
 
 from src.frontend.shared.controller.clock_controller import ClockController
@@ -128,7 +128,7 @@ def test_reset_calls_strategy_reset() -> None:
         strategy.reset.assert_called_once()
 
 
-def test_reset_logs_settings_when_strategy_reset_raises(caplog: pytest.LogCaptureFixture) -> None:
+def test_reset_logs_settings_when_strategy_reset_raises() -> None:
     controller = ClockController(start_time=make_dt())
 
     failing_strategy = MagicMock()
@@ -138,10 +138,10 @@ def test_reset_logs_settings_when_strategy_reset_raises(caplog: pytest.LogCaptur
         (failing_strategy, failing_strategy, failing_strategy),
     )
 
-    with caplog.at_level(logging.WARNING, logger="src.frontend.shared.controller.clock_controller"):
+    with capture_logs() as cap:
         controller.reset(make_dt(11, 0, 0))
 
-    assert any("test_message" in record.message for record in caplog.records)
+    assert any("test_message" in str(log.get("error")) for log in cap)
 
 
 def test_after_reset_update_uses_new_start_time() -> None:
