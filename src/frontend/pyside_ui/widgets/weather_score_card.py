@@ -3,7 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
+
+from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
 if TYPE_CHECKING:
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
@@ -13,7 +16,11 @@ class WeatherScoreCard(QFrame):
     def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
+        self._place = place
+        self._rank = rank
+
         self.setObjectName("weatherScoreCard")
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setToolTip(f"{place.latitude:.4f}, {place.longitude:.4f} ({place.timezone})")
 
@@ -66,6 +73,25 @@ class WeatherScoreCard(QFrame):
             f"QProgressBar::chunk {{ background-color: {color}; border-radius: 4px; }}"
         )
 
+    def show_details_dialog(self) -> None:
+        dialog = WeatherDetailsDialog(self._place, rank=self._rank, parent=self.window())
+        dialog.exec()
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        if event.button() == Qt.MouseButton.LeftButton:
+            event.accept()
+            return
+
+        super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        if event.button() == Qt.MouseButton.LeftButton and self.rect().contains(event.position().toPoint()):
+            event.accept()
+            self.show_details_dialog()
+            return
+
+        super().mouseReleaseEvent(event)
+
     @property
     def name(self) -> str:
         return self._name_label.text()
@@ -85,3 +111,4 @@ class WeatherScoreCard(QFrame):
         if score >= 0.33:
             return "rgb(241, 196, 15)"
         return "rgb(231, 76, 60)"
+
