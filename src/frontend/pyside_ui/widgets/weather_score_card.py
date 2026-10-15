@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
 
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
 if TYPE_CHECKING:
+    from PySide6.QtGui import QMouseEvent
+
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 
@@ -111,4 +112,3 @@ class WeatherScoreCard(QFrame):
         if score >= 0.33:
             return "rgb(241, 196, 15)"
         return "rgb(231, 76, 60)"
-

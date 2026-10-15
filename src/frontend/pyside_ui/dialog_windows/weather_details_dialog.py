@@ -4,13 +4,14 @@ from typing import TYPE_CHECKING
 
 import structlog
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
+    from PySide6.QtGui import QCloseEvent
+
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 logger = structlog.get_logger(__name__)
@@ -128,4 +129,3 @@ class WeatherDetailsDialog(DraggableDialog):
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         logger.info("weather_details_dialog_closed", place=self._place.key)
         super().closeEvent(event)
-

@@ -114,4 +114,3 @@ def test_show_details_dialog_executes_dialog(qtbot: QtBot) -> None:
 
     dialog_cls.assert_called_once_with(place, rank=1, parent=card.window())
     dialog_cls.return_value.exec.assert_called_once_with()
-

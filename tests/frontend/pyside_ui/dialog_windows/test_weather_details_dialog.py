@@ -120,4 +120,3 @@ def test_close_event_calls_super(dialog: WeatherDetailsDialog) -> None:
         dialog.closeEvent(event)
 
     super_close.assert_called_once_with(event)
-
