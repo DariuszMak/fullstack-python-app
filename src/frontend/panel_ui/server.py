@@ -2,8 +2,8 @@ import threading
 
 from panel.io.server import serve
 
-from src.helpers.config.config import Config
 from src.frontend.panel_ui.time_panel.layout import create_layout
+from src.helpers.config.config import Config
 
 
 def run_panel() -> None:

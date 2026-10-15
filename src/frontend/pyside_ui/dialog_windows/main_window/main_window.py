@@ -8,8 +8,6 @@ from PySide6.QtWidgets import QCheckBox, QLabel, QSlider, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_score_response import BestScoreResponse
-from src.helpers.config.config import Config
-from src.helpers.style_loader import StyleLoader
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.frontend.pyside_ui.dialog_windows.main_window.helpers import clear_layout, render_weather_score
 from src.frontend.pyside_ui.dialog_windows.settings_dialog import SettingsDialog
@@ -23,6 +21,8 @@ from src.frontend.pyside_ui.settings import (
 from src.frontend.pyside_ui.tray_manager import TrayManager
 from src.frontend.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 from src.frontend.shared.client.httpx_client import HttpxClient
+from src.helpers.config.config import Config
+from src.helpers.style_loader import StyleLoader
 
 logger = structlog.get_logger(__name__)
 

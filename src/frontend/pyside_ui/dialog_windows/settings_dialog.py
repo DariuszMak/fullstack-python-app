@@ -3,9 +3,9 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtWidgets import QWidget
 
-from src.helpers.style_loader import StyleLoader
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_settings_dialog import Ui_Dialog
+from src.helpers.style_loader import StyleLoader
 
 logger = structlog.get_logger(__name__)
 
