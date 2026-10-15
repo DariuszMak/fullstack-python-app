@@ -32,6 +32,7 @@ class WeatherDetailsDialog(DraggableDialog):
         parent: QWidget | None = None,
     ) -> None:
         super().__init__()
+
         self._place = place
         self._values: dict[str, QLabel] = {}
 
