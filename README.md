@@ -100,6 +100,7 @@ clear ; task local-static-tests ; task local-dev-native-profile ; # task local-d
 ```console
 uv run pyside6-designer src\frontend\pyside_ui\forms\main_window.ui ; 
 uv run pyside6-designer src\frontend\pyside_ui\forms\settings_dialog.ui ; 
+uv run pyside6-designer src\frontend\pyside_ui\forms\weather_details_dialog.ui ; 
 ```
 
 #### GUI files specification
