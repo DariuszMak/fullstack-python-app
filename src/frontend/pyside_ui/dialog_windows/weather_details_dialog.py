@@ -73,12 +73,7 @@ class WeatherDetailsDialog(DraggableDialog):
         title_font.setPointSize(title_font.pointSize() + 4)
         self._title_label.setFont(title_font)
 
-        # self._close_button = QPushButton("\u2715", self._container)
-        # self._close_button.setObjectName("btn_close")
-        # self._close_button.setFixedSize(34, 34)
-
         title_layout.addWidget(self._title_label, 1)
-        # title_layout.addWidget(self._close_button)
         container_layout.addLayout(title_layout)
 
         separator = QFrame(self._container)
