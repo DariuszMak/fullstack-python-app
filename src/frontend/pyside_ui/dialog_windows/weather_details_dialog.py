@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 import structlog
 from PySide6.QtCore import QEvent, Qt
-from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
@@ -12,17 +11,11 @@ from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
+    from PySide6.QtGui import QCloseEvent
+
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 logger = structlog.get_logger(__name__)
-
-
-CONTAINER_STYLE = (
-    "QFrame#weatherDetailsFrame { background-color: rgb(40, 44, 52); border-radius: 10px; }"
-    "QFrame#weatherDetailsFrame QLabel { color: rgb(221, 221, 221); background: transparent; }"
-)
-CAPTION_STYLE = "color: rgb(152, 159, 172);"
-SEPARATOR_STYLE = "background-color: rgb(52, 59, 72);"
 
 
 class WeatherDetailsDialog(DraggableDialog):
@@ -56,7 +49,6 @@ class WeatherDetailsDialog(DraggableDialog):
 
         self._container = QFrame(self)
         self._container.setObjectName("weatherDetailsFrame")
-        self._container.setStyleSheet(CONTAINER_STYLE)
         outer_layout.addWidget(self._container)
 
         container_layout = QVBoxLayout(self._container)
@@ -78,7 +70,6 @@ class WeatherDetailsDialog(DraggableDialog):
 
         separator = QFrame(self._container)
         separator.setFixedHeight(1)
-        separator.setStyleSheet(SEPARATOR_STYLE)
         container_layout.addWidget(separator)
 
         grid = QGridLayout()
@@ -100,7 +91,6 @@ class WeatherDetailsDialog(DraggableDialog):
 
         for row, (field, caption, text) in enumerate(rows):
             caption_label = QLabel(caption, self._container)
-            caption_label.setStyleSheet(CAPTION_STYLE)
 
             value_label = QLabel(text, self._container)
             value_label.setWordWrap(True)
