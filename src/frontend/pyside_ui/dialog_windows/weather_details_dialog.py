@@ -5,6 +5,12 @@ from typing import TYPE_CHECKING
 import structlog
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent, QPixmap
+import structlog
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+
+from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
+from src.helpers.style_loader import StyleLoader
 
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
@@ -18,11 +24,24 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 
+CONTAINER_STYLE = (
+    "QFrame#weatherDetailsFrame { background-color: rgb(40, 44, 52); border-radius: 10px; }"
+    "QFrame#weatherDetailsFrame QLabel { color: rgb(221, 221, 221); background: transparent; }"
+)
+CAPTION_STYLE = "color: rgb(152, 159, 172);"
+SEPARATOR_STYLE = "background-color: rgb(52, 59, 72);"
+
+
 class WeatherDetailsDialog(DraggableDialog):
     def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
         super().__init__()
+        self._place = place
+        self._values: dict[str, QLabel] = {}
+
+        self._build_ui(rank)
         self._ui = Ui_Dialog()
         self._ui.setupUi(self)  # type: ignore[no-untyped-call]
+        self._build_ui(rank)
         StyleLoader.style_window(self)
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -35,6 +54,81 @@ class WeatherDetailsDialog(DraggableDialog):
         self._ui.label_warning.setPixmap(pixmap.scaled(40, 40, Qt.AspectRatioMode.KeepAspectRatio))
 
         logger.debug("weather_details_dialog_initialized", parent=type(parent).__name__ if parent else None)
+
+    @property
+    def place(self) -> PlaceBestScoreRecord:
+        return self._place
+
+    def value(self, field: str) -> str:
+        return self._values[field].text()
+
+    def _build_ui(self, rank: int | None) -> None:
+        outer_layout = QVBoxLayout(self)
+        outer_layout.setContentsMargins(10, 10, 10, 10)
+
+        self._container = QFrame(self)
+        self._container.setObjectName("weatherDetailsFrame")
+        self._container.setStyleSheet(CONTAINER_STYLE)
+        outer_layout.addWidget(self._container)
+
+        container_layout = QVBoxLayout(self._container)
+        container_layout.setContentsMargins(20, 10, 20, 20)
+        container_layout.setSpacing(14)
+
+        title_layout = QHBoxLayout()
+        title_layout.setContentsMargins(0, 0, 0, 0)
+
+        self._title_label = QLabel(self._place.name, self._container)
+        self._title_label.setObjectName("label_title_bar_top")
+        title_font = self._title_label.font()
+        title_font.setBold(True)
+        title_font.setPointSize(title_font.pointSize() + 4)
+        self._title_label.setFont(title_font)
+
+        self._close_button = QPushButton("\u2715", self._container)
+        self._close_button.setObjectName("btn_close")
+        self._close_button.setFixedSize(34, 34)
+
+        title_layout.addWidget(self._title_label, 1)
+        title_layout.addWidget(self._close_button)
+        container_layout.addLayout(title_layout)
+
+        separator = QFrame(self._container)
+        separator.setFixedHeight(1)
+        separator.setStyleSheet(SEPARATOR_STYLE)
+        container_layout.addWidget(separator)
+
+        grid = QGridLayout()
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setHorizontalSpacing(20)
+        grid.setVerticalSpacing(10)
+        grid.setColumnStretch(1, 1)
+
+        rows = (
+            ("name", "Name", self._place.name),
+            ("rank", "Rank", f"#{rank}" if rank is not None else "-"),
+            ("key", "Key", self._place.key),
+            ("latitude", "Latitude", f"{self._place.latitude:.4f}"),
+            ("longitude", "Longitude", f"{self._place.longitude:.4f}"),
+            ("timezone", "Timezone", self._place.timezone),
+            ("score", "Score", f"{self._place.score:.2f}"),
+            ("calculated_score", "Calculated score", f"{self._place.percentage_score:.2f}"),
+        )
+
+        for row, (field, caption, text) in enumerate(rows):
+            caption_label = QLabel(caption, self._container)
+            caption_label.setStyleSheet(CAPTION_STYLE)
+
+            value_label = QLabel(text, self._container)
+            value_label.setWordWrap(True)
+
+            grid.addWidget(caption_label, row, 0, Qt.AlignmentFlag.AlignTop)
+            grid.addWidget(value_label, row, 1)
+
+            self._values[field] = value_label
+
+        container_layout.addLayout(grid)
+        container_layout.addStretch(1)
 
     def changeEvent(self, event: QEvent) -> None:  # noqa: N802
         if event.type() == QEvent.Type.LanguageChange:
