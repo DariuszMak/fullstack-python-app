@@ -33,7 +33,9 @@ def test_init_with_parent_calls_style_loader(qtbot: QtBot) -> None:
 
     with (
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window") as style_window,
-        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window") as center_window,
+        patch(
+            "src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"
+        ) as center_window,
     ):
         widget = SettingsDialog(parent)
         qtbot.addWidget(widget)
@@ -79,7 +81,9 @@ def test_change_event_other_type_does_not_retranslate(
 def test_close_event_calls_super(dialog: SettingsDialog) -> None:
     event = QCloseEvent()
 
-    with patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.DraggableDialog.closeEvent") as super_close:
+    with patch(
+        "src.frontend.pyside_ui.dialog_windows.weather_details_dialog.DraggableDialog.closeEvent"
+    ) as super_close:
         dialog.closeEvent(event)
 
     super_close.assert_called_once_with(event)
