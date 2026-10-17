@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from unittest.mock import patch
 
 import pytest
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QWidget
 
@@ -100,6 +100,28 @@ def test_dialog_without_rank_shows_placeholder(qtbot: QtBot) -> None:
     qtbot.addWidget(widget)
 
     assert widget.value("rank") == "-"
+
+
+def test_change_event_language_change_retranslates(
+    dialog: WeatherDetailsDialog,
+) -> None:
+    event = QEvent(QEvent.Type.LanguageChange)
+
+    with patch.object(dialog._ui, "retranslateUi") as retranslate:
+        dialog.changeEvent(event)
+
+    retranslate.assert_called_once_with(dialog)
+
+
+def test_change_event_other_type_does_not_retranslate(
+    dialog: WeatherDetailsDialog,
+) -> None:
+    event = QEvent(QEvent.Type.Resize)
+
+    with patch.object(dialog._ui, "retranslateUi") as retranslate:
+        dialog.changeEvent(event)
+
+    retranslate.assert_not_called()
 
 
 def test_btn_close_click_closes_dialog(dialog: WeatherDetailsDialog) -> None:

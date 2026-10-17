@@ -12,7 +12,6 @@ from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
-
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 logger = structlog.get_logger(__name__)
