@@ -47,10 +47,10 @@
             <string notr="true">color: rgb(230, 230, 230);</string>
           </property>
           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
+            <enum>QFrame::Shadow::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
             <property name="spacing">
@@ -86,10 +86,10 @@
                   <string notr="true"/>
                 </property>
                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
+                  <enum>QFrame::Shape::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
+                  <enum>QFrame::Shadow::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                   <property name="spacing">
@@ -119,10 +119,10 @@
                         <string notr="true"/>
                       </property>
                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                        <enum>QFrame::Shape::NoFrame</enum>
                       </property>
                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
+                        <enum>QFrame::Shadow::Raised</enum>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_3">
                         <property name="spacing">
@@ -149,10 +149,10 @@
                         <string notr="true"/>
                       </property>
                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                        <enum>QFrame::Shape::NoFrame</enum>
                       </property>
                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
+                        <enum>QFrame::Shadow::Raised</enum>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_4">
                         <property name="spacing">
@@ -182,10 +182,10 @@
                               <string notr="true"/>
                             </property>
                             <property name="frameShape">
-                              <enum>QFrame::NoFrame</enum>
+                              <enum>QFrame::Shape::NoFrame</enum>
                             </property>
                             <property name="frameShadow">
-                              <enum>QFrame::Raised</enum>
+                              <enum>QFrame::Shadow::Raised</enum>
                             </property>
                             <layout class="QHBoxLayout" name="horizontalLayout_6">
                               <property name="spacing">
@@ -212,10 +212,10 @@
                                     </sizepolicy>
                                   </property>
                                   <property name="frameShape">
-                                    <enum>QFrame::NoFrame</enum>
+                                    <enum>QFrame::Shape::NoFrame</enum>
                                   </property>
                                   <property name="frameShadow">
-                                    <enum>QFrame::Raised</enum>
+                                    <enum>QFrame::Shadow::Raised</enum>
                                   </property>
                                   <layout class="QHBoxLayout" name="horizontalLayout_11">
                                     <property name="spacing">
@@ -238,7 +238,6 @@
                                         <property name="font">
                                           <font>
                                             <pointsize>10</pointsize>
-                                            <weight>75</weight>
                                             <bold>true</bold>
                                           </font>
                                         </property>
@@ -253,7 +252,7 @@
                                   </layout>
                                 </widget>
                               </item>
-                              <item alignment="Qt::AlignRight">
+                              <item alignment="Qt::AlignmentFlag::AlignRight">
                                 <widget class="QFrame" name="frame_btns_right">
                                   <property name="sizePolicy">
                                     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -268,10 +267,10 @@
                                     </size>
                                   </property>
                                   <property name="frameShape">
-                                    <enum>QFrame::NoFrame</enum>
+                                    <enum>QFrame::Shape::NoFrame</enum>
                                   </property>
                                   <property name="frameShadow">
-                                    <enum>QFrame::Raised</enum>
+                                    <enum>QFrame::Shadow::Raised</enum>
                                   </property>
                                   <layout class="QHBoxLayout" name="horizontalLayout_7">
                                     <property name="spacing">
@@ -349,10 +348,10 @@
                   </string>
                 </property>
                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
+                  <enum>QFrame::Shape::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
+                  <enum>QFrame::Shadow::Raised</enum>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_9">
                   <property name="spacing">
@@ -376,10 +375,10 @@
                         <string notr="true"/>
                       </property>
                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
+                        <enum>QFrame::Shape::NoFrame</enum>
                       </property>
                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
+                        <enum>QFrame::Shadow::Raised</enum>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_6">
                         <property name="spacing">
@@ -403,10 +402,10 @@
                               <string notr="true"/>
                             </property>
                             <property name="frameShape">
-                              <enum>QFrame::NoFrame</enum>
+                              <enum>QFrame::Shape::NoFrame</enum>
                             </property>
                             <property name="frameShadow">
-                              <enum>QFrame::Raised</enum>
+                              <enum>QFrame::Shadow::Raised</enum>
                             </property>
                             <layout class="QHBoxLayout" name="horizontalLayout_17">
                               <item>
@@ -437,10 +436,10 @@
                                   <item>
                                     <widget class="QDialogButtonBox" name="buttonBox">
                                       <property name="orientation">
-                                        <enum>Qt::Horizontal</enum>
+                                        <enum>Qt::Orientation::Horizontal</enum>
                                       </property>
                                       <property name="standardButtons">
-                                        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+                                        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
                                       </property>
                                     </widget>
                                   </item>
