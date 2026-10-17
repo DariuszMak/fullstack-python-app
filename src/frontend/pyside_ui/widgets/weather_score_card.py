@@ -75,7 +75,7 @@ class WeatherScoreCard(QFrame):
         )
 
     def show_details_dialog(self) -> None:
-        dialog = WeatherDetailsDialog(parent=self.window())
+        dialog = WeatherDetailsDialog(self._place, rank=self._rank, parent=self.window())
         dialog.exec()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
