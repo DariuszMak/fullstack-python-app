@@ -5,19 +5,13 @@ from typing import TYPE_CHECKING
 import structlog
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent, QPixmap
-import structlog
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
-
-from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
-from src.helpers.style_loader import StyleLoader
+from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
-    from PySide6.QtWidgets import QWidget
 
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
