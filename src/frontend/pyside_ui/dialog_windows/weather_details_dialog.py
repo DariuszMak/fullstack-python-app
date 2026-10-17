@@ -31,7 +31,6 @@ class WeatherDetailsDialog(DraggableDialog):
         self._place = place
         self._values: dict[str, QLabel] = {}
 
-        self._build_ui(rank)
         self._ui = Ui_Dialog()
         self._ui.setupUi(self)  # type: ignore[no-untyped-call]
         self._build_ui(rank)
@@ -56,8 +55,7 @@ class WeatherDetailsDialog(DraggableDialog):
         return self._values[field].text()
 
     def _build_ui(self, rank: int | None) -> None:
-        outer_layout = QVBoxLayout(self)
-        outer_layout.setContentsMargins(10, 10, 10, 10)
+        outer_layout = self._ui.formLayout
 
         self._container = QFrame(self)
         self._container.setObjectName("weatherDetailsFrame")
