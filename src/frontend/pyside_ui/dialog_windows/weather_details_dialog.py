@@ -10,7 +10,7 @@ from src.helpers.style_loader import StyleLoader
 logger = structlog.get_logger(__name__)
 
 
-class SettingsDialog(DraggableDialog):
+class WeatherDetailsDialog(DraggableDialog):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__()
         self._ui = Ui_Dialog()
