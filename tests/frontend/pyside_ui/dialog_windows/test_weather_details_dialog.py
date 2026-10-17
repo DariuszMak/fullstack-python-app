@@ -106,7 +106,7 @@ def test_btn_close_click_closes_dialog(dialog: WeatherDetailsDialog) -> None:
     dialog.show()
     assert dialog.isVisible() is True
 
-    dialog._close_button.click()
+    dialog._ui.btn_close.click()
 
     assert dialog.isVisible() is False
 
