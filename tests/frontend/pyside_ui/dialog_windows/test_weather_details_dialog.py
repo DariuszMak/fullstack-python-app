@@ -6,22 +6,22 @@ from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import SettingsDialog
+from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
 
 @pytest.fixture
-def dialog(qtbot: QtBot) -> SettingsDialog:
+def dialog(qtbot: QtBot) -> WeatherDetailsDialog:
     with (
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
     ):
-        widget = SettingsDialog()
+        widget = WeatherDetailsDialog()
 
     qtbot.addWidget(widget)
     return widget
 
 
-def test_init_without_parent(dialog: SettingsDialog) -> None:
+def test_init_without_parent(dialog: WeatherDetailsDialog) -> None:
     assert dialog._ui is not None
     assert dialog.windowFlags() & Qt.WindowType.FramelessWindowHint
     assert dialog.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
@@ -37,7 +37,7 @@ def test_init_with_parent_calls_style_loader(qtbot: QtBot) -> None:
             "src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"
         ) as center_window,
     ):
-        widget = SettingsDialog(parent)
+        widget = WeatherDetailsDialog(parent)
         qtbot.addWidget(widget)
 
     style_window.assert_called_once_with(widget)
@@ -45,7 +45,7 @@ def test_init_with_parent_calls_style_loader(qtbot: QtBot) -> None:
 
 
 def test_btn_close_click_closes_dialog(
-    dialog: SettingsDialog,
+    dialog: WeatherDetailsDialog,
     qtbot: QtBot,
 ) -> None:
     dialog.show()
@@ -57,7 +57,7 @@ def test_btn_close_click_closes_dialog(
 
 
 def test_change_event_language_change_retranslates(
-    dialog: SettingsDialog,
+    dialog: WeatherDetailsDialog,
 ) -> None:
     event = QEvent(QEvent.Type.LanguageChange)
 
@@ -68,7 +68,7 @@ def test_change_event_language_change_retranslates(
 
 
 def test_change_event_other_type_does_not_retranslate(
-    dialog: SettingsDialog,
+    dialog: WeatherDetailsDialog,
 ) -> None:
     event = QEvent(QEvent.Type.Resize)
 
@@ -78,7 +78,7 @@ def test_change_event_other_type_does_not_retranslate(
     retranslate.assert_not_called()
 
 
-def test_close_event_calls_super(dialog: SettingsDialog) -> None:
+def test_close_event_calls_super(dialog: WeatherDetailsDialog) -> None:
     event = QCloseEvent()
 
     with patch(
