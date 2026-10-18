@@ -1,12 +1,3 @@
-
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
-from src.frontend.pyside_ui.widgets.weather_score_card import WeatherScoreCard
-
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -127,7 +118,6 @@ def test_show_details_dialog_executes_dialog(qtbot: QtBot) -> None:
 
     dialog_cls.assert_called_once_with(place, rank=1, parent=card.window())
     dialog_cls.return_value.exec.assert_called_once_with()
-
 
 
 def test_card_displays_name_and_score(qtbot: QtBot) -> None:
