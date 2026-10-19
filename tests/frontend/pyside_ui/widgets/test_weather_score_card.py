@@ -57,7 +57,7 @@ def test_left_click_opens_details_dialog(qtbot: QtBot) -> None:
     with patch(DIALOG_PATH) as dialog_cls:
         qtbot.mouseClick(card, Qt.MouseButton.LeftButton)  # type: ignore[no-untyped-call]
 
-    dialog_cls.assert_called_once_with(place, rank=2, parent=card.window())
+    dialog_cls.assert_called_once_with(place=place, rank=2, parent=card.window())
     dialog_cls.return_value.exec.assert_called_once_with()
 
 
@@ -70,7 +70,7 @@ def test_left_click_without_rank_passes_none(qtbot: QtBot) -> None:
     with patch(DIALOG_PATH) as dialog_cls:
         qtbot.mouseClick(card, Qt.MouseButton.LeftButton)  # type: ignore[no-untyped-call]
 
-    dialog_cls.assert_called_once_with(place, rank=None, parent=card.window())
+    dialog_cls.assert_called_once_with(place=place, rank=None, parent=card.window())
 
 
 def test_right_click_does_not_open_details_dialog(qtbot: QtBot) -> None:
@@ -116,7 +116,7 @@ def test_show_details_dialog_executes_dialog(qtbot: QtBot) -> None:
     with patch(DIALOG_PATH) as dialog_cls:
         card.show_details_dialog()
 
-    dialog_cls.assert_called_once_with(place, rank=1, parent=card.window())
+    dialog_cls.assert_called_once_with(place=place, rank=1, parent=card.window())
     dialog_cls.return_value.exec.assert_called_once_with()
 
 
