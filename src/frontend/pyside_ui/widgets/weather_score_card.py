@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
+from src.frontend.pyside_ui.forms.moc_weather_score_card import Ui_Dialog
 
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
@@ -16,6 +17,8 @@ if TYPE_CHECKING:
 class WeatherScoreCard(QFrame):
     def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+
+        self._ui = Ui_Dialog()
 
         self._place = place
         self._rank = rank
