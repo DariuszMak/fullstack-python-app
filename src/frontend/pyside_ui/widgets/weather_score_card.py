@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
+from PySide6.QtWidgets import QFrame, QLabel, QProgressBar, QSizePolicy, QWidget
 
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 from src.frontend.pyside_ui.forms.moc_weather_score_card import Ui_Form
