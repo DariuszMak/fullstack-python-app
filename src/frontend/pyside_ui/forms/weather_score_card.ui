@@ -15,7 +15,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
-                <layout class="QFormLayout" name="formLayout_2"/>
+                <layout class="QFormLayout" name="formLayout"/>
             </item>
         </layout>
     </widget>
