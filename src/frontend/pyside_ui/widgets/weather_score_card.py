@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
-from src.frontend.pyside_ui.forms.moc_weather_score_card import Ui_Dialog
-from src.helpers.style_loader import StyleLoader
 
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
+from src.frontend.pyside_ui.forms.moc_weather_score_card import Ui_Form
+from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QMouseEvent
@@ -22,7 +22,7 @@ class WeatherScoreCard(QFrame):
         self._place = place
         self._rank = rank
 
-        self._ui = Ui_Dialog()
+        self._ui = Ui_Form()
         self._ui.setupUi(self)  # type: ignore[no-untyped-call]
         self._build_ui(place, rank)
         StyleLoader.style_window(self)
