@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QProgressBar, QSizePolicy, QWidget
 from src.frontend.pyside_ui.forms.moc_weather_score_card import Ui_Dialog
+from src.helpers.style_loader import StyleLoader
 
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
@@ -18,11 +19,15 @@ class WeatherScoreCard(QFrame):
     def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
-        self._ui = Ui_Dialog()
-
         self._place = place
         self._rank = rank
 
+        self._ui = Ui_Dialog()
+        self._ui.setupUi(self)  # type: ignore[no-untyped-call]
+        self._build_ui(place, rank)
+        StyleLoader.style_window(self)
+
+    def _build_ui(self, place: int | None, rank: int | None) -> None:
         self.setObjectName("weatherScoreCard")
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFrameShape(QFrame.Shape.StyledPanel)
@@ -78,7 +83,7 @@ class WeatherScoreCard(QFrame):
         )
 
     def show_details_dialog(self) -> None:
-        dialog = WeatherDetailsDialog(self._place, rank=self._rank, parent=self.window())
+        dialog = WeatherDetailsDialog(place=self._place, rank=self._rank, parent=self.window())
         dialog.exec()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
