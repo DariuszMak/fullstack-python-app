@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QLabel, QProgressBar, QSizePolicy, QWidget
+from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QProgressBar, QSizePolicy, QWidget
 
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 from src.frontend.pyside_ui.forms.moc_weather_score_card import Ui_Form
@@ -58,11 +58,20 @@ class WeatherScoreCard(QFrame):
         self._calculated_score_label.setFixedWidth(50)
         self._calculated_score_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
 
+        bar_container = QWidget(self)
+        bar_layout = QGridLayout(bar_container)
+        bar_layout.setContentsMargins(0, 0, 0, 0)
+
+        bar_layout.addWidget(self._score_bar, 0, 0)
+
+        bar_layout.addWidget(
+            self._calculated_score_label, 0, 0, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        )
+        bar_layout.addWidget(self._score_label, 0, 0, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+
+        layout.addWidget(bar_container)
         layout.addWidget(self._rank_label)
         layout.addWidget(self._name_label)
-        layout.addWidget(self._score_bar)
-        layout.addWidget(self._calculated_score_label)
-        layout.addWidget(self._score_label)
 
         self.set_score(place.score, place.percentage_score)
 
