@@ -101,6 +101,7 @@ clear ; task dev-env ; task local-static-tests ; task local-dev-native-profile ;
 uv run pyside6-designer src\frontend\pyside_ui\forms\main_window.ui ; 
 uv run pyside6-designer src\frontend\pyside_ui\forms\settings_dialog.ui ; 
 uv run pyside6-designer src\frontend\pyside_ui\forms\weather_details_dialog.ui ; 
+uv run pyside6-designer src\frontend\pyside_ui\forms\weather_score_card.ui ; 
 ```
 
 #### GUI files specification
