@@ -33,7 +33,7 @@ class WeatherScoreCard(QFrame):
         self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setToolTip(f"{place.latitude:.4f}, {place.longitude:.4f} ({place.timezone})")
 
-        layout = QHBoxLayout(self)
+        layout = self._ui.formLayout
         layout.setContentsMargins(10, 8, 10, 8)
         layout.setSpacing(10)
 
