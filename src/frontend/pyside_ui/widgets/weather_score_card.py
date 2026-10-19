@@ -34,8 +34,6 @@ class WeatherScoreCard(QFrame):
         self.setToolTip(f"{place.latitude:.4f}, {place.longitude:.4f} ({place.timezone})")
 
         layout = self._ui.mainHorizontalLayout
-        layout.setContentsMargins(10, 8, 10, 8)
-        layout.setSpacing(10)
 
         self._rank_label = QLabel(f"#{rank}" if rank is not None else "", self)
         self._rank_label.setFixedWidth(30)
