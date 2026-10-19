@@ -27,7 +27,7 @@ class WeatherScoreCard(QFrame):
         self._build_ui(place, rank)
         StyleLoader.style_window(self)
 
-    def _build_ui(self, place: int | None, rank: int | None) -> None:
+    def _build_ui(self, place: PlaceBestScoreRecord, rank: int | None) -> None:
         self.setObjectName("weatherScoreCard")
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFrameShape(QFrame.Shape.StyledPanel)
