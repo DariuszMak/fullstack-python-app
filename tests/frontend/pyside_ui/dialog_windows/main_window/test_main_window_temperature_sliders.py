@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import asyncio
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock
+
+import pytest
 
 from src.backend.api.models.weather_score_response import BestScoreResponse
 from src.frontend.pyside_ui.dialog_windows.main_window.main_window import MainWindow
@@ -33,6 +34,13 @@ def widgets_in_layout(window: MainWindow) -> list[QWidget]:
         if widget is not None:
             widgets.append(widget)
     return widgets
+
+
+async def run_check(window: MainWindow) -> None:
+    window.check_weather_score()
+    task = window._weather_score_task
+    assert task is not None
+    await task
 
 
 def test_temperature_sliders_have_default_values(qtbot: QtBot) -> None:
@@ -93,7 +101,8 @@ def test_max_temp_slider_cannot_reach_or_go_below_min_slider(qtbot: QtBot) -> No
     assert window._max_temp_slider.value() > window._min_temp_slider.value()
 
 
-def test_fetch_weather_score_uses_current_slider_values(qtbot: QtBot) -> None:
+@pytest.mark.asyncio
+async def test_check_weather_score_uses_current_slider_values(qtbot: QtBot) -> None:
     window = MainWindow(fetch_server_time=False)
     qtbot.addWidget(window)
 
@@ -103,7 +112,7 @@ def test_fetch_weather_score_uses_current_slider_values(qtbot: QtBot) -> None:
     response = make_response()
     window._httpx_client.fetch_weather_score = AsyncMock(return_value=response)  # type: ignore[method-assign]
 
-    asyncio.run(window._fetch_weather_score())
+    await run_check(window)
 
     window._httpx_client.fetch_weather_score.assert_called_once_with(
         apparent_temperature_min_threshold=10.0,
