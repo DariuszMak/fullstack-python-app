@@ -1,5 +1,6 @@
 import asyncio
 import platform
+
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
@@ -11,7 +12,12 @@ from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_renderer im
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_viewmodel import WeatherScoreViewModel
 from src.frontend.pyside_ui.dialog_windows.settings_dialog import SettingsDialog
 from src.frontend.pyside_ui.forms.moc_main_window import Ui_MainWindow
-from src.frontend.pyside_ui.settings import ANIMATION_DURATION, MAINWINDOW_HEIGHT, MAINWINDOW_RESIZE_RANGE, MAINWINDOW_WIDTH
+from src.frontend.pyside_ui.settings import (
+    ANIMATION_DURATION,
+    MAINWINDOW_HEIGHT,
+    MAINWINDOW_RESIZE_RANGE,
+    MAINWINDOW_WIDTH,
+)
 from src.frontend.pyside_ui.tray_manager import TrayManager
 from src.frontend.pyside_ui.widgets.clock_widget.view.clock_widget import ClockWidget
 from src.frontend.shared.client.httpx_client import HttpxClient
@@ -192,13 +198,15 @@ class MainWindow(DraggableMainWindow):
     def check_weather_score(self):
         if self._weather_score_task and not self._weather_score_task.done():
             return
-        self._weather_score_task = asyncio.create_task(self._viewmodel.fetch(
-            apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
-            apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
-            penalize_rain=self._penalize_rain_checkbox.isChecked(),
-            forecast_days=self._forecast_days_slider.value(),
-            start_day=self._start_day_slider.value() - 1,
-        ))
+        self._weather_score_task = asyncio.create_task(
+            self._viewmodel.fetch(
+                apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
+                apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
+                penalize_rain=self._penalize_rain_checkbox.isChecked(),
+                forecast_days=self._forecast_days_slider.value(),
+                start_day=self._start_day_slider.value() - 1,
+            )
+        )
 
     def fetch_server_time(self):
         if self._server_time_task and not self._server_time_task.done():
@@ -286,4 +294,3 @@ class MainWindow(DraggableMainWindow):
         self._is_closing = True
         logger.info("application_terminated")
         super().close()
-

@@ -1,9 +1,8 @@
-import asyncio
 from PySide6.QtCore import QObject, Signal
 
 from src.backend.api.models.weather_score_response import BestScoreResponse
-from src.frontend.shared.client.httpx_client import HttpxClient
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_state import WeatherScoreState
+from src.frontend.shared.client.httpx_client import HttpxClient
 
 
 class WeatherScoreViewModel(QObject):

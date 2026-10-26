@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QVBoxLayout, QLabel
+from PySide6.QtWidgets import QLabel, QVBoxLayout
+
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_state import WeatherScoreState
 from src.frontend.pyside_ui.widgets.weather_score_card import WeatherScoreCard
