@@ -88,7 +88,7 @@ class MainWindow(DraggableMainWindow):
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
             loop.call_soon(self.fetch_server_time)
-        self._fetch_weather_score_initial()
+        QTimer.singleShot(0, self._fetch_weather_score_initial)
 
     def _build_temperature_sliders(self) -> None:
         self._min_temp_label = QLabel(f"Min apparent temperature: {DEFAULT_MIN_TEMP:.1f}\u00b0C")
