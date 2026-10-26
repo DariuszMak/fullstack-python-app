@@ -228,10 +228,14 @@ class MainWindow(DraggableMainWindow):
         self._ui.checkWeatherScoreButton.setEnabled(not is_loading)
         self._ui.checkWeatherScoreButton.setText("Fetching..." if is_loading else "Get weather score")
 
-    def check_weather_score(self):
-        if self._weather_score_task and not self._weather_score_task.done():
+    def check_weather_score(self) -> None:
+        if self._weather_score_task is not None and not self._weather_score_task.done():
             return
-        self._weather_score_task = asyncio.create_task(
+        try:
+            loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
+        except RuntimeError:
+            return
+        self._weather_score_task = loop.create_task(
             self._viewmodel.fetch(
                 apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
                 apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
