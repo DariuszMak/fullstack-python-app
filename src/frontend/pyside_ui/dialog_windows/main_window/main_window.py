@@ -1,10 +1,11 @@
 import asyncio
 import platform
+from typing import Final
 
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
-from PySide6.QtWidgets import QCheckBox, QLabel, QSlider, QSystemTrayIcon
+from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QSlider, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
@@ -26,28 +27,29 @@ from src.helpers.style_loader import StyleLoader
 
 logger = structlog.get_logger(__name__)
 
-MIN_TEMP_SLIDER_RANGE = (-20, 40)
-MAX_TEMP_SLIDER_RANGE = (-20, 40)
-DEFAULT_MIN_TEMP = 18
-DEFAULT_MAX_TEMP = 25
-DEFAULT_PENALIZE_RAIN = True
-FORECAST_DAYS_SLIDER_RANGE = (1, 16)
-START_DAY_SLIDER_RANGE = (1, 16)
-DEFAULT_FORECAST_DAYS = 3
-DEFAULT_START_DAY = 1
+MIN_TEMP_SLIDER_RANGE: Final[tuple[int, int]] = (-20, 40)
+MAX_TEMP_SLIDER_RANGE: Final[tuple[int, int]] = (-20, 40)
+DEFAULT_MIN_TEMP: Final[int] = 18
+DEFAULT_MAX_TEMP: Final[int] = 25
+DEFAULT_PENALIZE_RAIN: Final[bool] = True
+FORECAST_DAYS_SLIDER_RANGE: Final[tuple[int, int]] = (1, 16)
+START_DAY_SLIDER_RANGE: Final[tuple[int, int]] = (1, 16)
+DEFAULT_FORECAST_DAYS: Final[int] = 3
+DEFAULT_START_DAY: Final[int] = 1
 
 
 class MainWindow(DraggableMainWindow):
     def __init__(self, fetch_server_time: bool = True) -> None:
         super().__init__()
 
-        self._supports_opacity = QGuiApplication.platformName().lower() not in ["wayland", "xcb"]
-        self._is_closing = False
+        self._supports_opacity: bool = QGuiApplication.platformName().lower() not in ["wayland", "xcb"]
+        self._is_closing: bool = False
         self._server_time_task: asyncio.Task[None] | None = None
         self._weather_score_task: asyncio.Task[None] | None = None
+        self.anim: QPropertyAnimation | None = None
 
-        config = Config()
-        self._httpx_client = HttpxClient(config.api_base_url)
+        config: Config = Config()
+        self._httpx_client: HttpxClient = HttpxClient(config.api_base_url)
 
         self._tray: TrayManager | None
         if QSystemTrayIcon.isSystemTrayAvailable() and platform.system() != "Linux":
@@ -56,7 +58,7 @@ class MainWindow(DraggableMainWindow):
             self._tray = None
             logger.debug("system_tray_unavailable", platform=platform.system())
 
-        self._ui = Ui_MainWindow()
+        self._ui: Ui_MainWindow = Ui_MainWindow()
         self._ui.setupUi(self)  # type: ignore[no-untyped-call]
         StyleLoader.style_window(self)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -88,7 +90,7 @@ class MainWindow(DraggableMainWindow):
         self._set_default_values()
 
         self._clock_widget: ClockWidget = ClockWidget()
-        layout = self._ui.frame_clock_widget.layout()
+        layout: QLayout | None = self._ui.frame_clock_widget.layout()
         if layout is not None:
             layout.addWidget(self._clock_widget)
         else:
@@ -98,11 +100,14 @@ class MainWindow(DraggableMainWindow):
             self._fade_in_animation()
 
         self.installEventFilter(self)
-        self._viewmodel = WeatherScoreViewModel(self._httpx_client, self)
-        self._renderer = WeatherScoreRenderer(self._ui.weatherScoreContainerLayout)
+
+        self._viewmodel: WeatherScoreViewModel = WeatherScoreViewModel(self._httpx_client, self)
+        self._renderer: WeatherScoreRenderer = WeatherScoreRenderer(self._ui.weatherScoreContainerLayout)
         self._viewmodel.state_changed.connect(self._renderer.render)
         self._viewmodel.loading_changed.connect(self._on_loading_changed)
+
         if fetch_server_time:
+            loop: asyncio.AbstractEventLoop
             try:
                 loop = asyncio.get_running_loop()
             except RuntimeError:
@@ -111,16 +116,16 @@ class MainWindow(DraggableMainWindow):
                 logger.debug("new_event_loop_created")
 
             loop.call_soon(self.fetch_server_time)
-        QTimer.singleShot(0, self._fetch_weather_score_initial)
+            QTimer.singleShot(0, self._fetch_weather_score_initial)
 
     def _build_temperature_sliders(self) -> None:
-        self._min_temp_label = QLabel(f"Min apparent temperature: {DEFAULT_MIN_TEMP:.1f}\u00b0C")
-        self._min_temp_slider = QSlider(Qt.Orientation.Horizontal)
+        self._min_temp_label: QLabel = QLabel(f"Min apparent temperature: {DEFAULT_MIN_TEMP:.1f}\u00b0C")
+        self._min_temp_slider: QSlider = QSlider(Qt.Orientation.Horizontal)
 
         self._min_temp_slider.valueChanged.connect(self._on_min_temp_changed)
 
-        self._max_temp_label = QLabel(f"Max apparent temperature: {DEFAULT_MAX_TEMP:.1f}\u00b0C")
-        self._max_temp_slider = QSlider(Qt.Orientation.Horizontal)
+        self._max_temp_label: QLabel = QLabel(f"Max apparent temperature: {DEFAULT_MAX_TEMP:.1f}\u00b0C")
+        self._max_temp_slider: QSlider = QSlider(Qt.Orientation.Horizontal)
 
         self._max_temp_slider.valueChanged.connect(self._on_max_temp_changed)
 
@@ -130,7 +135,7 @@ class MainWindow(DraggableMainWindow):
         self._ui.frame_generated_query_parameters.addWidget(self._max_temp_slider)
 
     def _build_rain_penalty_checkbox(self) -> None:
-        self._penalize_rain_checkbox = QCheckBox("Penalize rain")
+        self._penalize_rain_checkbox: QCheckBox = QCheckBox("Penalize rain")
 
         self._ui.frame_generated_query_parameters.addWidget(self._penalize_rain_checkbox)
 
@@ -150,7 +155,7 @@ class MainWindow(DraggableMainWindow):
 
     def _on_min_temp_changed(self, value: int) -> None:
         if value >= self._max_temp_slider.value():
-            clamped = self._max_temp_slider.value() - 1
+            clamped: int = self._max_temp_slider.value() - 1
             if clamped != value:
                 self._min_temp_slider.setValue(clamped)
                 return
@@ -158,23 +163,23 @@ class MainWindow(DraggableMainWindow):
 
     def _on_max_temp_changed(self, value: int) -> None:
         if value <= self._min_temp_slider.value():
-            clamped = self._min_temp_slider.value() + 1
+            clamped: int = self._min_temp_slider.value() + 1
             if clamped != value:
                 self._max_temp_slider.setValue(clamped)
                 return
         self._max_temp_label.setText(f"Max apparent temperature: {float(value):.1f}\u00b0C")
 
     def _build_forecast_days_slider(self) -> None:
-        self._forecast_days_label = QLabel(f"Forecast days: {DEFAULT_FORECAST_DAYS}")
-        self._forecast_days_slider = QSlider(Qt.Orientation.Horizontal)
+        self._forecast_days_label: QLabel = QLabel(f"Forecast days: {DEFAULT_FORECAST_DAYS}")
+        self._forecast_days_slider: QSlider = QSlider(Qt.Orientation.Horizontal)
         self._forecast_days_slider.valueChanged.connect(self._on_forecast_days_changed)
 
         self._ui.frame_generated_query_parameters.addWidget(self._forecast_days_label)
         self._ui.frame_generated_query_parameters.addWidget(self._forecast_days_slider)
 
     def _build_start_day_slider(self) -> None:
-        self._start_day_label = QLabel(f"Start day: {DEFAULT_START_DAY}")
-        self._start_day_slider = QSlider(Qt.Orientation.Horizontal)
+        self._start_day_label: QLabel = QLabel(f"Start day: {DEFAULT_START_DAY}")
+        self._start_day_slider: QSlider = QSlider(Qt.Orientation.Horizontal)
         self._start_day_slider.valueChanged.connect(self._on_start_day_changed)
 
         self._ui.frame_generated_query_parameters.addWidget(self._start_day_label)
@@ -182,7 +187,7 @@ class MainWindow(DraggableMainWindow):
 
     def _on_forecast_days_changed(self, value: int) -> None:
         if value <= self._start_day_slider.value():
-            clamped = self._start_day_slider.value()
+            clamped: int = self._start_day_slider.value()
             if clamped != value:
                 self._forecast_days_slider.setValue(clamped)
                 return
@@ -190,7 +195,7 @@ class MainWindow(DraggableMainWindow):
 
     def _on_start_day_changed(self, value: int) -> None:
         if value >= self._forecast_days_slider.value():
-            clamped = self._forecast_days_slider.value()
+            clamped: int = self._forecast_days_slider.value()
             if clamped != value:
                 self._start_day_slider.setValue(clamped)
                 return
@@ -221,19 +226,23 @@ class MainWindow(DraggableMainWindow):
         self.anim.finished.connect(self._final_close)
         self.anim.start()
 
-    def _fetch_weather_score_initial(self):
+    def _fetch_weather_score_initial(self) -> None:
         self.check_weather_score()
 
-    def _on_loading_changed(self, is_loading: bool):
+    def _on_loading_changed(self, is_loading: bool) -> None:
         self._ui.checkWeatherScoreButton.setEnabled(not is_loading)
         self._ui.checkWeatherScoreButton.setText("Fetching..." if is_loading else "Get weather score")
 
     def check_weather_score(self) -> None:
+        if self._is_closing:
+            return
         if self._weather_score_task is not None and not self._weather_score_task.done():
+            logger.debug("weather_score_task_already_running")
             return
         try:
             loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         except RuntimeError:
+            logger.debug("no_running_event_loop")
             return
         self._weather_score_task = loop.create_task(
             self._viewmodel.fetch(
@@ -246,17 +255,23 @@ class MainWindow(DraggableMainWindow):
         )
 
     def fetch_server_time(self) -> None:
-        if self._server_time_task and not self._server_time_task.done():
+        if self._is_closing:
+            return
+        if self._server_time_task is not None and not self._server_time_task.done():
             logger.debug("fetch_task_already_running")
             return
-
-        self._server_time_task = asyncio.create_task(self._fetch_server_time())
+        try:
+            loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
+        except RuntimeError:
+            logger.debug("no_running_event_loop")
+            return
+        self._server_time_task = loop.create_task(self._fetch_server_time())
 
     async def _fetch_server_time(self) -> None:
         log = logger.bind(client=type(self._httpx_client).__name__)
         try:
             log.debug("fetching_server_time")
-            result = await self._httpx_client.fetch_time()
+            result: ServerTimeResponse = await self._httpx_client.fetch_time()
             self._apply_server_time(result)
         except Exception as exc:
             log.exception("server_time_fetch_failed", error=str(exc))
@@ -266,7 +281,7 @@ class MainWindow(DraggableMainWindow):
         self._clock_widget.set_current_datetime(server_time.datetime)
 
     def show_settings_dialog(self) -> None:
-        dlg = SettingsDialog(self)
+        dlg: SettingsDialog = SettingsDialog(self)
         dlg._ui.label_title_bar_top.setText("Settings")
         dlg._ui.label_info.setText("Settings")
 
@@ -285,10 +300,10 @@ class MainWindow(DraggableMainWindow):
         logger.debug("window_state_toggled", maximized=self._is_maximized)
 
     def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
-        min_width = MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE
-        min_height = MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE
-        new_width = max(event.size().width(), min_width)
-        new_height = max(event.size().height(), min_height)
+        min_width: int = MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE
+        min_height: int = MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE
+        new_width: int = max(event.size().width(), min_width)
+        new_height: int = max(event.size().height(), min_height)
 
         if new_width != event.size().width() or new_height != event.size().height():
             self.resize(new_width, new_height)
@@ -335,7 +350,14 @@ class MainWindow(DraggableMainWindow):
 
         return super().eventFilter(obj, event)
 
+    def _cancel_tasks(self) -> None:
+        task: asyncio.Task[None] | None
+        for task in (self._server_time_task, self._weather_score_task):
+            if task is not None and not task.done():
+                task.cancel()
+
     def _final_close(self) -> None:
         self._is_closing = True
+        self._cancel_tasks()
         logger.info("application_terminated")
         super().close()
