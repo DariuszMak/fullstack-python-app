@@ -293,7 +293,7 @@ async def test_fetch_sets_loading_state_before_calling_client() -> None:
     observed: list[bool] = []
     viewmodel = WeatherScoreViewModel(client)
 
-    async def fetch_side_effect(**kwargs: object) -> BestScoreResponse:
+    def fetch_side_effect(**kwargs: object) -> BestScoreResponse:
         observed.append(viewmodel.state.is_loading)
         return make_response()
 

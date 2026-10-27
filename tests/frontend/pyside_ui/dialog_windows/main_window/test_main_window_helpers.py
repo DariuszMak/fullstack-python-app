@@ -277,7 +277,7 @@ async def test_check_weather_score_toggles_button_while_fetching(qtbot: QtBot) -
 
     observed: list[tuple[bool, str]] = []
 
-    async def fetch_side_effect(*args: object, **kwargs: object) -> BestScoreResponse:
+    def fetch_side_effect(*args: object, **kwargs: object) -> BestScoreResponse:
         button = window._ui.checkWeatherScoreButton
         observed.append((button.isEnabled(), button.text()))
         return make_response()
