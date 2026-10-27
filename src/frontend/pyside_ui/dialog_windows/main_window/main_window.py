@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QSlider, QSystemTrayIc
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_renderer import WeatherScoreRenderer
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_state import WeatherScoreState
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_viewmodel import WeatherScoreViewModel
 from src.frontend.pyside_ui.dialog_windows.settings_dialog import SettingsDialog
 from src.frontend.pyside_ui.forms.moc_main_window import Ui_MainWindow
@@ -105,6 +106,7 @@ class MainWindow(DraggableMainWindow):
         self._renderer: WeatherScoreRenderer = WeatherScoreRenderer(self._ui.weatherScoreContainerLayout)
         self._viewmodel.state_changed.connect(self._renderer.render)
         self._viewmodel.loading_changed.connect(self._on_loading_changed)
+        self._renderer.render(WeatherScoreState())
 
         if fetch_server_time:
             loop: asyncio.AbstractEventLoop
@@ -116,7 +118,8 @@ class MainWindow(DraggableMainWindow):
                 logger.debug("new_event_loop_created")
 
             loop.call_soon(self.fetch_server_time)
-            QTimer.singleShot(0, self._fetch_weather_score_initial)
+
+        QTimer.singleShot(0, self._fetch_weather_score_initial)
 
     def _build_temperature_sliders(self) -> None:
         self._min_temp_label: QLabel = QLabel(f"Min apparent temperature: {DEFAULT_MIN_TEMP:.1f}\u00b0C")
