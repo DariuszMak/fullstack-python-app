@@ -5,7 +5,7 @@ from dataclasses import FrozenInstanceError
 import pytest
 
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
-from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_state import (
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import (
     WeatherScoreCardData,
     WeatherScoreState,
 )

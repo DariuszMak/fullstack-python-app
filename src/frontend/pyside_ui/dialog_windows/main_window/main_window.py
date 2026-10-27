@@ -9,9 +9,9 @@ from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QSlider, QSystemTrayIc
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
-from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_renderer import WeatherScoreRenderer
-from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_state import WeatherScoreState
-from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_viewmodel import WeatherScoreViewModel
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_renderer import WeatherScoreRenderer
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import WeatherScoreState
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_viewmodel import WeatherScoreViewModel
 from src.frontend.pyside_ui.dialog_windows.settings_dialog import SettingsDialog
 from src.frontend.pyside_ui.forms.moc_main_window import Ui_MainWindow
 from src.frontend.pyside_ui.settings import (

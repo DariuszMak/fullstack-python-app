@@ -3,7 +3,7 @@ from dataclasses import replace
 from PySide6.QtCore import QObject, Signal
 
 from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
-from src.frontend.pyside_ui.dialog_windows.main_window.weather_score_state import (
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import (
     WeatherScoreCardData,
     WeatherScoreState,
 )
