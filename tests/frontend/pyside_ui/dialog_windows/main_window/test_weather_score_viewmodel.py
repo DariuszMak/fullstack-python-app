@@ -270,7 +270,7 @@ async def test_fetch_failure_clears_previous_cards() -> None:
     client.fetch_weather_score = AsyncMock(side_effect=RuntimeError("boom"))
     await viewmodel.fetch(**FETCH_KWARGS)  # type: ignore[arg-type]
 
-    assert viewmodel.state.cards == ()
+    assert not viewmodel.state.cards
     assert viewmodel.state.error == "boom"
 
 
