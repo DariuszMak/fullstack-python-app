@@ -13,6 +13,7 @@ ERROR_STYLE: str = "color: rgb(231, 76, 60);"
 class WeatherScoreRenderer:
     def __init__(self, layout: QVBoxLayout) -> None:
         self._layout: QVBoxLayout = layout
+        self._container = layout.parentWidget()
 
     def render(self, state: WeatherScoreState) -> None:
         self._clear()
