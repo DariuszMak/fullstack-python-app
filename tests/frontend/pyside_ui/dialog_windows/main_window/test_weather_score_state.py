@@ -28,8 +28,8 @@ def test_state_defaults() -> None:
     assert state.is_loading is False
     assert state.cards == ()
     assert state.error is None
-    assert state.min_threshold == 0.0
-    assert state.max_threshold == 0.0
+    assert state.min_threshold == pytest.approx(0.0)
+    assert state.max_threshold == pytest.approx(0.0)
     assert state.penalize_rain is False
     assert state.start_day == 0
 
@@ -86,7 +86,7 @@ def test_state_stores_all_fields() -> None:
     assert state.is_loading is True
     assert state.cards == (card,)
     assert state.error == "oops"
-    assert state.min_threshold == 10.0
-    assert state.max_threshold == 20.0
+    assert state.min_threshold == pytest.approx(10.0)
+    assert state.max_threshold == pytest.approx(20.0)
     assert state.penalize_rain is True
     assert state.start_day == 2
