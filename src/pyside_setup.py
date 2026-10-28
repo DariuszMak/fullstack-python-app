@@ -1,5 +1,5 @@
 import os
-import subprocess  # noqa: S404
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 from enum import StrEnum
 
 import structlog
@@ -43,7 +43,7 @@ def create_moc(dir_path: str, file_name: str, extension: UiExtensions) -> None:
         command = ["pyside6-rcc", input_file, "-o", output_file]
 
     log.info("generating_moc_file", command=command)
-    process = subprocess.run(  # noqa: S603
+    process = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
         command, capture_output=True, text=True
     )
 

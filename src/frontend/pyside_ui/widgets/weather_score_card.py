@@ -93,14 +93,14 @@ class WeatherScoreCard(QFrame):
         dialog = WeatherDetailsDialog(place=self._place, rank=self._rank, parent=self.window())
         dialog.exec()
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.button() == Qt.MouseButton.LeftButton:
             event.accept()
             return
 
         super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.button() == Qt.MouseButton.LeftButton and self.rect().contains(event.position().toPoint()):
             event.accept()
             self.show_details_dialog()

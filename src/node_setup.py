@@ -1,6 +1,6 @@
 import platform
 import shutil
-import subprocess  # noqa: S404
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 import sys
 from pathlib import Path
 
@@ -26,7 +26,7 @@ def run_command(command: list[str], cwd: Path | None = None) -> str:
         log.error("directory_not_found")
         raise NotADirectoryError(f"Directory does not exist: {cwd}")
 
-    process = subprocess.run(command, cwd=cwd, capture_output=True, text=True)  # noqa: S603
+    process = subprocess.run(command, cwd=cwd, capture_output=True, text=True)  # ruff: ignore[subprocess-without-shell-equals-true]
 
     if process.returncode != 0:
         log.error(

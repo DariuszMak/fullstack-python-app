@@ -304,7 +304,7 @@ class MainWindow(DraggableMainWindow):
         self._is_maximized = not self._is_maximized
         logger.debug("window_state_toggled", maximized=self._is_maximized)
 
-    def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
+    def resizeEvent(self, event: QResizeEvent) -> None:  # ruff: ignore[invalid-function-name]
         min_width: int = MAINWINDOW_WIDTH - MAINWINDOW_RESIZE_RANGE
         min_height: int = MAINWINDOW_HEIGHT - MAINWINDOW_RESIZE_RANGE
         new_width: int = max(event.size().width(), min_width)
@@ -315,7 +315,7 @@ class MainWindow(DraggableMainWindow):
 
         super().resizeEvent(event)
 
-    def changeEvent(self, event: QEvent) -> None:  # noqa: N802
+    def changeEvent(self, event: QEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.LanguageChange:
             self._ui.retranslateUi(self)  # type: ignore[no-untyped-call]
 
@@ -331,7 +331,7 @@ class MainWindow(DraggableMainWindow):
         self.hide()
         self._tray.notify_hidden()
 
-    def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
+    def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         if self._supports_opacity and not self._is_closing:
             logger.info("window_close_initiated")
             event.ignore()
@@ -341,7 +341,7 @@ class MainWindow(DraggableMainWindow):
             logger.debug("window_final_close_event")
             super().closeEvent(event)
 
-    def eventFilter(self, obj: QObject, event: QEvent) -> bool:  # noqa: N802
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.KeyPress and isinstance(event, QKeyEvent):
             if event.key() == Qt.Key.Key_R:
                 logger.debug("hotkey_refresh_triggered")

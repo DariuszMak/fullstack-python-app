@@ -42,13 +42,13 @@ class DummyTrayIcon:
         self.messages: list[dict[str, Any]] = []
         self.activated = DummySignal()
 
-    def setIcon(  # noqa: N802
+    def setIcon(  # ruff: ignore[invalid-function-name]
         self,
         icon: Any,
     ) -> None:
         self.icon = icon
 
-    def setContextMenu(  # noqa: N802
+    def setContextMenu(  # ruff: ignore[invalid-function-name]
         self,
         menu: Any,
     ) -> None:
@@ -60,7 +60,7 @@ class DummyTrayIcon:
     def hide(self) -> None:
         self.hidden = True
 
-    def showMessage(  # noqa: N802
+    def showMessage(  # ruff: ignore[invalid-function-name]
         self,
         title: str,
         message: str,

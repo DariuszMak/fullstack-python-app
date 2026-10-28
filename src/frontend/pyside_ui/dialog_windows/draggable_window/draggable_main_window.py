@@ -15,14 +15,14 @@ class DraggableMainWindow(QMainWindow, DraggableMixin):
     def _can_drag(self) -> bool:
         return not self._is_maximized
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # ruff: ignore[invalid-function-name]
         self._handle_mouse_press(event)
         super().mousePressEvent(event)
 
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:  # ruff: ignore[invalid-function-name]
         self._handle_mouse_move(event)
         super().mouseMoveEvent(event)
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:  # ruff: ignore[invalid-function-name]
         self._handle_mouse_release(event)
         super().mouseReleaseEvent(event)

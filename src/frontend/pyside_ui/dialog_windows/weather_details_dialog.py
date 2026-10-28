@@ -106,12 +106,12 @@ class WeatherDetailsDialog(DraggableDialog):
         container_layout.addLayout(grid)
         container_layout.addStretch(1)
 
-    def changeEvent(self, event: QEvent) -> None:  # noqa: N802
+    def changeEvent(self, event: QEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.LanguageChange:
             self._ui.retranslateUi(self)  # type: ignore[no-untyped-call]
             logger.debug("dialog_language_changed")
         super().changeEvent(event)
 
-    def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
+    def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
         super().closeEvent(event)

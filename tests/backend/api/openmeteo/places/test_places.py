@@ -40,7 +40,7 @@ def test_place_is_frozen() -> None:
 
     place = PLACES["jarocin"]
     with pytest.raises(FrozenInstanceError, match="cannot assign to field"):
-        setattr(place, "latitude", 0.0)  # noqa: B010
+        setattr(place, "latitude", 0.0)  # ruff: ignore[set-attr-with-constant]
 
 
 def test_default_place_is_jarocin() -> None:

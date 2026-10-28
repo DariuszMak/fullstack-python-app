@@ -48,7 +48,7 @@ class ClockWidget(QWidget):
         self._controller.reset(self._current_datetime)
         self.update()
 
-    def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802, ARG002
+    def paintEvent(self, event: QPaintEvent) -> None:  # ruff: ignore[invalid-function-name, unused-method-argument]
         with Painter(self) as painter:
             center, radius, font_size = painter.paint_clock_face(self.rect, self.palette)
             hands_position = convert_clock_pid_to_cartesian(self._controller._clock_hands, center, radius)
