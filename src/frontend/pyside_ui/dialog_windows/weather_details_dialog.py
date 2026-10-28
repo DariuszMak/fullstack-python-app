@@ -1,11 +1,10 @@
 import asyncio
-from typing import TYPE_CHECKING
 
 import pandas as pd
 import pyqtgraph as pg
 import structlog
 from PySide6.QtCore import QEvent, QShowEvent, Qt
-from PySide6.QtGui import QCloseEvent, QPixmap
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
@@ -14,9 +13,6 @@ from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog imp
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
-
-if TYPE_CHECKING:
-    from PySide6.QtGui import QCloseEvent
 
 logger = structlog.get_logger(__name__)
 
@@ -172,4 +168,3 @@ class WeatherDetailsDialog(DraggableDialog):
     def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
         super().closeEvent(event)
-

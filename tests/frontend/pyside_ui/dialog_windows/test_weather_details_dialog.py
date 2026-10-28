@@ -7,7 +7,6 @@ import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QWidget
-from pytestqt.qtbot import QtBot
 
 from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord

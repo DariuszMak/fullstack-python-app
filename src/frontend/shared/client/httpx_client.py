@@ -100,6 +100,8 @@ class HttpxClient:
                 raise
 
         payload = response.json()
-        log.debug("weather_info_fetched", hourly_rows=len(payload.get("hourly", [])), daily_rows=len(payload.get("daily", [])))
+        log.debug(
+            "weather_info_fetched", hourly_rows=len(payload.get("hourly", [])), daily_rows=len(payload.get("daily", []))
+        )
 
         return WeatherInfoResponse.model_validate(payload)
