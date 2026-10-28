@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QApplication, QWidget
 
 from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
@@ -149,13 +149,33 @@ def test_show_event_triggers_fetch(qtbot: QtBot) -> None:
     with (
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
+        patch.object(WeatherDetailsDialog, "_fetch_weather_info") as fetch,
     ):
         widget = WeatherDetailsDialog(make_place())
         qtbot.addWidget(widget)
         widget.show()
-        qtbot.processEvents()
+        QApplication.processEvents()
 
-    assert widget._weather_info_task is not None
+    fetch.assert_called_once()
+
+
+def test_fetch_weather_info_creates_task_when_loop_running(qtbot: QtBot) -> None:
+    with (
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
+    ):
+        widget = WeatherDetailsDialog(make_place())
+        qtbot.addWidget(widget)
+
+    fake_loop = MagicMock()
+    with (
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.asyncio.get_running_loop") as get_loop,
+        patch.object(WeatherDetailsDialog, "_do_fetch_weather_info", new=MagicMock()),
+    ):
+        get_loop.return_value = fake_loop
+        widget._fetch_weather_info()
+
+    fake_loop.create_task.assert_called_once()
 
 
 def test_update_plot_displays_curves(qtbot: QtBot) -> None:
@@ -190,5 +210,9 @@ def test_update_plot_displays_curves(qtbot: QtBot) -> None:
         widget._update_plot(response)
 
     assert widget._plot_widget is not None
-    curves = widget._plot_widget.plotDataItem()
+    curves = widget._plot_widget.getPlotItem().curves
     assert len(curves) == 2
+    x_data, y_data = curves[0].getData()
+    assert x_data is not None
+    assert x_data.dtype.kind == "f"
+    assert list(y_data) == [10.0]

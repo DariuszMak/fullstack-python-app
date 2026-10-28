@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING
 
+import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 import structlog
@@ -109,8 +110,8 @@ class WeatherDetailsDialog(DraggableDialog):
 
         container_layout.addLayout(grid)
 
-        self._plot_widget = pg.PlotWidget()
-        self._plot_widget.setLabel("left", "Temperature (°C)")
+        self._plot_widget = pg.PlotWidget(axisItems={"bottom": pg.DateAxisItem(utcOffset=0)})
+        self._plot_widget.setLabel("left", "Temperature (\u00b0C)")
         self._plot_widget.setLabel("bottom", "Date")
         self._plot_widget.setTitle("Hourly Forecast")
         self._plot_widget.addLegend()
@@ -146,7 +147,7 @@ class WeatherDetailsDialog(DraggableDialog):
             )
             self._update_plot(response)
         except Exception:
-            pass
+            logger.exception("weather_info_plot_failed")
 
     def _update_plot(self, response: WeatherInfoResponse) -> None:
         if self._plot_widget is None:
@@ -156,14 +157,29 @@ class WeatherDetailsDialog(DraggableDialog):
         if not hourly:
             return
 
-        dates = [pd.Timestamp(r.date).to_pydatetime() for r in hourly]
-        temps = [r.temperature_2m for r in hourly]
-        apparent_temps = [r.apparent_temperature for r in hourly]
+        dates = np.array([self._to_epoch(r.date) for r in hourly], dtype=float)
+        temps = np.array([r.temperature_2m for r in hourly], dtype=float)
+        apparent_temps = np.array([r.apparent_temperature for r in hourly], dtype=float)
 
         self._plot_widget.clear()
         self._plot_widget.plot(dates, temps, pen="r", name="Temperature")
         self._plot_widget.plot(dates, apparent_temps, pen="b", name="Apparent Temp")
         self._plot_widget.showGrid(x=True, y=True)
+
+    def _to_epoch(self, value: object) -> float:
+        """Convert a timestamp to epoch seconds (pyqtgraph needs numbers, not datetimes).
+
+        The value is shifted to the place's local wall-clock time, so the axis
+        (DateAxisItem with utcOffset=0) shows local time of the forecast location.
+        """
+        ts = pd.Timestamp(value)
+        if ts.tzinfo is not None:
+            try:
+                ts = ts.tz_convert(self._place.timezone)
+            except Exception:  # noqa: BLE001
+                pass
+            ts = ts.tz_localize(None)
+        return float(ts.timestamp())
 
     def changeEvent(self, event: QEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.LanguageChange:
