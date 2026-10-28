@@ -7,7 +7,9 @@ import pytest
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QWidget
+from pytestqt.qtbot import QtBot
 
+from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
 from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
@@ -142,3 +144,52 @@ def test_close_event_calls_super(dialog: WeatherDetailsDialog) -> None:
         dialog.closeEvent(event)
 
     super_close.assert_called_once_with(event)
+
+
+def test_show_event_triggers_fetch(qtbot: QtBot) -> None:
+    with (
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
+    ):
+        widget = WeatherDetailsDialog(make_place())
+        qtbot.addWidget(widget)
+        widget.show()
+        qtbot.processEvents()
+
+    assert widget._weather_info_task is not None
+
+
+def test_update_plot_displays_curves(qtbot: QtBot) -> None:
+    with (
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
+    ):
+        widget = WeatherDetailsDialog(make_place())
+        qtbot.addWidget(widget)
+
+        response = WeatherInfoResponse(
+            hourly=[
+                HourlyRecord(
+                    date="2026-01-01T00:00:00+00:00",
+                    temperature_2m=10.0,
+                    cloud_cover=50.0,
+                    precipitation=0.0,
+                    apparent_temperature=8.0,
+                    soil_temperature_6cm=12.0,
+                    relative_humidity_2m=60.0,
+                    surface_pressure=1013.0,
+                    wind_speed_10m=5.0,
+                    wind_direction_10m=180.0,
+                    wind_gusts_10m=10.0,
+                    soil_moisture_0_to_1cm=0.2,
+                )
+            ],
+            daily=[],
+            hourly_rows=1,
+            daily_rows=0,
+        )
+        widget._update_plot(response)
+
+    assert widget._plot_widget is not None
+    curves = widget._plot_widget.plotDataItem()
+    assert len(curves) == 2

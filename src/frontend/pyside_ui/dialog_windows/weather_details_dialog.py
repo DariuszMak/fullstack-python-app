@@ -1,19 +1,22 @@
-from __future__ import annotations
-
+import asyncio
 from typing import TYPE_CHECKING
 
+import pandas as pd
+import pyqtgraph as pg
 import structlog
-from PySide6.QtCore import QEvent, Qt
+from PySide6.QtCore import QEvent, QShowEvent, Qt
+from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
+from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
+from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
+from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QCloseEvent
-
-    from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 logger = structlog.get_logger(__name__)
 
@@ -23,9 +26,11 @@ class WeatherDetailsDialog(DraggableDialog):
         super().__init__()
         self._place = place
         self._values: dict[str, QLabel] = {}
+        self._plot_widget: pg.PlotWidget | None = None
+        self._weather_info_task: asyncio.Task[None] | None = None
 
         self._ui = Ui_Dialog()
-        self._ui.setupUi(self)  # type: ignore[no-untyped-call]
+        self._ui.setupUi(self)
         self._build_ui(rank)
         StyleLoader.style_window(self)
 
@@ -94,17 +99,69 @@ class WeatherDetailsDialog(DraggableDialog):
 
         for row, (field, caption, text) in enumerate(rows):
             caption_label = QLabel(caption, self._container)
-
             value_label = QLabel(text, self._container)
             value_label.setWordWrap(True)
-
             grid.addWidget(caption_label, row, 0, Qt.AlignmentFlag.AlignTop)
             grid.addWidget(value_label, row, 1)
-
             self._values[field] = value_label
 
         container_layout.addLayout(grid)
+
+        self._plot_widget = pg.PlotWidget()
+        self._plot_widget.setLabel("left", "Temperature (°C)")
+        self._plot_widget.setLabel("bottom", "Date")
+        self._plot_widget.setTitle("Hourly Forecast")
+        self._plot_widget.addLegend()
+        container_layout.addWidget(self._plot_widget, 1)
+
         container_layout.addStretch(1)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        super().showEvent(event)
+        self._fetch_weather_info()
+
+    def _fetch_weather_info(self) -> None:
+        if self._weather_info_task is not None and not self._weather_info_task.done():
+            return
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return
+        self._weather_info_task = loop.create_task(self._do_fetch_weather_info())
+
+    async def _do_fetch_weather_info(self) -> None:
+        from src.frontend.shared.client.httpx_client import HttpxClient
+
+        config = Config()
+        client = HttpxClient(config.api_base_url)
+
+        try:
+            response = await client.fetch_weather_info(
+                latitude=self._place.latitude,
+                longitude=self._place.longitude,
+                timezone=self._place.timezone,
+                forecast_days=3,
+            )
+            self._update_plot(response)
+        except Exception:
+            pass
+
+    def _update_plot(self, response: WeatherInfoResponse) -> None:
+        if self._plot_widget is None:
+            return
+
+        hourly: list[HourlyRecord] = response.hourly
+        if not hourly:
+            return
+
+        dates = [pd.Timestamp(r.date).to_pydatetime() for r in hourly]
+        temps = [r.temperature_2m for r in hourly]
+        apparent_temps = [r.apparent_temperature for r in hourly]
+
+        self._plot_widget.clear()
+        self._plot_widget.plot(dates, temps, pen="r", name="Temperature")
+        self._plot_widget.plot(dates, apparent_temps, pen="b", name="Apparent Temp")
+        self._plot_widget.showGrid(x=True, y=True)
 
     def changeEvent(self, event: QEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.LanguageChange:
@@ -115,3 +172,4 @@ class WeatherDetailsDialog(DraggableDialog):
     def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
         super().closeEvent(event)
+
