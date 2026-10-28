@@ -1,18 +1,24 @@
+from __future__ import annotations
+
 import asyncio
+from typing import TYPE_CHECKING
 
 import pandas as pd
 import pyqtgraph as pg
 import structlog
-from PySide6.QtCore import QEvent, QShowEvent, Qt
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QCloseEvent, QShowEvent
+
+    from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
+    from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 logger = structlog.get_logger(__name__)
 
