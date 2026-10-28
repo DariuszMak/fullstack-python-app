@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -174,10 +175,8 @@ class WeatherDetailsDialog(DraggableDialog):
         """
         ts = pd.Timestamp(value)
         if ts.tzinfo is not None:
-            try:
+            with contextlib.suppress(Exception):
                 ts = ts.tz_convert(self._place.timezone)
-            except Exception:  # noqa: BLE001
-                pass
             ts = ts.tz_localize(None)
         return float(ts.timestamp())
 
