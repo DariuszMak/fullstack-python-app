@@ -8,24 +8,19 @@ import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 import structlog
-from PySide6.QtCore import QEvent, QTimer, Qt
-from PySide6.QtGui import QCloseEvent, QShowEvent
-
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 
 if TYPE_CHECKING:
+    from PySide6.QtGui import QCloseEvent, QShowEvent
+
     from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
     from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
-
-pg.setConfigOption('asyncIO', True)
 
 logger = structlog.get_logger(__name__)
 
@@ -116,8 +111,8 @@ class WeatherDetailsDialog(DraggableDialog):
 
         container_layout.addLayout(grid)
 
-        self._plot_widget = pg.PlotWidget(axisItems={"bottom": pg.DateAxisItem()})
-        self._plot_widget.setLabel("left", "Temperature (°C)")
+        self._plot_widget = pg.PlotWidget(axisItems={"bottom": pg.DateAxisItem(utcOffset=0)})
+        self._plot_widget.setLabel("left", "Temperature (\u00b0C)")
         self._plot_widget.setLabel("bottom", "Date")
         self._plot_widget.setTitle("Hourly Forecast")
         self._plot_widget.addLegend()
@@ -151,7 +146,7 @@ class WeatherDetailsDialog(DraggableDialog):
                 timezone=self._place.timezone,
                 forecast_days=3,
             )
-            QTimer.singleShot(0, self._update_plot, response)
+            self._update_plot(response)
         except Exception:
             logger.exception("weather_info_plot_failed")
 
@@ -173,19 +168,24 @@ class WeatherDetailsDialog(DraggableDialog):
         self._plot_widget.showGrid(x=True, y=True)
 
     def _to_epoch(self, value: object) -> float:
+        """Convert a timestamp to epoch seconds (pyqtgraph needs numbers, not datetimes).
+
+        The value is shifted to the place's local wall-clock time, so the axis
+        (DateAxisItem with utcOffset=0) shows local time of the forecast location.
+        """
         ts = pd.Timestamp(value)
         if ts.tzinfo is not None:
             with contextlib.suppress(Exception):
                 ts = ts.tz_convert(self._place.timezone)
-        ts = ts.tz_localize(None)
+            ts = ts.tz_localize(None)
         return float(ts.timestamp())
 
-    def changeEvent(self, event: QEvent) -> None:
+    def changeEvent(self, event: QEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.LanguageChange:
-            self._ui.retranslateUi(self)
+            self._ui.retranslateUi(self)  # type: ignore[no-untyped-call]
             logger.debug("dialog_language_changed")
         super().changeEvent(event)
 
-    def closeEvent(self, event: QCloseEvent) -> None:
+    def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
         super().closeEvent(event)
