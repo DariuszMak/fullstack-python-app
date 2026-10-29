@@ -15,6 +15,8 @@ from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog imp
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
+from PySide6.QtCore import QEvent, Qt, Signal, Slot
+from shiboken6 import isValid
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QCloseEvent, QShowEvent
@@ -26,17 +28,20 @@ logger = structlog.get_logger(__name__)
 
 
 class WeatherDetailsDialog(DraggableDialog):
+    weather_info_ready = Signal(object)
     def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
+
         super().__init__()
         self._place = place
         self._values: dict[str, QLabel] = {}
         self._plot_widget: pg.PlotWidget | None = None
         self._weather_info_task: asyncio.Task[None] | None = None
+        self.weather_info_ready.connect(self._update_plot, Qt.ConnectionType.QueuedConnection)
 
         self._ui = Ui_Dialog()
         self._ui.setupUi(self)
         self._build_ui(rank)
-        StyleLoader.style_window(self)
+        StyleLoader.style_window(self)  
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
@@ -133,6 +138,10 @@ class WeatherDetailsDialog(DraggableDialog):
             return
         self._weather_info_task = loop.create_task(self._do_fetch_weather_info())
 
+    def _cancel_fetch(self) -> None:
+        if self._weather_info_task is not None and not self._weather_info_task.done():
+            self._weather_info_task.cancel()
+
     async def _do_fetch_weather_info(self) -> None:
         from src.frontend.shared.client.httpx_client import HttpxClient
 
@@ -146,12 +155,18 @@ class WeatherDetailsDialog(DraggableDialog):
                 timezone=self._place.timezone,
                 forecast_days=3,
             )
-            self._update_plot(response)
+        except asyncio.CancelledError:
+            raise
         except Exception:
             logger.exception("weather_info_plot_failed")
+            return
 
+        if isValid(self):
+            self.weather_info_ready.emit(response)
+
+    @Slot(object)
     def _update_plot(self, response: WeatherInfoResponse) -> None:
-        if self._plot_widget is None:
+        if self._plot_widget is None or not isValid(self._plot_widget):
             return
 
         hourly: list[HourlyRecord] = response.hourly
@@ -188,4 +203,5 @@ class WeatherDetailsDialog(DraggableDialog):
 
     def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
+        self._cancel_fetch()
         super().closeEvent(event)
