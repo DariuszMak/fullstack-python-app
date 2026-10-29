@@ -15,6 +15,32 @@ from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import Weather
 if TYPE_CHECKING:
     from pytestqt.qtbot import QtBot
 
+SUPER_CLOSE = "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog.DraggableDialog.closeEvent"
+
+
+def make_response() -> WeatherInfoResponse:
+    return WeatherInfoResponse(
+        hourly=[
+            HourlyRecord(
+                date="2026-01-01T00:00:00+00:00",
+                temperature_2m=10.0,
+                cloud_cover=50.0,
+                precipitation=0.0,
+                apparent_temperature=8.0,
+                soil_temperature_6cm=12.0,
+                relative_humidity_2m=60.0,
+                surface_pressure=1013.0,
+                wind_speed_10m=5.0,
+                wind_direction_10m=180.0,
+                wind_gusts_10m=10.0,
+                soil_moisture_0_to_1cm=0.2,
+            )
+        ],
+        daily=[],
+        hourly_rows=1,
+        daily_rows=0,
+    )
+
 
 def make_place(
     score: float = 0.5,
@@ -216,3 +242,52 @@ def test_update_plot_displays_curves(qtbot: QtBot) -> None:
     assert x_data is not None
     assert x_data.dtype.kind == "f"
     assert list(y_data) == [10.0]
+
+
+def test_close_event_cancels_pending_fetch(dialog: WeatherDetailsDialog) -> None:
+    task = MagicMock()
+    task.done.return_value = False
+    dialog._weather_info_task = task
+
+    with patch(SUPER_CLOSE):
+        dialog.closeEvent(QCloseEvent())
+
+    task.cancel.assert_called_once()
+
+
+def test_close_event_does_not_cancel_finished_fetch(dialog: WeatherDetailsDialog) -> None:
+    task = MagicMock()
+    task.done.return_value = True
+    dialog._weather_info_task = task
+
+    with patch(SUPER_CLOSE):
+        dialog.closeEvent(QCloseEvent())
+
+    task.cancel.assert_not_called()
+
+
+def test_close_event_releases_plot_widget(dialog: WeatherDetailsDialog) -> None:
+    plot = dialog._plot_widget
+    assert plot is not None
+
+    with patch.object(plot, "deleteLater") as delete_later, patch(SUPER_CLOSE):
+        dialog.closeEvent(QCloseEvent())
+
+    delete_later.assert_called_once()
+    assert dialog._plot_widget is None
+
+
+def test_update_plot_ignored_after_plot_released(dialog: WeatherDetailsDialog) -> None:
+    dialog._plot_widget = None
+
+    dialog._update_plot(make_response())
+
+    assert dialog._plot_widget is None
+
+
+def test_weather_info_ready_signal_updates_plot(dialog: WeatherDetailsDialog) -> None:
+    dialog.weather_info_ready.emit(make_response())
+    QApplication.processEvents()
+
+    assert dialog._plot_widget is not None
+    assert len(dialog._plot_widget.getPlotItem().curves) == 2
