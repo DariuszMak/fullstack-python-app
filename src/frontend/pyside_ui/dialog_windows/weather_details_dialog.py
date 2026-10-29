@@ -49,9 +49,6 @@ class WeatherDetailsDialog(DraggableDialog):
         self._ui.btn_close.clicked.connect(self.close)
         StyleLoader.center_window(self, parent)
 
-        self.ensurePolished()
-        self.adjustSize()
-
         logger.debug("weather_details_dialog_initialized", parent=type(parent).__name__ if parent else None)
 
     @property

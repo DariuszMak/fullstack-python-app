@@ -48,3 +48,6 @@ class StyleLoader:
                 if primary_screen:
                     position = primary_screen.geometry().center() - current_window.rect().center()
                     current_window.move(position.x(), position.y())
+
+        current_window.ensurePolished()
+        current_window.adjustSize()
