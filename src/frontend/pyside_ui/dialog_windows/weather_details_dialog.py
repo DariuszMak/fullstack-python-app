@@ -125,7 +125,7 @@ class WeatherDetailsDialog(DraggableDialog):
 
         container_layout.addStretch(1)
 
-    def showEvent(self, event: QShowEvent) -> None:
+    def showEvent(self, event: QShowEvent) -> None:  # ruff: ignore[invalid-function-name]
         super().showEvent(event)
         self._fetch_weather_info()
 
