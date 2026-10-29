@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 import pandas as pd
@@ -183,7 +183,7 @@ class WeatherDetailsDialog(DraggableDialog):
         self._plot_widget.showGrid(x=True, y=True)
 
     def _to_epoch(self, value: object) -> float:
-        ts = pd.Timestamp(value)
+        ts = pd.Timestamp(cast("Any", value))
         if ts.tzinfo is not None:
             with contextlib.suppress(Exception):
                 ts = ts.tz_convert(self._place.timezone)
