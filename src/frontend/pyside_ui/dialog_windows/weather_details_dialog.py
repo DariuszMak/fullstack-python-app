@@ -8,15 +8,14 @@ import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 import structlog
-from PySide6.QtCore import QEvent, Qt
+from PySide6.QtCore import QEvent, Qt, Signal, Slot
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from shiboken6 import isValid
 
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
-from PySide6.QtCore import QEvent, Qt, Signal, Slot
-from shiboken6 import isValid
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QCloseEvent, QShowEvent
@@ -29,6 +28,7 @@ logger = structlog.get_logger(__name__)
 
 class WeatherDetailsDialog(DraggableDialog):
     weather_info_ready = Signal(object)
+
     def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
 
         super().__init__()
@@ -41,7 +41,7 @@ class WeatherDetailsDialog(DraggableDialog):
         self._ui = Ui_Dialog()
         self._ui.setupUi(self)
         self._build_ui(rank)
-        StyleLoader.style_window(self)  
+        StyleLoader.style_window(self)
 
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
@@ -204,4 +204,8 @@ class WeatherDetailsDialog(DraggableDialog):
     def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
         self._cancel_fetch()
+        if self._plot_widget is not None:
+            self._plot_widget.close()
+            self._plot_widget.deleteLater()
+            self._plot_widget = None
         super().closeEvent(event)
