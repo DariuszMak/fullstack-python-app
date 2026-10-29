@@ -39,7 +39,7 @@ class WeatherDetailsDialog(DraggableDialog):
         self.weather_info_ready.connect(self._update_plot, Qt.ConnectionType.QueuedConnection)
 
         self._ui = Ui_Dialog()
-        self._ui.setupUi(self)
+        self._ui.setupUi(self)  # type: ignore[no-untyped-call]
         self._build_ui(rank)
         StyleLoader.style_window(self)
 
@@ -183,11 +183,6 @@ class WeatherDetailsDialog(DraggableDialog):
         self._plot_widget.showGrid(x=True, y=True)
 
     def _to_epoch(self, value: object) -> float:
-        """Convert a timestamp to epoch seconds (pyqtgraph needs numbers, not datetimes).
-
-        The value is shifted to the place's local wall-clock time, so the axis
-        (DateAxisItem with utcOffset=0) shows local time of the forecast location.
-        """
         ts = pd.Timestamp(value)
         if ts.tzinfo is not None:
             with contextlib.suppress(Exception):
