@@ -14,6 +14,7 @@ from shiboken6 import isValid
 
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
+from src.frontend.shared.client.httpx_client import HttpxClient
 from src.helpers.config.config import Config
 from src.helpers.style_loader import StyleLoader
 
@@ -140,7 +141,6 @@ class WeatherDetailsDialog(DraggableDialog):
             self._weather_info_task.cancel()
 
     async def _do_fetch_weather_info(self) -> None:
-        from src.frontend.shared.client.httpx_client import HttpxClient
 
         config = Config()
         client = HttpxClient(config.api_base_url)
