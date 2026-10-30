@@ -119,7 +119,17 @@ class WeatherDetailsDialog(DraggableDialog):
         self._plot_widget.setLabel("bottom", "Date")
         self._plot_widget.setTitle("Hourly Forecast")
         self._plot_widget.addLegend()
+        self._disable_plot_menus(self._plot_widget)
         container_layout.addWidget(self._plot_widget, 1)
+
+    @staticmethod
+    def _disable_plot_menus(plot: pg.PlotWidget) -> None:
+        plot_item = plot.getPlotItem()
+        plot_item.setMenuEnabled(False, False)
+        plot_item.vb.setMenuEnabled(False)
+        scene = plot.scene()
+        if scene is not None:
+            scene.contextMenu = []
 
     def showEvent(self, event: QShowEvent) -> None:  # ruff: ignore[invalid-function-name]
         super().showEvent(event)
@@ -185,6 +195,24 @@ class WeatherDetailsDialog(DraggableDialog):
             ts = ts.tz_localize(None)
         return float(ts.timestamp())
 
+    def _release_plot(self) -> None:
+        plot = self._plot_widget
+        if plot is None:
+            return
+        self._plot_widget = None
+
+        with contextlib.suppress(Exception):
+            scene = plot.scene()
+            export_dialog = getattr(scene, "exportDialog", None)
+            if export_dialog is not None and isValid(export_dialog):
+                export_dialog.close()
+                export_dialog.deleteLater()
+            if scene is not None:
+                scene.exportDialog = None
+
+        plot.close()
+        plot.deleteLater()
+
     def changeEvent(self, event: QEvent) -> None:  # ruff: ignore[invalid-function-name]
         if event.type() == QEvent.Type.LanguageChange:
             self._ui.retranslateUi(self)  # type: ignore[no-untyped-call]
@@ -194,8 +222,5 @@ class WeatherDetailsDialog(DraggableDialog):
     def closeEvent(self, event: QCloseEvent) -> None:  # ruff: ignore[invalid-function-name]
         logger.info("weather_details_dialog_closed", place=self._place.key)
         self._cancel_fetch()
-        if self._plot_widget is not None:
-            self._plot_widget.close()
-            self._plot_widget.deleteLater()
-            self._plot_widget = None
+        self._release_plot()
         super().closeEvent(event)

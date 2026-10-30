@@ -291,3 +291,52 @@ def test_weather_info_ready_signal_updates_plot(dialog: WeatherDetailsDialog) ->
 
     assert dialog._plot_widget is not None
     assert len(dialog._plot_widget.getPlotItem().curves) == 2
+
+
+def test_plot_context_menus_are_disabled(dialog: WeatherDetailsDialog) -> None:
+    assert dialog._plot_widget is not None
+    plot_item = dialog._plot_widget.getPlotItem()
+
+    assert plot_item.vb.menuEnabled() is False
+    assert plot_item.vb.menu is None or plot_item.vb.menuEnabled() is False
+
+
+def test_plot_scene_has_no_export_action(dialog: WeatherDetailsDialog) -> None:
+    assert dialog._plot_widget is not None
+    scene = dialog._plot_widget.scene()
+
+    assert scene is not None
+    assert list(scene.contextMenu) == []
+
+
+def test_close_event_closes_existing_export_dialog(dialog: WeatherDetailsDialog) -> None:
+    assert dialog._plot_widget is not None
+    scene = dialog._plot_widget.scene()
+    export_dialog = QWidget()
+    export_dialog.show()
+    scene.exportDialog = export_dialog
+    assert export_dialog.isVisible() is True
+
+    with patch(SUPER_CLOSE):
+        dialog.closeEvent(QCloseEvent())
+
+    assert export_dialog.isVisible() is False
+    assert scene.exportDialog is None
+
+
+def test_close_event_without_export_dialog_does_not_fail(dialog: WeatherDetailsDialog) -> None:
+    assert dialog._plot_widget is not None
+    assert getattr(dialog._plot_widget.scene(), "exportDialog", None) is None
+
+    with patch(SUPER_CLOSE):
+        dialog.closeEvent(QCloseEvent())
+
+    assert dialog._plot_widget is None
+
+
+def test_release_plot_is_idempotent(dialog: WeatherDetailsDialog) -> None:
+    with patch(SUPER_CLOSE):
+        dialog.closeEvent(QCloseEvent())
+        dialog.closeEvent(QCloseEvent())
+
+    assert dialog._plot_widget is None
