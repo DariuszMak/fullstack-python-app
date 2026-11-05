@@ -16,11 +16,20 @@ if TYPE_CHECKING:
 
 
 class WeatherScoreCard(QFrame):
-    def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        place: PlaceBestScoreRecord,
+        rank: int | None = None,
+        parent: QWidget | None = None,
+        forecast_days: int = 3,
+        start_day: int = 0,
+    ) -> None:
         super().__init__(parent)
 
         self._place = place
         self._rank = rank
+        self._forecast_days = forecast_days
+        self._start_day = start_day
 
         self._ui = Ui_Form()
         self._ui.setupUi(self)  # type: ignore[no-untyped-call]
@@ -90,7 +99,13 @@ class WeatherScoreCard(QFrame):
         )
 
     def show_details_dialog(self) -> None:
-        dialog = WeatherDetailsDialog(place=self._place, rank=self._rank, parent=self.window())
+        dialog = WeatherDetailsDialog(
+            place=self._place,
+            rank=self._rank,
+            parent=self.window(),
+            forecast_days=self._forecast_days,
+            start_day=self._start_day,
+        )
         dialog.exec()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # ruff: ignore[invalid-function-name]

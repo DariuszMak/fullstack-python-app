@@ -57,7 +57,7 @@ def test_left_click_opens_details_dialog(qtbot: QtBot) -> None:
     with patch(DIALOG_PATH) as dialog_cls:
         qtbot.mouseClick(card, Qt.MouseButton.LeftButton)  # type: ignore[no-untyped-call]
 
-    dialog_cls.assert_called_once_with(place=place, rank=2, parent=card.window())
+    dialog_cls.assert_called_once_with(place=place, rank=2, parent=card.window(), forecast_days=3, start_day=0)
     dialog_cls.return_value.exec.assert_called_once_with()
 
 
@@ -70,7 +70,7 @@ def test_left_click_without_rank_passes_none(qtbot: QtBot) -> None:
     with patch(DIALOG_PATH) as dialog_cls:
         qtbot.mouseClick(card, Qt.MouseButton.LeftButton)  # type: ignore[no-untyped-call]
 
-    dialog_cls.assert_called_once_with(place=place, rank=None, parent=card.window())
+    dialog_cls.assert_called_once_with(place=place, rank=None, parent=card.window(), forecast_days=3, start_day=0)
 
 
 def test_right_click_does_not_open_details_dialog(qtbot: QtBot) -> None:
@@ -116,7 +116,7 @@ def test_show_details_dialog_executes_dialog(qtbot: QtBot) -> None:
     with patch(DIALOG_PATH) as dialog_cls:
         card.show_details_dialog()
 
-    dialog_cls.assert_called_once_with(place=place, rank=1, parent=card.window())
+    dialog_cls.assert_called_once_with(place=place, rank=1, parent=card.window(), forecast_days=3, start_day=0)
     dialog_cls.return_value.exec.assert_called_once_with()
 
 
@@ -198,3 +198,39 @@ def test_color_for_score_thresholds() -> None:
     assert WeatherScoreCard._color_for_score(0.9) == "rgb(46, 204, 113)"
     assert WeatherScoreCard._color_for_score(0.5) == "rgb(241, 196, 15)"
     assert WeatherScoreCard._color_for_score(0.1) == "rgb(231, 76, 60)"
+
+
+def test_card_stores_forecast_days_and_start_day(qtbot: QtBot) -> None:
+    place = make_place()
+    card = WeatherScoreCard(place, forecast_days=7, start_day=2)
+    qtbot.addWidget(card)
+
+    assert card._forecast_days == 7
+    assert card._start_day == 2
+
+
+def test_card_defaults_forecast_days_and_start_day(qtbot: QtBot) -> None:
+    place = make_place()
+    card = WeatherScoreCard(place)
+    qtbot.addWidget(card)
+
+    assert card._forecast_days == 3
+    assert card._start_day == 0
+
+
+def test_show_details_dialog_passes_forecast_days_and_start_day(qtbot: QtBot) -> None:
+    place = make_place()
+    card = WeatherScoreCard(place, forecast_days=7, start_day=2)
+    qtbot.addWidget(card)
+
+    with patch(DIALOG_PATH) as dialog_cls:
+        card.show_details_dialog()
+
+    dialog_cls.assert_called_once_with(
+        place=place,
+        rank=None,
+        parent=card.window(),
+        forecast_days=7,
+        start_day=2,
+    )
+    dialog_cls.return_value.exec.assert_called_once_with()

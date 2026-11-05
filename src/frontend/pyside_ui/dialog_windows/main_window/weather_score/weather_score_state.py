@@ -18,3 +18,4 @@ class WeatherScoreState:
     max_threshold: float = 0.0
     penalize_rain: bool = False
     start_day: int = 0
+    forecast_days: int = 3

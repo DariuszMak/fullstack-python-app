@@ -57,6 +57,7 @@ def info_weather(params: WeatherQueryParams) -> WeatherInfoResponse:
         longitude=params.longitude,
         timezone=params.timezone,
         forecast_days=params.forecast_days,
+        start_day=params.start_day,
         include_hourly=True,
         include_daily=True,
     )

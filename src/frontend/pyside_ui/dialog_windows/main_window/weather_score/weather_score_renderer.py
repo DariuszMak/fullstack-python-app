@@ -32,7 +32,12 @@ class WeatherScoreRenderer:
 
         card_data: WeatherScoreCardData
         for card_data in state.cards:
-            card: WeatherScoreCard = WeatherScoreCard(place=card_data.place, rank=card_data.rank)
+            card: WeatherScoreCard = WeatherScoreCard(
+                place=card_data.place,
+                rank=card_data.rank,
+                forecast_days=state.forecast_days,
+                start_day=state.start_day,
+            )
             self._layout.addWidget(card)
 
         self._layout.addStretch(1)

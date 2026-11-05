@@ -76,3 +76,46 @@ async def test_fetch_weather_score_raises_on_http_error() -> None:
 
         with pytest.raises(httpx.HTTPStatusError):
             await client.fetch_weather_score()
+
+
+@pytest.mark.asyncio
+async def test_fetch_weather_info_sends_start_day() -> None:
+    payload = {
+        "hourly": [],
+        "daily": [],
+        "hourly_rows": 0,
+        "daily_rows": 0,
+    }
+
+    mock_response = MagicMock()
+    mock_response.json.return_value = payload
+    mock_response.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.post = AsyncMock(return_value=mock_response)
+
+    with patch("src.frontend.shared.client.httpx_client.httpx.AsyncClient") as mock_client_cls:
+        mock_instance = MagicMock()
+        mock_instance.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_instance.__aexit__ = AsyncMock(return_value=None)
+        mock_client_cls.return_value = mock_instance
+
+        client = HttpxClient("http://example.com")
+        await client.fetch_weather_info(
+            latitude=51.1,
+            longitude=17.0,
+            timezone="Europe/Warsaw",
+            forecast_days=7,
+            start_day=3,
+        )
+
+    mock_client.post.assert_called_once_with(
+        "http://example.com/api/v1/forecast/info",
+        json={
+            "latitude": 51.1,
+            "longitude": 17.0,
+            "timezone": "Europe/Warsaw",
+            "forecast_days": 7,
+            "start_day": 3,
+        },
+    )

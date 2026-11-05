@@ -34,10 +34,12 @@ def make_place(key: str, score: float, percentage: float = 1.0) -> PlaceBestScor
 
 def make_cards_state() -> WeatherScoreState:
     return WeatherScoreState(
+        forecast_days=3,
+        start_day=1,
         cards=(
             WeatherScoreCardData(rank=1, place=make_place("krakow", 0.8, 1.0)),
             WeatherScoreCardData(rank=2, place=make_place("wroclaw", 0.5, 0.0)),
-        )
+        ),
     )
 
 
@@ -229,3 +231,22 @@ def test_render_on_empty_layout_does_not_fail(qtbot: QtBot) -> None:
     renderer.render(WeatherScoreState())
 
     assert layout.count() == 2
+
+
+def test_render_cards_receive_forecast_days_and_start_day(qtbot: QtBot) -> None:
+    renderer, layout = make_renderer(qtbot)
+
+    state = WeatherScoreState(
+        forecast_days=7,
+        start_day=2,
+        cards=(
+            WeatherScoreCardData(rank=1, place=make_place("test", 0.5)),
+        ),
+    )
+
+    renderer.render(state)
+
+    cards = cards_in(layout)
+    assert len(cards) == 1
+    assert cards[0]._forecast_days == 7
+    assert cards[0]._start_day == 2

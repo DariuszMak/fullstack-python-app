@@ -80,6 +80,7 @@ class HttpxClient:
         longitude: float,
         timezone: str,
         forecast_days: int,
+        start_day: int = 0,
     ) -> WeatherInfoResponse:
         url = f"{self._base_url}/api/v1/forecast/info"
         log = logger.bind(url=url)
@@ -89,6 +90,7 @@ class HttpxClient:
             "longitude": longitude,
             "timezone": timezone,
             "forecast_days": forecast_days,
+            "start_day": start_day,
         }
 
         async with httpx.AsyncClient(timeout=self.timeout) as client:

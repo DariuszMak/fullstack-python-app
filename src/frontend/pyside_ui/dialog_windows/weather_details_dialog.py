@@ -30,10 +30,19 @@ logger = structlog.get_logger(__name__)
 class WeatherDetailsDialog(DraggableDialog):
     weather_info_ready = Signal(object)
 
-    def __init__(self, place: PlaceBestScoreRecord, rank: int | None = None, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        place: PlaceBestScoreRecord,
+        rank: int | None = None,
+        parent: QWidget | None = None,
+        forecast_days: int = 3,
+        start_day: int = 0,
+    ) -> None:
 
         super().__init__()
         self._place = place
+        self._forecast_days = forecast_days
+        self._start_day = start_day
         self._values: dict[str, QLabel] = {}
         self._plot_widget: pg.PlotWidget | None = None
         self._weather_info_task: asyncio.Task[None] | None = None
@@ -50,7 +59,12 @@ class WeatherDetailsDialog(DraggableDialog):
         self._ui.btn_close.clicked.connect(self.close)
         StyleLoader.center_window(self, parent)
 
-        logger.debug("weather_details_dialog_initialized", parent=type(parent).__name__ if parent else None)
+        logger.debug(
+            "weather_details_dialog_initialized",
+            parent=type(parent).__name__ if parent else None,
+            forecast_days=self._forecast_days,
+            start_day=self._start_day,
+        )
 
     @property
     def place(self) -> PlaceBestScoreRecord:
@@ -158,7 +172,8 @@ class WeatherDetailsDialog(DraggableDialog):
                 latitude=self._place.latitude,
                 longitude=self._place.longitude,
                 timezone=self._place.timezone,
-                forecast_days=3,
+                forecast_days=self._forecast_days,
+                start_day=self._start_day,
             )
         except asyncio.CancelledError:
             raise
@@ -181,10 +196,12 @@ class WeatherDetailsDialog(DraggableDialog):
         dates = np.array([self._to_epoch(r.date) for r in hourly], dtype=float)
         temps = np.array([r.temperature_2m for r in hourly], dtype=float)
         apparent_temps = np.array([r.apparent_temperature for r in hourly], dtype=float)
+        precip = np.array([r.precipitation for r in hourly], dtype=float)
 
         self._plot_widget.clear()
         self._plot_widget.plot(dates, temps, pen="r", name="Temperature")
         self._plot_widget.plot(dates, apparent_temps, pen="b", name="Apparent Temp")
+        self._plot_widget.plot(dates, precip, pen="g", name="Precipitation")
         self._plot_widget.showGrid(x=True, y=True)
 
     def _to_epoch(self, value: object) -> float:

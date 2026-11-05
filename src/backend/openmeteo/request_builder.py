@@ -36,6 +36,7 @@ def build_request_parameters(
     longitude: float = LONGITUDE,
     timezone: str = TIMEZONE,
     forecast_days: int = MAX_FORECAST_DAYS,
+    start_day: int = 0,
     include_hourly: bool = True,
     include_daily: bool = True,
 ) -> dict[str, object]:
@@ -46,9 +47,19 @@ def build_request_parameters(
         "forecast_days": forecast_days,
     }
 
+    if start_day > 0:
+        params["start_date"] = _future_date(start_day)
+
     if include_daily:
         params["daily"] = DAILY_VARIABLES
     if include_hourly:
         params["hourly"] = HOURLY_VARIABLES
 
     return params
+
+
+def _future_date(days_offset: int) -> str:
+    import datetime
+
+    target = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=days_offset - 1)
+    return target.strftime("%Y-%m-%d")

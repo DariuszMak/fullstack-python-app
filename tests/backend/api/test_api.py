@@ -362,6 +362,36 @@ def test_weather_info_passes_params_to_build_request_parameters(mock_build: Magi
 
 @patch("src.backend.api.routes.gather_data")
 @patch("src.backend.api.routes.build_request_parameters")
+def test_weather_info_passes_start_day_to_build_request_parameters(
+    mock_build: MagicMock, mock_gather: MagicMock
+) -> None:
+    params = WeatherQueryParams(
+        latitude=54.352,
+        longitude=18.649,
+        timezone="Europe/Warsaw",
+        forecast_days=7,
+        start_day=3,
+    )
+
+    mock_build.return_value = {}
+    mock_gather.return_value = (_make_hourly_df(), _make_daily_df())
+
+    with TestClient(app) as client:
+        client.post("/api/v1/forecast/info", json=params.model_dump())
+
+    mock_build.assert_called_once_with(
+        latitude=54.352,
+        longitude=18.649,
+        timezone="Europe/Warsaw",
+        forecast_days=7,
+        start_day=3,
+        include_hourly=True,
+        include_daily=True,
+    )
+
+
+@patch("src.backend.api.routes.gather_data")
+@patch("src.backend.api.routes.build_request_parameters")
 def test_weather_info_passes_built_parameters_to_gather_data(mock_build: MagicMock, mock_gather: MagicMock) -> None:
     sentinel_params = {"sentinel": True}
     mock_build.return_value = sentinel_params

@@ -64,7 +64,9 @@ def dialog(qtbot: QtBot) -> WeatherDetailsDialog:
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
         patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
     ):
-        widget = WeatherDetailsDialog(make_place(score=0.42, percentage_score=0.8), rank=2)
+        widget = WeatherDetailsDialog(
+            make_place(score=0.42, percentage_score=0.8), rank=2, forecast_days=3, start_day=1
+        )
 
     qtbot.addWidget(widget)
     return widget
@@ -85,7 +87,7 @@ def test_init_with_parent_calls_style_loader(qtbot: QtBot) -> None:
             "src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"
         ) as center_window,
     ):
-        widget = WeatherDetailsDialog(make_place(), parent=parent)
+        widget = WeatherDetailsDialog(make_place(), parent=parent, forecast_days=3, start_day=1)
         qtbot.addWidget(widget)
 
     style_window.assert_called_once_with(widget)
@@ -237,11 +239,50 @@ def test_update_plot_displays_curves(qtbot: QtBot) -> None:
 
     assert widget._plot_widget is not None
     curves = widget._plot_widget.getPlotItem().curves
-    assert len(curves) == 2
+    assert len(curves) == 3
     x_data, y_data = curves[0].getData()
     assert x_data is not None
     assert x_data.dtype.kind == "f"
     assert list(y_data) == [10.0]
+
+
+def test_precipitation_curve_is_added(qtbot: QtBot) -> None:
+    with (
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.style_window"),
+        patch("src.frontend.pyside_ui.dialog_windows.weather_details_dialog.StyleLoader.center_window"),
+    ):
+        widget = WeatherDetailsDialog(make_place())
+        qtbot.addWidget(widget)
+
+        response = WeatherInfoResponse(
+            hourly=[
+                HourlyRecord(
+                    date="2026-01-01T00:00:00+00:00",
+                    temperature_2m=10.0,
+                    cloud_cover=50.0,
+                    precipitation=5.2,
+                    apparent_temperature=8.0,
+                    soil_temperature_6cm=12.0,
+                    relative_humidity_2m=60.0,
+                    surface_pressure=1013.0,
+                    wind_speed_10m=5.0,
+                    wind_direction_10m=180.0,
+                    wind_gusts_10m=10.0,
+                    soil_moisture_0_to_1cm=0.2,
+                )
+            ],
+            daily=[],
+            hourly_rows=1,
+            daily_rows=0,
+        )
+        widget._update_plot(response)
+
+    assert widget._plot_widget is not None
+    curves = widget._plot_widget.getPlotItem().curves
+    assert len(curves) == 3
+    x_data, y_data = curves[2].getData()
+    assert x_data is not None
+    assert list(y_data) == [5.2]
 
 
 def test_close_event_cancels_pending_fetch(dialog: WeatherDetailsDialog) -> None:
@@ -290,7 +331,7 @@ def test_weather_info_ready_signal_updates_plot(dialog: WeatherDetailsDialog) ->
     QApplication.processEvents()
 
     assert dialog._plot_widget is not None
-    assert len(dialog._plot_widget.getPlotItem().curves) == 2
+    assert len(dialog._plot_widget.getPlotItem().curves) == 3
 
 
 def test_plot_context_menus_are_disabled(dialog: WeatherDetailsDialog) -> None:
