@@ -239,9 +239,7 @@ def test_render_cards_receive_forecast_days_and_start_day(qtbot: QtBot) -> None:
     state = WeatherScoreState(
         forecast_days=7,
         start_day=2,
-        cards=(
-            WeatherScoreCardData(rank=1, place=make_place("test", 0.5)),
-        ),
+        cards=(WeatherScoreCardData(rank=1, place=make_place("test", 0.5)),),
     )
 
     renderer.render(state)

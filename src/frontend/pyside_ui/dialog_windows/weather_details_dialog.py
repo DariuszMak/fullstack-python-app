@@ -158,7 +158,7 @@ class WeatherDetailsDialog(DraggableDialog):
         scene.addItem(view)
 
         right_axis = plot_item.getAxis("right")
-        right_axis.setLabel("Precipitation (mm)", color="#%02x%02x%02x" % PRECIPITATION_COLOR)
+        right_axis.setLabel("Precipitation (mm)", color="#{:02x}{:02x}{:02x}".format(*PRECIPITATION_COLOR))
         right_axis.linkToView(view)
 
         view.setXLink(plot_item.vb)
