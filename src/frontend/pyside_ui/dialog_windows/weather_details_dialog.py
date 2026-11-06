@@ -227,7 +227,7 @@ class WeatherDetailsDialog(DraggableDialog):
         if self._plot_widget is None or not isValid(self._plot_widget):
             return
 
-        hourly: list[HourlyRecord] = response.hourly
+        hourly: list[HourlyRecord] = response.hourly[self._start_day : self._forecast_days]
         if not hourly:
             return
 

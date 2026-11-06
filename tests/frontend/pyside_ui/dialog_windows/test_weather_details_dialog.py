@@ -42,7 +42,7 @@ def make_record(date: str = "2026-01-01T00:00:00+00:00", precipitation: float = 
 
 
 def make_response(*records: HourlyRecord) -> WeatherInfoResponse:
-    hourly = list(records) if records else [make_record()]
+    hourly: list[HourlyRecord] = list(records) if records else [make_record()]
     return WeatherInfoResponse(hourly=hourly, daily=[], hourly_rows=len(hourly), daily_rows=0)
 
 
@@ -390,7 +390,8 @@ def test_update_plot_replaces_previous_bars(qtbot: QtBot) -> None:
 def test_update_plot_fits_x_range_to_data(qtbot: QtBot) -> None:
     widget = build_dialog(qtbot)
     stamps = pd.date_range("2026-01-01T00:00:00+00:00", "2026-01-03T00:00:00+00:00", freq="h")
-    records = [make_record(ts.isoformat()) for ts in stamps]
+    all_records = [make_record(ts.isoformat()) for ts in stamps]
+    records = all_records[: widget._forecast_days]
 
     widget._update_plot(make_response(*records))
 
@@ -461,15 +462,15 @@ def test_update_plot_with_empty_hourly_keeps_plot_untouched(qtbot: QtBot) -> Non
 
 
 def test_bar_step_defaults_to_one_hour_for_single_point() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([100.0])) == 3600.0
+    assert WeatherDetailsDialog._bar_step(np.array([100.0])) == pytest.approx(3600.0)
 
 
 def test_bar_step_uses_median_spacing() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([0.0, 7200.0, 14400.0])) == 7200.0
+    assert WeatherDetailsDialog._bar_step(np.array([0.0, 7200.0, 14400.0])) == pytest.approx(7200.0)
 
 
 def test_bar_step_falls_back_when_spacing_is_zero() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([5.0, 5.0, 5.0])) == 3600.0
+    assert WeatherDetailsDialog._bar_step(np.array([5.0, 5.0, 5.0])) == pytest.approx(3600.0)
 
 
 def test_sync_precipitation_view_is_noop_without_plot(dialog: WeatherDetailsDialog) -> None:
@@ -512,7 +513,13 @@ def test_close_event_releases_plot_widget(dialog: WeatherDetailsDialog) -> None:
 
 
 def test_close_event_releases_precipitation_references(dialog: WeatherDetailsDialog) -> None:
-    dialog._update_plot(make_response(make_record(precipitation=1.0)))
+    dialog._update_plot(
+        make_response(
+            make_record(precipitation=1.0),
+            make_record(precipitation=2.0),
+            make_record(precipitation=3.0),
+        )
+    )
     assert dialog._precip_view is not None
     assert dialog._precipitation_bars is not None
 
@@ -532,7 +539,13 @@ def test_update_plot_ignored_after_plot_released(dialog: WeatherDetailsDialog) -
 
 
 def test_weather_info_ready_signal_updates_plot(dialog: WeatherDetailsDialog) -> None:
-    dialog.weather_info_ready.emit(make_response())
+    dialog.weather_info_ready.emit(
+        make_response(
+            make_record(),
+            make_record(),
+            make_record(),
+        )
+    )
     QApplication.processEvents()
 
     assert dialog._plot_widget is not None
