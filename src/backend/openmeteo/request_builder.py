@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+from datetime import UTC, date, datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from src.backend.openmeteo.places.places import LATITUDE, LONGITUDE, TIMEZONE
 
 MAX_FORECAST_DAYS: int = 16
@@ -39,16 +44,20 @@ def build_request_parameters(
     start_day: int = 0,
     include_hourly: bool = True,
     include_daily: bool = True,
+    today: date | None = None,
 ) -> dict[str, object]:
     params: dict[str, object] = {
         "latitude": latitude,
         "longitude": longitude,
         "timezone": timezone,
-        "forecast_days": forecast_days,
     }
 
     if start_day > 0:
-        params["start_date"] = _future_date(start_day)
+        start_date, end_date = _date_window(start_day, forecast_days, timezone, today)
+        params["start_date"] = start_date.isoformat()
+        params["end_date"] = end_date.isoformat()
+    else:
+        params["forecast_days"] = forecast_days
 
     if include_daily:
         params["daily"] = DAILY_VARIABLES
@@ -58,8 +67,22 @@ def build_request_parameters(
     return params
 
 
-def _future_date(days_offset: int) -> str:
-    import datetime
+def _date_window(
+    start_day: int,
+    forecast_days: int,
+    timezone: str,
+    today: date | None,
+) -> tuple[date, date]:
+    base = today if today is not None else _today_in(timezone)
+    last_allowed = base + timedelta(days=MAX_FORECAST_DAYS - 1)
+    start = min(base + timedelta(days=start_day), last_allowed)
+    end = min(start + timedelta(days=max(forecast_days, 1) - 1), last_allowed)
+    return start, end
 
-    target = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=days_offset - 1)
-    return target.strftime("%Y-%m-%d")
+
+def _today_in(timezone: str) -> date:
+    try:
+        tz = ZoneInfo(timezone)
+    except (ZoneInfoNotFoundError, ValueError, OSError):
+        tz = UTC
+    return datetime.now(tz).date()

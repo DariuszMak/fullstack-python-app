@@ -26,6 +26,13 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger(__name__)
 
+HOUR_SECONDS: float = 3600.0
+BAR_WIDTH_RATIO: float = 0.8
+PRECIPITATION_COLOR: tuple[int, int, int] = (46, 204, 113)
+PRECIPITATION_BAR_ALPHA: int = 170
+PRECIPITATION_HEADROOM: float = 1.2
+MIN_PRECIPITATION_AXIS_MAX: float = 1.0
+
 
 class WeatherDetailsDialog(DraggableDialog):
     weather_info_ready = Signal(object)
@@ -45,6 +52,8 @@ class WeatherDetailsDialog(DraggableDialog):
         self._start_day = start_day
         self._values: dict[str, QLabel] = {}
         self._plot_widget: pg.PlotWidget | None = None
+        self._precip_view: pg.ViewBox | None = None
+        self._precipitation_bars: pg.BarGraphItem | None = None
         self._weather_info_task: asyncio.Task[None] | None = None
         self.weather_info_ready.connect(self._update_plot, Qt.ConnectionType.QueuedConnection)
 
@@ -134,7 +143,36 @@ class WeatherDetailsDialog(DraggableDialog):
         self._plot_widget.setTitle("Hourly Forecast")
         self._plot_widget.addLegend()
         self._disable_plot_menus(self._plot_widget)
+        self._precip_view = self._create_precipitation_view(self._plot_widget)
         container_layout.addWidget(self._plot_widget, 1)
+
+    def _create_precipitation_view(self, plot: pg.PlotWidget) -> pg.ViewBox | None:
+        plot_item = plot.getPlotItem()
+        scene = plot_item.scene()
+        if scene is None:
+            return None
+
+        plot_item.showAxis("right")
+        view = pg.ViewBox()
+        view.setMouseEnabled(x=False, y=False)
+        scene.addItem(view)
+
+        right_axis = plot_item.getAxis("right")
+        right_axis.setLabel("Precipitation (mm)", color="#%02x%02x%02x" % PRECIPITATION_COLOR)
+        right_axis.linkToView(view)
+
+        view.setXLink(plot_item.vb)
+        plot_item.vb.sigResized.connect(self._sync_precipitation_view)
+        return view
+
+    def _sync_precipitation_view(self) -> None:
+        plot = self._plot_widget
+        view = self._precip_view
+        if plot is None or view is None or not isValid(plot):
+            return
+        main_view = plot.getPlotItem().vb
+        view.setGeometry(main_view.sceneBoundingRect())
+        view.linkedViewChanged(main_view, view.XAxis)
 
     @staticmethod
     def _disable_plot_menus(plot: pg.PlotWidget) -> None:
@@ -196,13 +234,62 @@ class WeatherDetailsDialog(DraggableDialog):
         dates = np.array([self._to_epoch(r.date) for r in hourly], dtype=float)
         temps = np.array([r.temperature_2m for r in hourly], dtype=float)
         apparent_temps = np.array([r.apparent_temperature for r in hourly], dtype=float)
-        precip = np.array([r.precipitation for r in hourly], dtype=float)
+        precipitation = np.nan_to_num(np.array([r.precipitation for r in hourly], dtype=float), nan=0.0)
 
         self._plot_widget.clear()
         self._plot_widget.plot(dates, temps, pen="r", name="Temperature")
         self._plot_widget.plot(dates, apparent_temps, pen="b", name="Apparent Temp")
-        self._plot_widget.plot(dates, precip, pen="g", name="Precipitation")
         self._plot_widget.showGrid(x=True, y=True)
+
+        self._update_precipitation(dates, precipitation)
+        self._fit_time_range(dates)
+
+    def _update_precipitation(self, dates: np.ndarray, precipitation: np.ndarray) -> None:
+        view = self._precip_view
+        if view is None:
+            return
+
+        for item in list(view.addedItems):
+            view.removeItem(item)
+
+        r, g, b = PRECIPITATION_COLOR
+        bars = pg.BarGraphItem(
+            x=dates,
+            height=precipitation,
+            width=self._bar_step(dates) * BAR_WIDTH_RATIO,
+            brush=pg.mkBrush(r, g, b, PRECIPITATION_BAR_ALPHA),
+        )
+        view.addItem(bars)
+        self._precipitation_bars = bars
+
+        top = max(float(precipitation.max()) * PRECIPITATION_HEADROOM, MIN_PRECIPITATION_AXIS_MAX)
+        view.setYRange(0.0, top, padding=0)
+        self._sync_precipitation_view()
+
+    def _fit_time_range(self, dates: np.ndarray) -> None:
+        if self._plot_widget is None:
+            return
+
+        half_step = self._bar_step(dates) / 2
+        x_min = float(dates.min()) - half_step
+        x_max = float(dates.max()) + half_step
+
+        plot_item = self._plot_widget.getPlotItem()
+        plot_item.setLimits(xMin=x_min, xMax=x_max)
+        plot_item.setXRange(x_min, x_max, padding=0)
+        plot_item.enableAutoRange(axis="y")
+
+        first = pd.to_datetime(float(dates.min()), unit="s").strftime("%Y-%m-%d")
+        last = pd.to_datetime(float(dates.max()), unit="s").strftime("%Y-%m-%d")
+        title = f"Hourly Forecast: {first}" if first == last else f"Hourly Forecast: {first} to {last}"
+        self._plot_widget.setTitle(title)
+
+    @staticmethod
+    def _bar_step(dates: np.ndarray) -> float:
+        if dates.size < 2:
+            return HOUR_SECONDS
+        step = float(np.median(np.abs(np.diff(dates))))
+        return step if step > 0 else HOUR_SECONDS
 
     def _to_epoch(self, value: object) -> float:
         ts = pd.Timestamp(cast("Any", value))
@@ -217,6 +304,8 @@ class WeatherDetailsDialog(DraggableDialog):
         if plot is None:
             return
         self._plot_widget = None
+        self._precip_view = None
+        self._precipitation_bars = None
 
         with contextlib.suppress(Exception):
             scene = plot.scene()
