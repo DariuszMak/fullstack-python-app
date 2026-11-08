@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from src.backend.openmeteo.places.places import LATITUDE, LONGITUDE, TIMEZONE
@@ -84,5 +84,5 @@ def _today_in(timezone: str) -> date:
     try:
         tz = ZoneInfo(timezone)
     except (ZoneInfoNotFoundError, ValueError, OSError):
-        tz = UTC
+        tz = ZoneInfo("UTC")
     return datetime.now(tz).date()
