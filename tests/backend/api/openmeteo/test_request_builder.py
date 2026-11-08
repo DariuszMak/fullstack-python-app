@@ -59,8 +59,8 @@ def test_exclude_daily() -> None:
 def test_custom_location_and_forecast_days() -> None:
     params = build_request_parameters(latitude=50.0, longitude=15.0, timezone="Europe/Warsaw", forecast_days=5)
 
-    assert params["latitude"] == 50.0
-    assert params["longitude"] == 15.0
+    assert params["latitude"] == pytest.approx(50.0)
+    assert params["longitude"] == pytest.approx(15.0)
     assert params["timezone"] == "Europe/Warsaw"
     assert params["forecast_days"] == 5
 

@@ -461,15 +461,15 @@ def test_update_plot_with_empty_hourly_keeps_plot_untouched(qtbot: QtBot) -> Non
 
 
 def test_bar_step_defaults_to_one_hour_for_single_point() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([100.0])) == 3600.0
+    assert WeatherDetailsDialog._bar_step(np.array([100.0])) == pytest.approx(3600.0)
 
 
 def test_bar_step_uses_median_spacing() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([0.0, 7200.0, 14400.0])) == 7200.0
+    assert WeatherDetailsDialog._bar_step(np.array([0.0, 7200.0, 14400.0])) == pytest.approx(7200.0)
 
 
 def test_bar_step_falls_back_when_spacing_is_zero() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([5.0, 5.0, 5.0])) == 3600.0
+    assert WeatherDetailsDialog._bar_step(np.array([5.0, 5.0, 5.0])) == pytest.approx(3600.0)
 
 
 def test_sync_precipitation_view_is_noop_without_plot(dialog: WeatherDetailsDialog) -> None:
