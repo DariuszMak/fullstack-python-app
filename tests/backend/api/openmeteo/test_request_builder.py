@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from datetime import date
+from typing import Any
 from unittest.mock import patch
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import pytest
 
@@ -143,3 +145,25 @@ def test_today_in_returns_date_for_valid_timezone() -> None:
 @pytest.mark.parametrize("timezone", ["Not/AZone", "", "../etc"])
 def test_today_in_falls_back_to_utc_for_invalid_timezone(timezone: str) -> None:
     assert isinstance(request_builder._today_in(timezone), date)
+
+
+@pytest.mark.parametrize(
+    "exc",
+    [
+        ZoneInfoNotFoundError("not found"),
+        ValueError("bad value"),
+        OSError("os error"),
+    ],
+)
+def test_today_in_handles_zone_exceptions_with_utc_fallback(exc: Exception) -> None:
+    original_zoneinfo = ZoneInfo
+
+    class MockZoneInfo:
+        def __new__(cls, key: str) -> Any:
+            if key == "UTC":
+                return original_zoneinfo("UTC")
+            raise exc
+
+    with patch("src.backend.openmeteo.request_builder.ZoneInfo", MockZoneInfo):
+        res = request_builder._today_in("Invalid/Zone")
+        assert isinstance(res, date)
