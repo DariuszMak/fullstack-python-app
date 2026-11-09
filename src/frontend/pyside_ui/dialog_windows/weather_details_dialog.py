@@ -34,6 +34,25 @@ PRECIPITATION_HEADROOM: float = 1.2
 MIN_PRECIPITATION_AXIS_MAX: float = 1.0
 
 
+class CustomDateAxisItem(pg.DateAxisItem):
+    def tickValues(self, minVal: float, maxVal: float, size: float) -> list[tuple[float, list[float]]]:
+        span = maxVal - minVal
+        day_seconds = 86400.0
+
+        if span <= 3 * day_seconds:
+            return super().tickValues(minVal, maxVal, size)
+
+        cal = self.generateCalendar(minVal, maxVal)
+        days = [float(ts.timestamp()) for ts in cal]
+
+        ticks = []
+        for d in days:
+            if minVal <= d <= maxVal:
+                ticks.append(d)
+
+        return [(day_seconds, ticks), (day_seconds * 7, [])]
+
+
 class WeatherDetailsDialog(DraggableDialog):
     weather_info_ready = Signal(object)
 
@@ -137,7 +156,7 @@ class WeatherDetailsDialog(DraggableDialog):
 
         container_layout.addLayout(grid)
 
-        self._plot_widget = pg.PlotWidget(axisItems={"bottom": pg.DateAxisItem(utcOffset=0)})
+        self._plot_widget = pg.PlotWidget(axisItems={"bottom": CustomDateAxisItem(utcOffset=0)})
         self._plot_widget.setLabel("left", "Temperature (\u00b0C)")
         self._plot_widget.setLabel("bottom", "Date")
         self._plot_widget.setTitle("Hourly Forecast")
@@ -271,8 +290,16 @@ class WeatherDetailsDialog(DraggableDialog):
             return
 
         half_step = self._bar_step(dates) / 2
-        x_min = float(dates.min()) - half_step
-        x_max = float(dates.max()) + half_step
+
+        min_date = float(dates.min())
+        max_date = float(dates.max())
+
+        day_seconds = 86400.0
+        target_min = min_date + (self._start_day * day_seconds)
+        target_max = target_min + (self._forecast_days * day_seconds)
+
+        x_min = max(min_date - half_step, target_min - half_step)
+        x_max = min(max_date + half_step, target_max + half_step)
 
         plot_item = self._plot_widget.getPlotItem()
         plot_item.setLimits(xMin=x_min, xMax=x_max)
