@@ -8,4 +8,3 @@ class WeatherQueryParams(BaseModel):
     longitude: float = Field(default=17.5026, description="Longitude of the location")
     timezone: str = Field(default="Europe/Berlin", description="IANA timezone string")
     forecast_days: int = Field(default=3, ge=1, le=16, description="Number of forecast days (1-16)")
-    start_day: int = Field(default=0, ge=0, description="First day offset from today (0 = today)")
