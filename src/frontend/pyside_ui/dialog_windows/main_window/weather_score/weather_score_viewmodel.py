@@ -88,5 +88,6 @@ class WeatherScoreViewModel(QObject):
             min_threshold=response.min_threshold,
             max_threshold=response.max_threshold,
             penalize_rain=response.penalize_rain,
+            forecast_days=response.forecast_days,
             start_day=response.start_day,
         )

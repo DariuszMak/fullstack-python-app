@@ -17,4 +17,5 @@ class BestScoreResponse(BaseModel):
     min_threshold: float
     max_threshold: float
     penalize_rain: bool
+    forecast_days: int
     start_day: int
