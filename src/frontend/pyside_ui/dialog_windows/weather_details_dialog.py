@@ -308,7 +308,7 @@ class WeatherDetailsDialog(DraggableDialog):
         first = pd.to_datetime(float(dates.min()), unit="s").strftime("%Y-%m-%d")
 
         last = pd.to_datetime(float(dates.max()), unit="s").strftime("%Y-%m-%d")
-        
+
         title = f"Hourly Forecast: {first}" if first == last else f"Hourly Forecast: {first} to {last}"
         self._plot_widget.setTitle(title)
 

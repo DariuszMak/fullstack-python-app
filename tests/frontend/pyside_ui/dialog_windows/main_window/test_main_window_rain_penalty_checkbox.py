@@ -19,6 +19,7 @@ def make_response() -> BestScoreResponse:
         min_threshold=20.0,
         max_threshold=25.0,
         penalize_rain=True,
+        forecast_days=3,
         start_day=0,
     )
 
