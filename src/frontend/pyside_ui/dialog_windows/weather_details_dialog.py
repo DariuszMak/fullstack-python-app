@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 HOUR_SECONDS: float = 3600.0
+DAY_SECONDS = 86400.0
 BAR_WIDTH_RATIO: float = 0.8
 PRECIPITATION_COLOR: tuple[int, int, int] = (46, 204, 113)
 PRECIPITATION_BAR_ALPHA: int = 170
@@ -37,9 +38,8 @@ MIN_PRECIPITATION_AXIS_MAX: float = 1.0
 class CustomDateAxisItem(pg.DateAxisItem):
     def tickValues(self, minVal: float, maxVal: float, size: float) -> list[tuple[float, list[float]]]:
         span = maxVal - minVal
-        day_seconds = 86400.0
 
-        if span <= 3 * day_seconds:
+        if span <= 3 * DAY_SECONDS:
             return super().tickValues(minVal, maxVal, size)
 
         cal = self.generateCalendar(minVal, maxVal)
@@ -50,7 +50,7 @@ class CustomDateAxisItem(pg.DateAxisItem):
             if minVal <= d <= maxVal:
                 ticks.append(d)
 
-        return [(day_seconds, ticks), (day_seconds * 7, [])]
+        return [(DAY_SECONDS, ticks), (DAY_SECONDS * 7, [])]
 
 
 class WeatherDetailsDialog(DraggableDialog):
@@ -294,9 +294,8 @@ class WeatherDetailsDialog(DraggableDialog):
         min_date = float(dates.min())
         max_date = float(dates.max())
 
-        day_seconds = 86400.0
-        target_min = min_date + (self._start_day * day_seconds)
-        target_max = target_min + (self._forecast_days * day_seconds)
+        target_min = min_date + (self._start_day * DAY_SECONDS)
+        target_max = target_min + (self._forecast_days * DAY_SECONDS)
 
         x_min = max(min_date - half_step, target_min - half_step)
         x_max = min(max_date + half_step, target_max + half_step)
