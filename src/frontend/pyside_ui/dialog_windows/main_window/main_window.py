@@ -104,7 +104,9 @@ class MainWindow(DraggableMainWindow):
 
         self.installEventFilter(self)
 
-        self._viewmodel: WeatherScoreViewModel = WeatherScoreViewModel(self._httpx_client, self)
+        self._viewmodel: WeatherScoreViewModel = WeatherScoreViewModel(
+            self._httpx_client, self._forecast_days_slider, self
+        )
         self._renderer: WeatherScoreRenderer = WeatherScoreRenderer(self._ui.weatherScoreContainerLayout)
         self._viewmodel.state_changed.connect(self._renderer.render)
         self._viewmodel.loading_changed.connect(self._on_loading_changed)

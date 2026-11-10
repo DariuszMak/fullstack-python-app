@@ -1,6 +1,7 @@
 from dataclasses import replace
 
 from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QSlider
 
 from src.backend.api.models.best_score_response import BestScoreResponse, PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import (
@@ -14,8 +15,9 @@ class WeatherScoreViewModel(QObject):
     state_changed = Signal(object)
     loading_changed = Signal(bool)
 
-    def __init__(self, httpx_client: HttpxClient, parent: QObject | None = None) -> None:
+    def __init__(self, httpx_client: HttpxClient, forecast_days_slider: QSlider, parent: QObject | None = None) -> None:
         super().__init__(parent)
+        self.forecast_days_slider = forecast_days_slider
         self._client: HttpxClient = httpx_client
         self._state: WeatherScoreState = WeatherScoreState()
 
@@ -46,7 +48,7 @@ class WeatherScoreViewModel(QObject):
                 forecast_days=forecast_days,
                 start_day=start_day,
             )
-            self._set_state(self._build_state(response))
+            self._set_state(self._build_state(response, self.forecast_days_slider))
         except Exception as exc:
             message: str = str(exc) or type(exc).__name__
             self._set_state(replace(self._state, is_loading=False, cards=(), error=message))
@@ -56,7 +58,7 @@ class WeatherScoreViewModel(QObject):
             self.loading_changed.emit(False)
 
     @staticmethod
-    def _build_state(response: BestScoreResponse) -> WeatherScoreState:
+    def _build_state(response: BestScoreResponse, forecast_days_slider: QSlider) -> WeatherScoreState:
         sorted_results: list[PlaceBestScoreRecord] = sorted(response.results, key=lambda r: r.score, reverse=True)
         cards: tuple[WeatherScoreCardData, ...] = ()
         if sorted_results:
@@ -88,5 +90,6 @@ class WeatherScoreViewModel(QObject):
             min_threshold=response.min_threshold,
             max_threshold=response.max_threshold,
             penalize_rain=response.penalize_rain,
+            forecast_days=forecast_days_slider.value(),
             start_day=response.start_day,
         )
