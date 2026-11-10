@@ -12,8 +12,8 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QApplication, QWidget
 
+from src.backend.api.models.best_score_response import PlaceBestScoreRecord
 from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
 
 if TYPE_CHECKING:

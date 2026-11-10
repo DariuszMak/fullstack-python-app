@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
+from src.backend.api.models.best_score_response import PlaceBestScoreRecord
 
 
 @dataclass(frozen=True)

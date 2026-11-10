@@ -5,9 +5,9 @@ from datetime import datetime
 import httpx
 import structlog
 
+from src.backend.api.models.best_score_response import BestScoreResponse
 from src.backend.api.models.server_time_response import ServerTimeResponse
 from src.backend.api.models.weather_info_response import WeatherInfoResponse
-from src.backend.api.models.weather_score_response import BestScoreResponse
 
 logger = structlog.get_logger(__name__)
 

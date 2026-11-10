@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import httpx
 import pytest
 
-from src.backend.api.models.weather_score_response import BestScoreResponse
+from src.backend.api.models.best_score_response import BestScoreResponse
 from src.frontend.shared.client.httpx_client import HttpxClient
 
 

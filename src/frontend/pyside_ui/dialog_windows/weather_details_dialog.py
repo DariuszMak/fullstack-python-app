@@ -21,8 +21,8 @@ from src.helpers.style_loader import StyleLoader
 if TYPE_CHECKING:
     from PySide6.QtGui import QCloseEvent, QShowEvent
 
+    from src.backend.api.models.best_score_response import PlaceBestScoreRecord
     from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
-    from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
 
 logger = structlog.get_logger(__name__)
 
@@ -308,7 +308,7 @@ class WeatherDetailsDialog(DraggableDialog):
         first = pd.to_datetime(float(dates.min()), unit="s").strftime("%Y-%m-%d")
 
         last = pd.to_datetime(float(dates.max()), unit="s").strftime("%Y-%m-%d")
-        
+
         title = f"Hourly Forecast: {first}" if first == last else f"Hourly Forecast: {first} to {last}"
         self._plot_widget.setTitle(title)
 

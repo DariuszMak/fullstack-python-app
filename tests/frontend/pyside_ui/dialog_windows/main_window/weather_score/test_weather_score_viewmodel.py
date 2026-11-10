@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from src.backend.api.models.weather_score_response import BestScoreResponse, PlaceBestScoreRecord
+from src.backend.api.models.best_score_response import BestScoreResponse, PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import WeatherScoreState
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_viewmodel import (
     WeatherScoreViewModel,

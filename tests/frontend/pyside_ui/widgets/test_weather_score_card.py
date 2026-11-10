@@ -6,7 +6,7 @@ from unittest.mock import patch
 from PySide6.QtCore import QPoint, QPointF, Qt
 from PySide6.QtGui import QMouseEvent
 
-from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
+from src.backend.api.models.best_score_response import PlaceBestScoreRecord
 from src.frontend.pyside_ui.widgets.weather_score_card import WeatherScoreCard
 
 if TYPE_CHECKING:

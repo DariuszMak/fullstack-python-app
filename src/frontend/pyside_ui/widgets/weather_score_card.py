@@ -12,7 +12,7 @@ from src.helpers.style_loader import StyleLoader
 if TYPE_CHECKING:
     from PySide6.QtGui import QMouseEvent
 
-    from src.backend.api.models.weather_score_response import PlaceBestScoreRecord
+    from src.backend.api.models.best_score_response import PlaceBestScoreRecord
 
 
 class WeatherScoreCard(QFrame):
