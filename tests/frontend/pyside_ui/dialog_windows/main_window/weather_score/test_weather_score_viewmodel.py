@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -9,6 +10,9 @@ from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_sco
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_viewmodel import (
     WeatherScoreViewModel,
 )
+
+if TYPE_CHECKING:
+    from PySide6.QtWidgets import QSlider
 
 FETCH_KWARGS: dict[str, object] = {
     "apparent_temperature_min_threshold": 18.0,
@@ -52,13 +56,17 @@ def make_viewmodel(
     *,
     response: BestScoreResponse | None = None,
     error: Exception | None = None,
+    forecast_days_slider: QSlider | None = None,
 ) -> tuple[WeatherScoreViewModel, MagicMock]:
     client = MagicMock()
     if error is not None:
         client.fetch_weather_score = AsyncMock(side_effect=error)
     else:
         client.fetch_weather_score = AsyncMock(return_value=response if response is not None else make_response())
-    return WeatherScoreViewModel(client), client
+
+    slider = forecast_days_slider if forecast_days_slider is not None else MagicMock()
+
+    return WeatherScoreViewModel(client, slider), client
 
 
 def record_states(viewmodel: WeatherScoreViewModel) -> list[WeatherScoreState]:
@@ -293,7 +301,7 @@ async def test_fetch_success_clears_previous_error() -> None:
 async def test_fetch_sets_loading_state_before_calling_client() -> None:
     client = MagicMock()
     observed: list[bool] = []
-    viewmodel = WeatherScoreViewModel(client)
+    viewmodel = WeatherScoreViewModel(client, MagicMock())
 
     def fetch_side_effect(**kwargs: object) -> BestScoreResponse:
         observed.append(viewmodel.state.is_loading)
@@ -307,7 +315,7 @@ async def test_fetch_sets_loading_state_before_calling_client() -> None:
 
 
 def test_build_state_returns_state_without_loading_or_error() -> None:
-    state = WeatherScoreViewModel._build_state(make_response())
+    state = WeatherScoreViewModel._build_state(make_response(), MagicMock())
 
     assert state.is_loading is False
     assert state.error is None
@@ -315,7 +323,7 @@ def test_build_state_returns_state_without_loading_or_error() -> None:
 
 
 def test_build_state_with_empty_results() -> None:
-    state = WeatherScoreViewModel._build_state(make_response({}))
+    state = WeatherScoreViewModel._build_state(make_response({}), MagicMock())
 
     assert state.cards == ()
 
@@ -323,6 +331,6 @@ def test_build_state_with_empty_results() -> None:
 def test_build_state_does_not_mutate_response() -> None:
     response = make_response({"a": 0.2, "b": 0.9})
 
-    WeatherScoreViewModel._build_state(response)
+    WeatherScoreViewModel._build_state(response, MagicMock())
 
     assert [place.key for place in response.results] == ["a", "b"]
