@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from PySide6.QtCore import QObject
 
 from src.backend.api.models.best_score_response import BestScoreResponse, PlaceBestScoreRecord
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import WeatherScoreState
@@ -57,6 +59,7 @@ def make_viewmodel(
     response: BestScoreResponse | None = None,
     error: Exception | None = None,
     forecast_days_slider: QSlider | None = None,
+    parent: QObject | None = None,
 ) -> tuple[WeatherScoreViewModel, MagicMock]:
     client = MagicMock()
     if error is not None:
@@ -66,7 +69,7 @@ def make_viewmodel(
 
     slider = forecast_days_slider if forecast_days_slider is not None else MagicMock()
 
-    return WeatherScoreViewModel(client, slider), client
+    return WeatherScoreViewModel(client, slider, parent=parent), client
 
 
 def record_states(viewmodel: WeatherScoreViewModel) -> list[WeatherScoreState]:
@@ -85,6 +88,13 @@ def test_initial_state_is_default() -> None:
     viewmodel, _ = make_viewmodel()
 
     assert viewmodel.state == WeatherScoreState()
+
+
+def test_init_with_parent() -> None:
+    parent = QObject()
+    viewmodel, _ = make_viewmodel(parent=parent)
+
+    assert viewmodel.parent() == parent
 
 
 @pytest.mark.asyncio
@@ -240,6 +250,26 @@ async def test_fetch_failure_uses_exception_type_when_message_is_empty() -> None
     await viewmodel.fetch(**FETCH_KWARGS)  # type: ignore[arg-type]
 
     assert viewmodel.state.error == "TimeoutError"
+
+
+@pytest.mark.asyncio
+async def test_fetch_failure_with_empty_string_exception() -> None:
+    viewmodel, _ = make_viewmodel(error=Exception(""))
+
+    await viewmodel.fetch(**FETCH_KWARGS)  # type: ignore[arg-type]
+
+    assert viewmodel.state.error == "Exception"
+
+
+@pytest.mark.asyncio
+async def test_fetch_cancelled_error_resets_loading() -> None:
+    viewmodel, client = make_viewmodel()
+    client.fetch_weather_score = AsyncMock(side_effect=asyncio.CancelledError())
+
+    with pytest.raises(asyncio.CancelledError):
+        await viewmodel.fetch(**FETCH_KWARGS)  # type: ignore[arg-type]
+
+    assert viewmodel.state.is_loading is False
 
 
 @pytest.mark.asyncio
