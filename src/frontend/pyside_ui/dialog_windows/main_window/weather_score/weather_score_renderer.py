@@ -1,13 +1,12 @@
 from PySide6.QtWidgets import QLabel, QLayoutItem, QVBoxLayout, QWidget
 
+from src.frontend.pyside_ui.config import ERROR_STYLE, INFO_STYLE
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score import ForecastConfig
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import (
     WeatherScoreCardData,
     WeatherScoreState,
 )
 from src.frontend.pyside_ui.widgets.weather_score_card import WeatherScoreCard
-
-INFO_STYLE: str = "color: rgb(85, 170, 255);"
-ERROR_STYLE: str = "color: rgb(231, 76, 60);"
 
 
 class WeatherScoreRenderer:
@@ -15,7 +14,7 @@ class WeatherScoreRenderer:
         self._layout: QVBoxLayout = layout
         self._container = layout.parentWidget()
 
-    def render(self, state: WeatherScoreState) -> None:
+    def render(self, state: WeatherScoreState, config: ForecastConfig | None = None) -> None:
         self._clear()
 
         if state.is_loading:
@@ -30,13 +29,14 @@ class WeatherScoreRenderer:
             self._show_message("No matching places found.", INFO_STYLE)
             return
 
+        card_config = config or ForecastConfig()
         card_data: WeatherScoreCardData
         for card_data in state.cards:
             card: WeatherScoreCard = WeatherScoreCard(
                 place=card_data.place,
                 rank=card_data.rank,
-                forecast_days=state.forecast_days,
-                start_day=state.start_day,
+                forecast_days=card_config.forecast_days,
+                start_day=card_config.start_day,
             )
             self._layout.addWidget(card)
 

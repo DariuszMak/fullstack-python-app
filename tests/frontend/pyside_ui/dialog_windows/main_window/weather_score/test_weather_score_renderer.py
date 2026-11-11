@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from src.backend.api.models.best_score_response import PlaceBestScoreRecord
+from src.frontend.pyside_ui.config import ERROR_STYLE, INFO_STYLE
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score import ForecastConfig
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_renderer import (
-    ERROR_STYLE,
-    INFO_STYLE,
     WeatherScoreRenderer,
 )
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import (
@@ -34,8 +34,6 @@ def make_place(key: str, score: float, percentage: float = 1.0) -> PlaceBestScor
 
 def make_cards_state() -> WeatherScoreState:
     return WeatherScoreState(
-        forecast_days=3,
-        start_day=1,
         cards=(
             WeatherScoreCardData(rank=1, place=make_place("krakow", 0.8, 1.0)),
             WeatherScoreCardData(rank=2, place=make_place("wroclaw", 0.5, 0.0)),
@@ -237,12 +235,12 @@ def test_render_cards_receive_forecast_days_and_start_day(qtbot: QtBot) -> None:
     renderer, layout = make_renderer(qtbot)
 
     state = WeatherScoreState(
-        forecast_days=7,
-        start_day=2,
         cards=(WeatherScoreCardData(rank=1, place=make_place("test", 0.5)),),
     )
 
-    renderer.render(state)
+    config = ForecastConfig(forecast_days=7, start_day=2)
+
+    renderer.render(state, config)
 
     cards = cards_in(layout)
     assert len(cards) == 1

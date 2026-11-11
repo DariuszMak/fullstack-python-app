@@ -1,20 +1,17 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from PySide6.QtCore import QObject
 
 from src.backend.api.models.best_score_response import BestScoreResponse, PlaceBestScoreRecord
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score import ForecastConfig
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import WeatherScoreState
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_viewmodel import (
     WeatherScoreViewModel,
 )
-
-if TYPE_CHECKING:
-    from PySide6.QtWidgets import QSlider
 
 FETCH_KWARGS: dict[str, object] = {
     "apparent_temperature_min_threshold": 18.0,
@@ -58,7 +55,7 @@ def make_viewmodel(
     *,
     response: BestScoreResponse | None = None,
     error: Exception | None = None,
-    forecast_days_slider: QSlider | None = None,
+    config: ForecastConfig | None = None,
     parent: QObject | None = None,
 ) -> tuple[WeatherScoreViewModel, MagicMock]:
     client = MagicMock()
@@ -67,9 +64,9 @@ def make_viewmodel(
     else:
         client.fetch_weather_score = AsyncMock(return_value=response if response is not None else make_response())
 
-    slider = forecast_days_slider if forecast_days_slider is not None else MagicMock()
+    cfg = config if config is not None else ForecastConfig()
 
-    return WeatherScoreViewModel(client, slider, parent=parent), client
+    return WeatherScoreViewModel(client, cfg, parent=parent), client
 
 
 def record_states(viewmodel: WeatherScoreViewModel) -> list[WeatherScoreState]:
@@ -229,7 +226,7 @@ async def test_fetch_propagates_response_metadata_to_state() -> None:
     assert viewmodel.state.min_threshold == pytest.approx(11.0)
     assert viewmodel.state.max_threshold == pytest.approx(22.0)
     assert viewmodel.state.penalize_rain is False
-    assert viewmodel.state.start_day == 4
+    assert viewmodel.config.start_day == 4
 
 
 @pytest.mark.asyncio
@@ -331,7 +328,7 @@ async def test_fetch_success_clears_previous_error() -> None:
 async def test_fetch_sets_loading_state_before_calling_client() -> None:
     client = MagicMock()
     observed: list[bool] = []
-    viewmodel = WeatherScoreViewModel(client, MagicMock())
+    viewmodel = WeatherScoreViewModel(client, ForecastConfig())
 
     def fetch_side_effect(**kwargs: object) -> BestScoreResponse:
         observed.append(viewmodel.state.is_loading)
@@ -345,7 +342,7 @@ async def test_fetch_sets_loading_state_before_calling_client() -> None:
 
 
 def test_build_state_returns_state_without_loading_or_error() -> None:
-    state = WeatherScoreViewModel._build_state(make_response(), MagicMock())
+    state = WeatherScoreViewModel._build_state(make_response())
 
     assert state.is_loading is False
     assert state.error is None
@@ -353,7 +350,7 @@ def test_build_state_returns_state_without_loading_or_error() -> None:
 
 
 def test_build_state_with_empty_results() -> None:
-    state = WeatherScoreViewModel._build_state(make_response({}), MagicMock())
+    state = WeatherScoreViewModel._build_state(make_response({}))
 
     assert state.cards == ()
 
@@ -361,6 +358,6 @@ def test_build_state_with_empty_results() -> None:
 def test_build_state_does_not_mutate_response() -> None:
     response = make_response({"a": 0.2, "b": 0.9})
 
-    WeatherScoreViewModel._build_state(response, MagicMock())
+    WeatherScoreViewModel._build_state(response)
 
     assert [place.key for place in response.results] == ["a", "b"]

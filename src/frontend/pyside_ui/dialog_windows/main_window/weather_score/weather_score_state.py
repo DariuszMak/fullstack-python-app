@@ -17,5 +17,3 @@ class WeatherScoreState:
     min_threshold: float = 0.0
     max_threshold: float = 0.0
     penalize_rain: bool = False
-    forecast_days: int = 3
-    start_day: int = 0

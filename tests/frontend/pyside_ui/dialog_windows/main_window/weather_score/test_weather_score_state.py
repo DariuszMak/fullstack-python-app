@@ -31,8 +31,6 @@ def test_state_defaults() -> None:
     assert state.min_threshold == pytest.approx(0.0)
     assert state.max_threshold == pytest.approx(0.0)
     assert state.penalize_rain is False
-    assert state.start_day == 0
-    assert state.forecast_days == 3
 
 
 def test_state_is_frozen() -> None:
@@ -81,8 +79,6 @@ def test_state_stores_all_fields() -> None:
         min_threshold=10.0,
         max_threshold=20.0,
         penalize_rain=True,
-        start_day=2,
-        forecast_days=7,
     )
 
     assert state.is_loading is True
@@ -91,5 +87,3 @@ def test_state_stores_all_fields() -> None:
     assert state.min_threshold == pytest.approx(10.0)
     assert state.max_threshold == pytest.approx(20.0)
     assert state.penalize_rain is True
-    assert state.start_day == 2
-    assert state.forecast_days == 7

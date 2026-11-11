@@ -1,6 +1,5 @@
 import asyncio
 import platform
-from typing import Final
 
 import structlog
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QTimer
@@ -8,7 +7,19 @@ from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QResizeEvent
 from PySide6.QtWidgets import QCheckBox, QLabel, QLayout, QSlider, QSystemTrayIcon
 
 from src.backend.api.models.server_time_response import ServerTimeResponse
+from src.frontend.pyside_ui.config import (
+    DEFAULT_FORECAST_DAYS,
+    DEFAULT_MAX_TEMP,
+    DEFAULT_MIN_TEMP,
+    DEFAULT_PENALIZE_RAIN,
+    DEFAULT_START_DAY,
+    FORECAST_DAYS_SLIDER_RANGE,
+    MAX_TEMP_SLIDER_RANGE,
+    MIN_TEMP_SLIDER_RANGE,
+    START_DAY_SLIDER_RANGE,
+)
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_main_window import DraggableMainWindow
+from src.frontend.pyside_ui.dialog_windows.main_window.weather_score import ForecastConfig
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_renderer import WeatherScoreRenderer
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_state import WeatherScoreState
 from src.frontend.pyside_ui.dialog_windows.main_window.weather_score.weather_score_viewmodel import (
@@ -30,16 +41,6 @@ from src.helpers.style_loader import StyleLoader
 
 logger = structlog.get_logger(__name__)
 
-MIN_TEMP_SLIDER_RANGE: Final[tuple[int, int]] = (-20, 40)
-MAX_TEMP_SLIDER_RANGE: Final[tuple[int, int]] = (-20, 40)
-DEFAULT_MIN_TEMP: Final[int] = 18
-DEFAULT_MAX_TEMP: Final[int] = 25
-DEFAULT_PENALIZE_RAIN: Final[bool] = True
-FORECAST_DAYS_SLIDER_RANGE: Final[tuple[int, int]] = (1, 16)
-START_DAY_SLIDER_RANGE: Final[tuple[int, int]] = (1, 16)
-DEFAULT_FORECAST_DAYS: Final[int] = 3
-DEFAULT_START_DAY: Final[int] = 1
-
 
 class MainWindow(DraggableMainWindow):
     def __init__(self, fetch_server_time: bool = True) -> None:
@@ -49,6 +50,7 @@ class MainWindow(DraggableMainWindow):
         self._is_closing: bool = False
         self._server_time_task: asyncio.Task[None] | None = None
         self._weather_score_task: asyncio.Task[None] | None = None
+        self._viewmodel: WeatherScoreViewModel | None = None
         self.anim: QPropertyAnimation | None = None
 
         config: Config = Config()
@@ -104,13 +106,13 @@ class MainWindow(DraggableMainWindow):
 
         self.installEventFilter(self)
 
-        self._viewmodel: WeatherScoreViewModel = WeatherScoreViewModel(
-            self._httpx_client, self._forecast_days_slider, self
+        self._viewmodel = WeatherScoreViewModel(
+            self._httpx_client, ForecastConfig(forecast_days=DEFAULT_FORECAST_DAYS, start_day=DEFAULT_START_DAY), self
         )
         self._renderer: WeatherScoreRenderer = WeatherScoreRenderer(self._ui.weatherScoreContainerLayout)
-        self._viewmodel.state_changed.connect(self._renderer.render)
+        self._viewmodel.state_changed.connect(lambda state: self._renderer.render(state, self._viewmodel.config))
         self._viewmodel.loading_changed.connect(self._on_loading_changed)
-        self._renderer.render(WeatherScoreState())
+        self._renderer.render(WeatherScoreState(), self._viewmodel.config)
 
         if fetch_server_time:
             loop: asyncio.AbstractEventLoop
@@ -199,6 +201,8 @@ class MainWindow(DraggableMainWindow):
                 self._forecast_days_slider.setValue(clamped)
                 return
         self._forecast_days_label.setText(f"Forecast days: {value}")
+        if self._viewmodel is not None:
+            self._viewmodel.set_config(ForecastConfig(forecast_days=value, start_day=self._viewmodel.config.start_day))
 
     def _on_start_day_changed(self, value: int) -> None:
         if value >= self._forecast_days_slider.value():
@@ -207,6 +211,9 @@ class MainWindow(DraggableMainWindow):
                 self._start_day_slider.setValue(clamped)
                 return
         self._start_day_label.setText(f"Start day: {value}")
+        if self._viewmodel is not None:
+            cfg = self._viewmodel.config
+            self._viewmodel.set_config(ForecastConfig(forecast_days=cfg.forecast_days, start_day=value))
 
     def _fade_in_animation(self) -> None:
         if not self._supports_opacity:
@@ -252,7 +259,7 @@ class MainWindow(DraggableMainWindow):
             logger.debug("no_running_event_loop")
             return
         self._weather_score_task = loop.create_task(
-            self._viewmodel.fetch(
+            self._viewmodel.fetch(  # type: ignore[union-attr]
                 apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
                 apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
                 penalize_rain=self._penalize_rain_checkbox.isChecked(),
@@ -260,6 +267,7 @@ class MainWindow(DraggableMainWindow):
                 start_day=self._start_day_slider.value() - 1,
             )
         )
+        self._renderer.render(self._viewmodel.state, self._viewmodel.config)  # type: ignore[union-attr]
 
     def fetch_server_time(self) -> None:
         if self._is_closing:

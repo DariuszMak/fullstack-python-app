@@ -14,6 +14,18 @@ from PySide6.QtCore import QEvent, Qt, Signal, Slot
 from PySide6.QtWidgets import QFrame, QGridLayout, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 from shiboken6 import isValid
 
+from src.frontend.pyside_ui.config import (
+    BAR_WIDTH_RATIO,
+    DAY_LABEL_FORMAT,
+    DAY_SECONDS,
+    HOUR_SECONDS,
+    LONG_SPAN_DAYS,
+    MIN_DAY_LABEL_PIXELS,
+    MIN_PRECIPITATION_AXIS_MAX,
+    PRECIPITATION_BAR_ALPHA,
+    PRECIPITATION_COLOR,
+    PRECIPITATION_HEADROOM,
+)
 from src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog import DraggableDialog
 from src.frontend.pyside_ui.forms.moc_weather_details_dialog import Ui_Dialog
 from src.frontend.shared.client.httpx_client import HttpxClient
@@ -28,17 +40,8 @@ if TYPE_CHECKING:
 
 logger = structlog.get_logger(__name__)
 
-HOUR_SECONDS: float = 3600.0
-DAY_SECONDS: float = 86400.0
-LONG_SPAN_DAYS: float = 3.0
-MIN_DAY_LABEL_PIXELS: float = 60.0
-DAY_LABEL_FORMAT: str = "%d %b"
-EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
-BAR_WIDTH_RATIO: float = 0.8
-PRECIPITATION_COLOR: tuple[int, int, int] = (46, 204, 113)
-PRECIPITATION_BAR_ALPHA: int = 170
-PRECIPITATION_HEADROOM: float = 1.2
-MIN_PRECIPITATION_AXIS_MAX: float = 1.0
+
+EPOCH: datetime = datetime(1970, 1, 1, tzinfo=UTC)
 
 
 class CustomDateAxisItem(pg.DateAxisItem):  # type: ignore[misc]
