@@ -434,6 +434,21 @@ def test_update_plot_title_shows_date_range(qtbot: QtBot) -> None:
     assert "2026-01-03" in title
 
 
+def test_update_plot_title_respects_start_day(qtbot: QtBot) -> None:
+    widget = build_dialog(qtbot, start_day=1)
+
+    widget._update_plot(
+        make_response(
+            make_record("2026-01-01T00:00:00+00:00"),
+            make_record("2026-01-03T00:00:00+00:00"),
+        )
+    )
+
+    assert widget._plot_widget is not None
+    title = widget._plot_widget.getPlotItem().titleLabel.text
+    assert "2026-01-02" in title
+
+
 def test_update_plot_title_shows_single_date_when_range_is_one_day(qtbot: QtBot) -> None:
     widget = build_dialog(qtbot)
 

@@ -325,7 +325,7 @@ class WeatherDetailsDialog(DraggableDialog):
         plot_item.setXRange(x_min, x_max, padding=0)
         plot_item.enableAutoRange(axis="y")
 
-        first = pd.to_datetime(float(dates.min()), unit="s").strftime("%Y-%m-%d")
+        first = pd.to_datetime(float(dates.min()) + (self._start_day * DAY_SECONDS), unit="s").strftime("%Y-%m-%d")
 
         last = pd.to_datetime(float(dates.max()), unit="s").strftime("%Y-%m-%d")
 
