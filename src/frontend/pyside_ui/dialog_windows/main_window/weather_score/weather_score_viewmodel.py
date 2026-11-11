@@ -29,9 +29,6 @@ class WeatherScoreViewModel(QObject):
     def config(self) -> ForecastConfig:
         return self._config
 
-    def set_config(self, config: ForecastConfig) -> None:
-        self._config = config
-
     def _set_state(self, state: WeatherScoreState) -> None:
         self._state = state
         self.state_changed.emit(state)
@@ -55,9 +52,8 @@ class WeatherScoreViewModel(QObject):
                 forecast_days=forecast_days,
                 start_day=start_day,
             )
-            new_config = ForecastConfig(forecast_days=forecast_days, start_day=response.start_day)
+            self._config = ForecastConfig(forecast_days=forecast_days, start_day=response.start_day)
             self._set_state(self._build_state(response))
-            self._config = new_config
         except Exception as exc:
             message: str = str(exc) or type(exc).__name__
             self._set_state(replace(self._state, is_loading=False, cards=(), error=message))

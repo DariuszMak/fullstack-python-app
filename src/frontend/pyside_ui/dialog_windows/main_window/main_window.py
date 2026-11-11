@@ -50,7 +50,6 @@ class MainWindow(DraggableMainWindow):
         self._is_closing: bool = False
         self._server_time_task: asyncio.Task[None] | None = None
         self._weather_score_task: asyncio.Task[None] | None = None
-        self._viewmodel: WeatherScoreViewModel | None = None
         self.anim: QPropertyAnimation | None = None
 
         config: Config = Config()
@@ -106,11 +105,11 @@ class MainWindow(DraggableMainWindow):
 
         self.installEventFilter(self)
 
-        self._viewmodel = WeatherScoreViewModel(
-            self._httpx_client, ForecastConfig(forecast_days=DEFAULT_FORECAST_DAYS, start_day=DEFAULT_START_DAY), self
+        self._viewmodel: WeatherScoreViewModel = WeatherScoreViewModel(
+            self._httpx_client, self._current_forecast_config(), self
         )
         self._renderer: WeatherScoreRenderer = WeatherScoreRenderer(self._ui.weatherScoreContainerLayout)
-        self._viewmodel.state_changed.connect(lambda state: self._renderer.render(state, self._viewmodel.config))
+        self._viewmodel.state_changed.connect(self._on_state_changed)
         self._viewmodel.loading_changed.connect(self._on_loading_changed)
         self._renderer.render(WeatherScoreState(), self._viewmodel.config)
 
@@ -157,10 +156,9 @@ class MainWindow(DraggableMainWindow):
         self._penalize_rain_checkbox.setChecked(DEFAULT_PENALIZE_RAIN)
 
         self._forecast_days_slider.setRange(*FORECAST_DAYS_SLIDER_RANGE)
-        self._forecast_days_slider.setValue(DEFAULT_FORECAST_DAYS)
-
         self._start_day_slider.setRange(*START_DAY_SLIDER_RANGE)
         self._start_day_slider.setValue(DEFAULT_START_DAY)
+        self._forecast_days_slider.setValue(DEFAULT_FORECAST_DAYS)
 
     def _on_min_temp_changed(self, value: int) -> None:
         if value >= self._max_temp_slider.value():
@@ -201,8 +199,6 @@ class MainWindow(DraggableMainWindow):
                 self._forecast_days_slider.setValue(clamped)
                 return
         self._forecast_days_label.setText(f"Forecast days: {value}")
-        if self._viewmodel is not None:
-            self._viewmodel.set_config(ForecastConfig(forecast_days=value, start_day=self._viewmodel.config.start_day))
 
     def _on_start_day_changed(self, value: int) -> None:
         if value >= self._forecast_days_slider.value():
@@ -211,9 +207,15 @@ class MainWindow(DraggableMainWindow):
                 self._start_day_slider.setValue(clamped)
                 return
         self._start_day_label.setText(f"Start day: {value}")
-        if self._viewmodel is not None:
-            cfg = self._viewmodel.config
-            self._viewmodel.set_config(ForecastConfig(forecast_days=cfg.forecast_days, start_day=value))
+
+    def _current_forecast_config(self) -> ForecastConfig:
+        return ForecastConfig(
+            forecast_days=self._forecast_days_slider.value(),
+            start_day=self._start_day_slider.value() - 1,
+        )
+
+    def _on_state_changed(self, state: WeatherScoreState) -> None:
+        self._renderer.render(state, self._viewmodel.config)
 
     def _fade_in_animation(self) -> None:
         if not self._supports_opacity:
@@ -258,16 +260,16 @@ class MainWindow(DraggableMainWindow):
         except RuntimeError:
             logger.debug("no_running_event_loop")
             return
+        forecast_config: ForecastConfig = self._current_forecast_config()
         self._weather_score_task = loop.create_task(
-            self._viewmodel.fetch(  # type: ignore[union-attr]
+            self._viewmodel.fetch(
                 apparent_temperature_min_threshold=float(self._min_temp_slider.value()),
                 apparent_temperature_max_threshold=float(self._max_temp_slider.value()),
                 penalize_rain=self._penalize_rain_checkbox.isChecked(),
-                forecast_days=self._forecast_days_slider.value(),
-                start_day=self._start_day_slider.value() - 1,
+                forecast_days=forecast_config.forecast_days,
+                start_day=forecast_config.start_day,
             )
         )
-        self._renderer.render(self._viewmodel.state, self._viewmodel.config)  # type: ignore[union-attr]
 
     def fetch_server_time(self) -> None:
         if self._is_closing:

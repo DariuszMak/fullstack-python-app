@@ -69,6 +69,16 @@ def make_viewmodel(
     return WeatherScoreViewModel(client, cfg, parent=parent), client
 
 
+async def fetch_with(viewmodel: WeatherScoreViewModel, *, forecast_days: int, start_day: int) -> None:
+    await viewmodel.fetch(
+        apparent_temperature_min_threshold=18.0,
+        apparent_temperature_max_threshold=25.0,
+        penalize_rain=True,
+        forecast_days=forecast_days,
+        start_day=start_day,
+    )
+
+
 def record_states(viewmodel: WeatherScoreViewModel) -> list[WeatherScoreState]:
     states: list[WeatherScoreState] = []
     viewmodel.state_changed.connect(states.append)
@@ -85,6 +95,13 @@ def test_initial_state_is_default() -> None:
     viewmodel, _ = make_viewmodel()
 
     assert viewmodel.state == WeatherScoreState()
+
+
+def test_initial_config_is_the_one_passed_in() -> None:
+    config = ForecastConfig(forecast_days=5, start_day=2)
+    viewmodel, _ = make_viewmodel(config=config)
+
+    assert viewmodel.config is config
 
 
 def test_init_with_parent() -> None:
@@ -227,6 +244,48 @@ async def test_fetch_propagates_response_metadata_to_state() -> None:
     assert viewmodel.state.max_threshold == pytest.approx(22.0)
     assert viewmodel.state.penalize_rain is False
     assert viewmodel.config.start_day == 4
+
+
+@pytest.mark.asyncio
+async def test_fetch_updates_config_from_request_and_response() -> None:
+    viewmodel, _ = make_viewmodel(response=make_response(start_day=4))
+
+    await fetch_with(viewmodel, forecast_days=9, start_day=4)
+
+    assert viewmodel.config == ForecastConfig(forecast_days=9, start_day=4)
+
+
+@pytest.mark.asyncio
+async def test_fetch_applies_config_before_emitting_result_state() -> None:
+    viewmodel, _ = make_viewmodel(response=make_response(start_day=2))
+    configs_seen: list[ForecastConfig] = []
+    viewmodel.state_changed.connect(lambda _state: configs_seen.append(viewmodel.config))
+
+    await fetch_with(viewmodel, forecast_days=6, start_day=2)
+
+    assert configs_seen[-1] == ForecastConfig(forecast_days=6, start_day=2)
+
+
+@pytest.mark.asyncio
+async def test_fetch_config_follows_latest_successful_fetch() -> None:
+    viewmodel, client = make_viewmodel(response=make_response(start_day=0))
+    await fetch_with(viewmodel, forecast_days=3, start_day=0)
+    assert viewmodel.config == ForecastConfig(forecast_days=3, start_day=0)
+
+    client.fetch_weather_score = AsyncMock(return_value=make_response(start_day=2))
+    await fetch_with(viewmodel, forecast_days=6, start_day=2)
+
+    assert viewmodel.config == ForecastConfig(forecast_days=6, start_day=2)
+
+
+@pytest.mark.asyncio
+async def test_fetch_failure_keeps_previous_config() -> None:
+    config = ForecastConfig(forecast_days=5, start_day=2)
+    viewmodel, _ = make_viewmodel(error=RuntimeError("boom"), config=config)
+
+    await fetch_with(viewmodel, forecast_days=9, start_day=4)
+
+    assert viewmodel.config == config
 
 
 @pytest.mark.asyncio
