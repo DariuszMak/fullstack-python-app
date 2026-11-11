@@ -22,7 +22,6 @@ def mock_places_constants(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_constants() -> None:
-    """Verify module-level constants are correctly defined."""
     assert MAX_FORECAST_DAYS == 16
     assert API_URL == "https://api.open-meteo.com/v1/forecast"
     assert len(DAILY_VARIABLES) > 0
