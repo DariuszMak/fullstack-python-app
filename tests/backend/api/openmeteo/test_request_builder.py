@@ -3,8 +3,6 @@ from typing import Any
 import pytest
 
 import src.backend.openmeteo.places.places as places_module
-
-# Adjust the import path below to match your actual module location
 from src.backend.openmeteo.request_builder import (
     API_URL,
     DAILY_VARIABLES,
