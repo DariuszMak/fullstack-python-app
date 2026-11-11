@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import math
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, cast, override
 
 import numpy as np
@@ -27,7 +29,11 @@ if TYPE_CHECKING:
 logger = structlog.get_logger(__name__)
 
 HOUR_SECONDS: float = 3600.0
-DAY_SECONDS = 86400.0
+DAY_SECONDS: float = 86400.0
+LONG_SPAN_DAYS: float = 3.0
+MIN_DAY_LABEL_PIXELS: float = 60.0
+DAY_LABEL_FORMAT: str = "%d %b"
+EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 BAR_WIDTH_RATIO: float = 0.8
 PRECIPITATION_COLOR: tuple[int, int, int] = (46, 204, 113)
 PRECIPITATION_BAR_ALPHA: int = 170
@@ -36,19 +42,35 @@ MIN_PRECIPITATION_AXIS_MAX: float = 1.0
 
 
 class CustomDateAxisItem(pg.DateAxisItem):  # type: ignore[misc]
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._daily_ticks = False
+
     @override
     def tickValues(self, min_val: float, max_val: float, size: float) -> list[tuple[float, list[float]]]:
-        span = max_val - min_val
+        if not (math.isfinite(min_val) and math.isfinite(max_val)) or max_val <= min_val or size <= 0:
+            self._daily_ticks = False
+            return []
 
-        if span <= 3 * DAY_SECONDS:
+        if max_val - min_val <= LONG_SPAN_DAYS * DAY_SECONDS:
+            self._daily_ticks = False
             return cast("list[tuple[float, list[float]]]", super().tickValues(min_val, max_val, size))
 
-        cal = self.generateCalendar(min_val, max_val)
-        days = [float(ts.timestamp()) for ts in cal]
+        first_day = math.ceil(min_val / DAY_SECONDS)
+        last_day = math.floor(max_val / DAY_SECONDS)
+        count = last_day - first_day + 1
+        max_labels = max(1, int(size // MIN_DAY_LABEL_PIXELS))
+        step = max(1, math.ceil(count / max_labels))
+        ticks = [float((first_day + offset) * DAY_SECONDS) for offset in range(0, count, step)]
 
-        ticks = [d for d in days if min_val <= d <= max_val]
+        self._daily_ticks = True
+        return [(step * DAY_SECONDS, ticks)]
 
-        return [(DAY_SECONDS, ticks), (DAY_SECONDS * 7, [])]
+    @override
+    def tickStrings(self, values: list[float], scale: float, spacing: float) -> list[str]:
+        if not self._daily_ticks:
+            return cast("list[str]", super().tickStrings(values, scale, spacing))
+        return [(EPOCH + timedelta(seconds=value)).strftime(DAY_LABEL_FORMAT) for value in values]
 
 
 class WeatherDetailsDialog(DraggableDialog):

@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from src.backend.api.models.best_score_response import PlaceBestScoreRecord
 from src.backend.api.models.weather_info_response import HourlyRecord, WeatherInfoResponse
-from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import WeatherDetailsDialog
+from src.frontend.pyside_ui.dialog_windows.weather_details_dialog import CustomDateAxisItem, WeatherDetailsDialog
 
 if TYPE_CHECKING:
     from pytestqt.qtbot import QtBot
@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 SUPER_CLOSE = "src.frontend.pyside_ui.dialog_windows.draggable_window.draggable_dialog.DraggableDialog.closeEvent"
 MODULE = "src.frontend.pyside_ui.dialog_windows.weather_details_dialog"
 HALF_HOUR = 1800.0
+DAY = 86400.0
 
 
 def make_record(date: str = "2026-01-01T00:00:00+00:00", precipitation: float = 0.0) -> HourlyRecord:
@@ -587,3 +588,95 @@ def test_release_plot_is_idempotent(dialog: WeatherDetailsDialog) -> None:
         dialog.closeEvent(QCloseEvent())
 
     assert dialog._plot_widget is None
+
+
+def test_axis_short_span_delegates_to_base(qtbot: QtBot) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+
+    with patch.object(pg.DateAxisItem, "tickValues", return_value=[(3600.0, [0.0])]) as base:
+        result = axis.tickValues(0.0, DAY, 600.0)
+
+    base.assert_called_once()
+    assert result == [(3600.0, [0.0])]
+    assert axis._daily_ticks is False
+
+
+@pytest.mark.parametrize(
+    ("min_val", "max_val", "size"),
+    [
+        (float("nan"), DAY, 600.0),
+        (0.0, float("inf"), 600.0),
+        (DAY, DAY, 600.0),
+        (DAY, 0.0, 600.0),
+        (0.0, 10 * DAY, 0.0),
+    ],
+)
+def test_axis_invalid_input_returns_no_ticks(qtbot: QtBot, min_val: float, max_val: float, size: float) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+
+    assert axis.tickValues(min_val, max_val, size) == []
+    assert axis._daily_ticks is False
+
+
+def test_axis_long_span_returns_daily_ticks(qtbot: QtBot) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+
+    result = axis.tickValues(0.0, 10 * DAY, 660.0)
+
+    assert result == [(DAY, [float(i) * DAY for i in range(11)])]
+    assert axis._daily_ticks is True
+
+
+def test_axis_long_span_skips_days_when_narrow(qtbot: QtBot) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+
+    result = axis.tickValues(0.0, 10 * DAY, 120.0)
+
+    assert result == [(6 * DAY, [0.0, 6 * DAY])]
+
+
+def test_axis_long_span_ticks_start_at_first_full_day(qtbot: QtBot) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+
+    result = axis.tickValues(HALF_HOUR, 10 * DAY + HALF_HOUR, 600.0)
+
+    ticks = result[0][1]
+    assert ticks[0] == pytest.approx(DAY)
+    assert ticks[-1] == pytest.approx(10 * DAY)
+
+
+def test_axis_tick_strings_use_day_labels_for_long_span(qtbot: QtBot) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+    axis.tickValues(0.0, 10 * DAY, 660.0)
+
+    assert axis.tickStrings([0.0, DAY], 1.0, DAY) == ["01 Jan", "02 Jan"]
+
+
+def test_axis_tick_strings_delegate_to_base_for_short_span(qtbot: QtBot) -> None:
+    axis = CustomDateAxisItem(utcOffset=0)
+
+    with patch.object(pg.DateAxisItem, "tickStrings", return_value=["12:00"]) as base:
+        result = axis.tickStrings([0.0], 1.0, 3600.0)
+
+    base.assert_called_once()
+    assert result == ["12:00"]
+
+
+def test_long_date_range_renders_without_errors(qtbot: QtBot) -> None:
+    widget = build_dialog(qtbot, forecast_days=16)
+    stamps = pd.date_range("2026-01-01T00:00:00+00:00", periods=16 * 24, freq="h")
+    records = [make_record(ts.isoformat()) for ts in stamps]
+
+    widget._update_plot(make_response(*records))
+    widget.show()
+    widget.grab()
+
+    assert widget._plot_widget is not None
+    axis = widget._plot_widget.getPlotItem().getAxis("bottom")
+    assert isinstance(axis, CustomDateAxisItem)
+    min_val, max_val = axis.range
+    assert max_val - min_val > 3 * DAY
+    ticks = axis.tickValues(min_val, max_val, 600.0)
+    assert axis._daily_ticks is True
+    assert len(ticks) == 1
+    assert len(axis.tickStrings(ticks[0][1], 1.0, ticks[0][0])) == len(ticks[0][1])
