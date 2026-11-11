@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, override
 
 import numpy as np
 import pandas as pd
@@ -35,20 +35,18 @@ PRECIPITATION_HEADROOM: float = 1.2
 MIN_PRECIPITATION_AXIS_MAX: float = 1.0
 
 
-class CustomDateAxisItem(pg.DateAxisItem):
-    def tickValues(self, minVal: float, maxVal: float, size: float) -> list[tuple[float, list[float]]]:
-        span = maxVal - minVal
+class CustomDateAxisItem(pg.DateAxisItem):  # type: ignore[misc]
+    @override
+    def tickValues(self, min_val: float, max_val: float, size: float) -> list[tuple[float, list[float]]]:
+        span = max_val - min_val
 
         if span <= 3 * DAY_SECONDS:
-            return super().tickValues(minVal, maxVal, size)
+            return cast("list[tuple[float, list[float]]]", super().tickValues(min_val, max_val, size))
 
-        cal = self.generateCalendar(minVal, maxVal)
+        cal = self.generateCalendar(min_val, max_val)
         days = [float(ts.timestamp()) for ts in cal]
 
-        ticks = []
-        for d in days:
-            if minVal <= d <= maxVal:
-                ticks.append(d)
+        ticks = [d for d in days if min_val <= d <= max_val]
 
         return [(DAY_SECONDS, ticks), (DAY_SECONDS * 7, [])]
 
