@@ -3,11 +3,11 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import math
+import statistics
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, cast, override
+from zoneinfo import ZoneInfo
 
-import numpy as np
-import pandas as pd
 import pyqtgraph as pg
 import structlog
 from PySide6.QtCore import QEvent, Qt, Signal, Slot
@@ -273,10 +273,11 @@ class WeatherDetailsDialog(DraggableDialog):
         if not hourly:
             return
 
-        dates = np.array([self._to_epoch(r.date) for r in hourly], dtype=float)
-        temps = np.array([r.temperature_2m for r in hourly], dtype=float)
-        apparent_temps = np.array([r.apparent_temperature for r in hourly], dtype=float)
-        precipitation = np.nan_to_num(np.array([r.precipitation for r in hourly], dtype=float), nan=0.0)
+        dates = [self._to_epoch(r.date) for r in hourly]
+        temps = [r.temperature_2m for r in hourly]
+        apparent_temps = [r.apparent_temperature for r in hourly]
+        raw_precip = [r.precipitation for r in hourly]
+        precipitation = [max(0.0, p) if not math.isnan(p) else 0.0 for p in raw_precip]
 
         self._plot_widget.clear()
         self._plot_widget.plot(dates, temps, pen="r", name="Temperature")
@@ -286,7 +287,7 @@ class WeatherDetailsDialog(DraggableDialog):
         self._update_precipitation(dates, precipitation)
         self._fit_time_range(dates)
 
-    def _update_precipitation(self, dates: np.ndarray, precipitation: np.ndarray) -> None:
+    def _update_precipitation(self, dates: list[float], precipitation: list[float]) -> None:
         view = self._precip_view
         if view is None:
             return
@@ -304,18 +305,18 @@ class WeatherDetailsDialog(DraggableDialog):
         view.addItem(bars)
         self._precipitation_bars = bars
 
-        top = max(float(precipitation.max()) * PRECIPITATION_HEADROOM, MIN_PRECIPITATION_AXIS_MAX)
+        top = max(max(precipitation) * PRECIPITATION_HEADROOM, MIN_PRECIPITATION_AXIS_MAX)
         view.setYRange(0.0, top, padding=0)
         self._sync_precipitation_view()
 
-    def _fit_time_range(self, dates: np.ndarray) -> None:
+    def _fit_time_range(self, dates: list[float]) -> None:
         if self._plot_widget is None:
             return
 
         half_step = self._bar_step(dates) / 2
 
-        min_date = float(dates.min())
-        max_date = float(dates.max())
+        min_date = min(dates)
+        max_date = max(dates)
 
         target_min = min_date + (self._start_day * DAY_SECONDS)
         target_max = target_min + (self._forecast_days * DAY_SECONDS)
@@ -328,27 +329,31 @@ class WeatherDetailsDialog(DraggableDialog):
         plot_item.setXRange(x_min, x_max, padding=0)
         plot_item.enableAutoRange(axis="y")
 
-        first = pd.to_datetime(float(dates.min()) + (self._start_day * DAY_SECONDS), unit="s").strftime("%Y-%m-%d")
+        first_dt = datetime.fromtimestamp(min(dates) + (self._start_day * DAY_SECONDS), tz=UTC)
+        first = first_dt.strftime("%Y-%m-%d")
 
-        last = pd.to_datetime(float(dates.max()), unit="s").strftime("%Y-%m-%d")
+        last = datetime.fromtimestamp(max(dates), tz=UTC).strftime("%Y-%m-%d")
 
         title = f"Hourly Forecast: {first}" if first == last else f"Hourly Forecast: {first} to {last}"
         self._plot_widget.setTitle(title)
 
     @staticmethod
-    def _bar_step(dates: np.ndarray) -> float:
-        if dates.size < 2:
+    def _bar_step(dates: list[float]) -> float:
+        if len(dates) < 2:
             return HOUR_SECONDS
-        step = float(np.median(np.abs(np.diff(dates))))
+        diffs = [abs(dates[i + 1] - dates[i]) for i in range(len(dates) - 1)]
+        step = statistics.median(diffs) if diffs else HOUR_SECONDS
         return step if step > 0 else HOUR_SECONDS
 
     def _to_epoch(self, value: object) -> float:
-        ts = pd.Timestamp(cast("Any", value))
-        if ts.tzinfo is not None:
-            with contextlib.suppress(Exception):
-                ts = ts.tz_convert(self._place.timezone)
-            ts = ts.tz_localize(None)
-        return float(ts.timestamp())
+        if isinstance(value, str):
+            dt = datetime.fromisoformat(value)
+            if dt.tzinfo is not None:
+                with contextlib.suppress(Exception):
+                    dt = dt.astimezone(ZoneInfo(self._place.timezone))
+                dt = dt.replace(tzinfo=None)
+            return dt.timestamp()
+        return float(value)
 
     def _release_plot(self) -> None:
         plot = self._plot_widget

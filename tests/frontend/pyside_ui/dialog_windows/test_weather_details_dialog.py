@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import numpy as np
-import pandas as pd
 import pyqtgraph as pg
 import pytest
 from PySide6.QtCore import QEvent, Qt
@@ -390,7 +389,9 @@ def test_update_plot_replaces_previous_bars(qtbot: QtBot) -> None:
 
 def test_update_plot_fits_x_range_to_data(qtbot: QtBot) -> None:
     widget = build_dialog(qtbot)
-    stamps = pd.date_range("2026-01-01T00:00:00+00:00", "2026-01-03T00:00:00+00:00", freq="h")
+    start = datetime(2026, 1, 1, tzinfo=UTC)
+    end = datetime(2026, 1, 3, tzinfo=UTC)
+    stamps = [start + timedelta(hours=i) for i in range(int((end - start).total_seconds() // 3600) + 1)]
     records = [make_record(ts.isoformat()) for ts in stamps]
 
     widget._update_plot(make_response(*records))
@@ -477,15 +478,15 @@ def test_update_plot_with_empty_hourly_keeps_plot_untouched(qtbot: QtBot) -> Non
 
 
 def test_bar_step_defaults_to_one_hour_for_single_point() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([100.0])) == pytest.approx(3600.0)
+    assert WeatherDetailsDialog._bar_step([100.0]) == pytest.approx(3600.0)
 
 
 def test_bar_step_uses_median_spacing() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([0.0, 7200.0, 14400.0])) == pytest.approx(7200.0)
+    assert WeatherDetailsDialog._bar_step([0.0, 7200.0, 14400.0]) == pytest.approx(7200.0)
 
 
 def test_bar_step_falls_back_when_spacing_is_zero() -> None:
-    assert WeatherDetailsDialog._bar_step(np.array([5.0, 5.0, 5.0])) == pytest.approx(3600.0)
+    assert WeatherDetailsDialog._bar_step([5.0, 5.0, 5.0]) == pytest.approx(3600.0)
 
 
 def test_sync_precipitation_view_is_noop_without_plot(dialog: WeatherDetailsDialog) -> None:
@@ -679,7 +680,8 @@ def test_axis_tick_strings_delegate_to_base_for_short_span(qtbot: QtBot) -> None
 
 def test_long_date_range_renders_without_errors(qtbot: QtBot) -> None:
     widget = build_dialog(qtbot, forecast_days=16)
-    stamps = pd.date_range("2026-01-01T00:00:00+00:00", periods=16 * 24, freq="h")
+    start = datetime(2026, 1, 1, tzinfo=UTC)
+    stamps = [start + timedelta(hours=i) for i in range(16 * 24)]
     records = [make_record(ts.isoformat()) for ts in stamps]
 
     widget._update_plot(make_response(*records))
