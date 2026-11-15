@@ -353,7 +353,7 @@ class WeatherDetailsDialog(DraggableDialog):
                     dt = dt.astimezone(ZoneInfo(self._place.timezone))
                 dt = dt.replace(tzinfo=None)
             return dt.timestamp()
-        return float(value)
+        return float(cast("Any", value))
 
     def _release_plot(self) -> None:
         plot = self._plot_widget
